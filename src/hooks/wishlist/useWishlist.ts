@@ -8,7 +8,7 @@ import {
   deleteWishlist,
   checkWishlistExists,
 } from '@/services/api/wishlistApi'
-import type { WishlistResponse } from '@/types/responses'
+import type { WishlistResponse, WishlistIdItem } from '@/types/responses'
 import type {
   CreateWishlistRequest,
   UpdateWishlistRequest,
@@ -16,6 +16,7 @@ import type {
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useMainIds } from '@/hooks/home'
 
 /**
  * Hook to fetch all wishlists
@@ -114,6 +115,7 @@ export const useCreateWishlist = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
         'Wishlist created successfully',
@@ -146,6 +148,7 @@ export const useUpdateWishlist = () => {
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       queryClient.invalidateQueries({ queryKey: ['wishlist', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
         'Wishlist updated successfully',
@@ -178,6 +181,7 @@ export const useDeleteWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       queryClient.invalidateQueries({ queryKey: ['wishlist', variables.id] })
       queryClient.removeQueries({ queryKey: ['wishlist', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       addToast('Wishlist deleted successfully', 'success')
     },
     onError: (error) => {
@@ -196,23 +200,25 @@ export const useDeleteWishlist = () => {
  * we rely on the sourceId matching the product/service ID.
  */
 export const useWishlistItems = (enabled = true) => {
-  const { data: wishlistsData } = useWishlists({
-    enabled,
-    page: 1,
-    pageSize: 1000, // Fetch a large number to get all wishlists
-  })
+  const { data: mainIds, isLoading } = useMainIds(
+    {
+      page: 1,
+      pageSize: 1000,
+    },
+    enabled
+  )
 
   // Extract all wishlists from response (direct array, not paginated)
   const wishlists = useMemo(() => {
-    return wishlistsData || []
-  }, [wishlistsData])
+    return mainIds?.wishlists || []
+  }, [mainIds])
 
   // Extract product IDs from wishlists
   const productIds = useMemo(() => {
     return new Set<number>(
       wishlists
-        .filter((wishlist: WishlistResponse) => wishlist.source === Source.Product)
-        .map((wishlist: WishlistResponse) => wishlist.sourceId)
+        .filter((wishlist: WishlistIdItem) => String(wishlist.source) === Source.Product)
+        .map((wishlist: WishlistIdItem) => wishlist.sourceId)
     )
   }, [wishlists])
 
@@ -220,8 +226,8 @@ export const useWishlistItems = (enabled = true) => {
   const serviceIds = useMemo(() => {
     return new Set<number>(
       wishlists
-        .filter((wishlist: WishlistResponse) => wishlist.source === Source.Service)
-        .map((wishlist: WishlistResponse) => wishlist.sourceId)
+        .filter((wishlist: WishlistIdItem) => String(wishlist.source) === Source.Service)
+        .map((wishlist: WishlistIdItem) => wishlist.sourceId)
     )
   }, [wishlists])
 
@@ -250,10 +256,10 @@ export const useWishlistItems = (enabled = true) => {
     return (productId: number): number[] => {
       return wishlists
         .filter(
-          (wishlist: WishlistResponse) =>
-            wishlist.source === Source.Product && wishlist.sourceId === productId
+          (wishlist: WishlistIdItem) =>
+            String(wishlist.source) === Source.Product && wishlist.sourceId === productId
         )
-        .map((wishlist: WishlistResponse) => wishlist.id)
+        .map((wishlist: WishlistIdItem) => wishlist.id)
     }
   }, [wishlists])
 
@@ -264,10 +270,10 @@ export const useWishlistItems = (enabled = true) => {
     return (serviceId: number): number[] => {
       return wishlists
         .filter(
-          (wishlist: WishlistResponse) =>
-            wishlist.source === Source.Service && wishlist.sourceId === serviceId
+          (wishlist: WishlistIdItem) =>
+            String(wishlist.source) === Source.Service && wishlist.sourceId === serviceId
         )
-        .map((wishlist: WishlistResponse) => wishlist.id)
+        .map((wishlist: WishlistIdItem) => wishlist.id)
     }
   }, [wishlists])
 
@@ -276,7 +282,7 @@ export const useWishlistItems = (enabled = true) => {
     isServiceInWishlist,
     getProductWishlistIds,
     getServiceWishlistIds,
-    isLoading: !wishlistsData,
+    isLoading,
     wishlists,
   }
 }

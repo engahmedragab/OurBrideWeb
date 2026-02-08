@@ -23,6 +23,7 @@ import type {
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import { useI18nTranslations } from '@/i18n'
+import { useMainIds } from '@/hooks/home'
 
 /**
  * Hook to fetch cart data
@@ -111,6 +112,7 @@ export const useUpdatePurchase = () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       
       // Show success toast
       const { message, type } = handleApiResponseForToast(
@@ -150,6 +152,7 @@ export const useRemovePurchase = () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       
       // Show success toast
       addToast(t('itemRemovedSuccess'), 'success')
@@ -177,6 +180,7 @@ export const useCheckout = () => {
       // Invalidate cart queries after successful checkout
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       
       // Show success toast
       const { message, type } = handleApiResponseForToast(
@@ -237,6 +241,7 @@ export const useClearCart = () => {
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       
       // Show success toast
       addToast(t('cartClearedSuccess'), 'success')
@@ -280,6 +285,7 @@ export const useAddToCart = () => {
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       
       // Show success toast
       const { message, type } = handleApiResponseForToast(
@@ -301,115 +307,94 @@ export const useAddToCart = () => {
  * Returns helper functions to check cart status
  */
 export const useCartItems = () => {
-  const { data: cart } = useCart()
-  const { data: cartsWithProviders } = useCartsWithProviders()
-
-  // Get all purchases from all carts
-  const allPurchases = useMemo(() => {
-    const purchases: PurchaseResponse[] = []
-    
-    if (cart?.purchases) {
-      purchases.push(...cart.purchases)
-    }
-    
-    if (cartsWithProviders) {
-      cartsWithProviders.forEach(cartWithProvider => {
-        if (cartWithProvider.purchases) {
-          purchases.push(...cartWithProvider.purchases)
-        }
-      })
-    }
-    
-    return purchases
-  }, [cart, cartsWithProviders])
+  const { data: mainIds, isLoading } = useMainIds(
+    {
+      page: 1,
+      pageSize: 1000,
+    },
+    true
+  )
 
   /**
    * Check if a product is in the cart
    */
   const isProductInCart = useMemo(() => {
     return (productId: number, providerId?: number): boolean => {
-      return allPurchases.some(purchase => {
-        if (purchase.type !== PurchaseType.Product) return false
-        if (purchase.productId !== productId) return false
-        if (providerId !== undefined && purchase.providerId !== providerId) return false
-        return !purchase.isDeleted
-      })
+      if (!mainIds?.cart?.productId) return false
+      if (mainIds.cart.productId !== productId) return false
+      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return false
+      return true
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   /**
    * Check if a service is in the cart
    */
   const isServiceInCart = useMemo(() => {
     return (serviceId: number, providerId?: number): boolean => {
-      return allPurchases.some(purchase => {
-        if (purchase.type !== PurchaseType.Service) return false
-        if (purchase.serviceId !== serviceId) return false
-        if (providerId !== undefined && purchase.providerId !== providerId) return false
-        return !purchase.isDeleted
-      })
+      if (!mainIds) return false
+      if (mainIds.cart?.serviceId === serviceId) {
+        if (providerId !== undefined && mainIds.cart?.providerId !== providerId) {
+          return false
+        }
+        return true
+      }
+      if (providerId !== undefined) {
+        return mainIds.cartsWithProviders?.some(
+          cartWithProvider => cartWithProvider.providerId === providerId
+        )
+      }
+      return false
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   /**
    * Get purchase quantity for a product
    */
   const getProductQuantity = useMemo(() => {
     return (productId: number, providerId?: number): number => {
-      const purchase = allPurchases.find(p => {
-        if (p.type !== PurchaseType.Product) return false
-        if (p.productId !== productId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
-        return !p.isDeleted
-      })
-      return purchase?.quantity || 0
+      if (!mainIds?.cart?.productId) return 0
+      if (mainIds.cart.productId !== productId) return 0
+      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return 0
+      return 1
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   /**
    * Get purchase quantity for a service
    */
   const getServiceQuantity = useMemo(() => {
     return (serviceId: number, providerId?: number): number => {
-      const purchase = allPurchases.find(p => {
-        if (p.type !== PurchaseType.Service) return false
-        if (p.serviceId !== serviceId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
-        return !p.isDeleted
-      })
-      return purchase?.quantity || 0
+      if (!mainIds?.cart?.serviceId) return 0
+      if (mainIds.cart.serviceId !== serviceId) return 0
+      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return 0
+      return 1
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   /**
    * Get purchase ID for a product (useful for removing/updating)
    */
   const getProductPurchaseId = useMemo(() => {
     return (productId: number, providerId?: number): number | null => {
-      const purchase = allPurchases.find(p => {
-        if (p.type !== PurchaseType.Product) return false
-        if (p.productId !== productId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
-        return !p.isDeleted
-      })
-      return purchase?.id || null
+      if (!mainIds?.cart?.productId) return null
+      if (mainIds.cart.productId !== productId) return null
+      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return null
+      return mainIds.cart.id ?? null
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   /**
    * Get purchase ID for a service (useful for removing/updating)
    */
   const getServicePurchaseId = useMemo(() => {
     return (serviceId: number, providerId?: number): number | null => {
-      const purchase = allPurchases.find(p => {
-        if (p.type !== PurchaseType.Service) return false
-        if (p.serviceId !== serviceId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
-        return !p.isDeleted
-      })
-      return purchase?.id || null
+      if (!mainIds?.cart?.serviceId) return null
+      if (mainIds.cart.serviceId !== serviceId) return null
+      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return null
+      return mainIds.cart.id ?? null
     }
-  }, [allPurchases])
+  }, [mainIds])
 
   return {
     isProductInCart,
@@ -418,6 +403,6 @@ export const useCartItems = () => {
     getServiceQuantity,
     getProductPurchaseId,
     getServicePurchaseId,
-    isLoading: !cart && !cartsWithProviders,
+    isLoading,
   }
 }
