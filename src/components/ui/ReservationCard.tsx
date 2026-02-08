@@ -156,7 +156,11 @@ export const ReservationCard = ({
           isRTL ? 'left-6' : 'right-6'
         )}
       >
-        <StatusBadge status={mapReservationStatusToBadgeType(status)} label={getTranslatedStatus(status)} />
+        <StatusBadge
+          status={mapReservationStatusToBadgeType(status)}
+          label={getTranslatedStatus(status)}
+          size="md"
+        />
 
         <button
           type="button"
@@ -176,12 +180,12 @@ export const ReservationCard = ({
         </button>
       </div>
 
-      <div className={cn("flex flex-col lg:flex-row gap-6 ",isRTL?'pl-28':'pr-28')}>
+      <div className={cn('flex flex-col lg:flex-row gap-6 ', isRTL ? 'pl-28' : 'pr-28')}>
         {/* Left Section - Reservation Info */}
         <div className="flex-1">
           {/* Reservation ID and Date */}
           <div className="mb-4">
-            <h3 className="text-18 font-semibold text-gray-900 mb-1">
+            <h3 className="text-14 md:text-18 font-semibold text-gray-900 mb-1 break-all">
               {t('card.header.title', { reservationId: reservation.reservationId })}
             </h3>
             {createdDate && (
@@ -191,129 +195,133 @@ export const ReservationCard = ({
             )}
           </div>
 
-          {/* Service Info */}
-          <div className="mb-4 bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-start gap-3">
-              <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+          {isDetailsOpen && (
+            <>
+              {/* Service Info */}
+              <div className="mb-4 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="flex items-start gap-3">
+                  <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
                 {serviceImage && serviceImage.trim() !== '' && serviceImage !== '/placeholder-service.png' && !imageError ? (
-                  <Image
-                    src={serviceImage}
-                    alt={serviceName}
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-gray-400 text-10 font-medium text-center px-1">
-                      {t('card.service.noImage')}
+                      <Image
+                        src={serviceImage}
+                        alt={serviceName}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-400 text-10 font-medium text-center px-1">
+                          {t('card.service.noImage')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Link
+                      href={service?.id ? `/services/category/${service.id}` : '#'}
+                      className="text-16 font-semibold text-gray-900 hover:text-brand-600 transition-colors mb-1 block"
+                    >
+                      {serviceName}
+                    </Link>
+                    {serviceRating > 0 && (
+                      <div className="mb-1">
+                        <RatingDisplay
+                          rating={serviceRating}
+                          size="xs"
+                          format="value-only"
+                          variant="compact"
+                          showValue={true}
+                        />
+                      </div>
+                    )}
+                    <p className="text-14 text-gray-600">
+                      {t('card.service.providerLabel')}{' '}
+                      {reservation.providerId ? (
+                        <Link
+                          href={`/provider/${reservation.providerId}`}
+                          className="hover:text-brand-500 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {providerName}
+                        </Link>
+                      ) : (
+                        providerName
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reservation Details */}
+              <div className="space-y-2 text-14 text-gray-700">
+                {reservationDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-500" />
+                    <span>
+                      {t('card.fields.date')}: {reservationDate}
+                    </span>
+                  </div>
+                )}
+                {reservationTime && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-gray-500" />
+                    <span>
+                      {t('card.fields.time')}: {reservationTime}
+                    </span>
+                  </div>
+                )}
+                {placeName && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <span>{placeName}</span>
+                  </div>
+                )}
+                {staffName && (
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-gray-500" />
+                    <span>
+                      {t('card.fields.staff')}: {staffName}
+                    </span>
+                  </div>
+                )}
+
+                {reservation.quantity && reservation.quantity > 1 && (
+                  <div className="flex items-center gap-2">
+                    <span>
+                      {t('card.fields.quantity')}: {reservation.quantity}
                     </span>
                   </div>
                 )}
               </div>
-              <div className="flex-1 min-w-0">
-                <Link
-                  href={service?.id ? `/services/category/${service.id}` : '#'}
-                  className="text-16 font-semibold text-gray-900 hover:text-brand-600 transition-colors mb-1 block"
-                >
-                  {serviceName}
-                </Link>
-                {serviceRating > 0 && (
-                  <div className="mb-1">
-                    <RatingDisplay
-                      rating={serviceRating}
-                      size="xs"
-                      format="value-only"
-                      variant="compact"
-                      showValue={true}
-                    />
-                  </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mt-4">
+                {onViewDetails && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onViewDetails(reservation.reservationId)}
+                    className="flex-1"
+                  >
+                    {t('card.actions.viewDetails')}
+                  </Button>
                 )}
-                <p className="text-14 text-gray-600">
-                  {t('card.service.providerLabel')}{' '}
-                  {reservation.providerId ? (
-                    <Link
-                      href={`/provider/${reservation.providerId}`}
-                      className="hover:text-brand-500 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {providerName}
-                    </Link>
-                  ) : (
-                    providerName
-                  )}
-                </p>
+                {isInProgress && onCancel && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onCancel(reservation.reservationId)}
+                    className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                  >
+                    <X className="h-4 w-4" />
+                    {t('card.actions.cancel')}
+                  </Button>
+                )}
               </div>
-            </div>
-          </div>
-
-          {/* Reservation Details */}
-          <div className="space-y-2 text-14 text-gray-700">
-            {reservationDate && (
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span>
-                  {t('card.fields.date')}: {reservationDate}
-                </span>
-              </div>
-            )}
-            {reservationTime && (
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-gray-500" />
-                <span>
-                  {t('card.fields.time')}: {reservationTime}
-                </span>
-              </div>
-            )}
-            {placeName && (
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <span>{placeName}</span>
-              </div>
-            )}
-            {staffName && (
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                <span>
-                  {t('card.fields.staff')}: {staffName}
-                </span>
-              </div>
-            )}
-
-            {reservation.quantity && reservation.quantity > 1 && (
-              <div className="flex items-center gap-2">
-                <span>
-                  {t('card.fields.quantity')}: {reservation.quantity}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-2 mt-4">
-            {onViewDetails && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onViewDetails(reservation.reservationId)}
-                className="flex-1"
-              >
-                {t('card.actions.viewDetails')}
-              </Button>
-            )}
-            {isInProgress && onCancel && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onCancel(reservation.reservationId)}
-                className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-              >
-                <X className="h-4 w-4" />
-                {t('card.actions.cancel')}
-              </Button>
-            )}
-          </div>
+            </>
+          )}
         </div>
 
         {/* Right Section - Collapsible Details */}

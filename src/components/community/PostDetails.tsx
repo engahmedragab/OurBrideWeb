@@ -32,7 +32,7 @@ import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 
 export interface PostDetailsProps {
@@ -44,9 +44,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
-
   const t = useI18nTranslations('community')
   const tC = useI18nTranslations('common')
+  const isRTL= useIsRTL()
+
 
   const [commentText, setCommentText] = useState('')
   const [isLiked, setIsLiked] = useState(false)
@@ -193,7 +194,9 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
           className="h-10 w-10"
           aria-label={t('profile.aria.goBack')}
         >
-          <ArrowLeft className="h-5 w-5 text-gray-600" />
+          <ArrowLeft className={cn("h-5 w-5 text-gray-600 ",
+            isRTL?'rotate-180':'rotate-0' 
+          )} />
         </Button>
         <div className="flex items-center gap-2 text-14 text-gray-600">
           <button
@@ -255,7 +258,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                 size="sm"
                 onClick={handleFollowClick}
                 disabled={toggleFollowMutation.isPending}
-                className={cn('text-12 flex-shrink-0', !isFollowing && 'text-white')}
+                className={cn('!text-14 flex-shrink-0', !isFollowing && 'text-white')}
               >
                 <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
@@ -368,25 +371,25 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-center gap-3">
             <EngagementButton
-              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
               count={likes}
               label={t('postCard.likes')}
               onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
               isActive={isLiked}
             />
             <EngagementButton
-              icon={<MessageCircle className="h-5 w-5" />}
+              icon={<MessageCircle className="h-4 w-4" />}
               count={post.reviewCount || post.commentCount || 0}
               label={t('postCard.comments')}
             />
             <EngagementButton
-              icon={<Share2 className="h-5 w-5" />}
+              icon={<Share2 className="h-4 w-4" />}
               count={shares}
               label={t('postCard.shares')}
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
-              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
               count={favorites}
               label={t('postCard.favorites')}
               onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
@@ -434,7 +437,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   size="sm"
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || addCommentMutation.isPending}
-                  className="text-10 text-white font-normal"
+                  className="!text-13 text-white font-normal"
                 >
                   {addCommentMutation.isPending ? t('articleDetails.posting') : t('articleDetails.postComment')}
                 </Button>

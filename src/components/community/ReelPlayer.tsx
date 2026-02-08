@@ -35,6 +35,7 @@ import type { ReviewResponse } from '@/types/responses/review-response'
 import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '../ui'
 
 export interface ReelPlayerProps {
   id: string
@@ -238,7 +239,7 @@ export const ReelPlayer = ({ id, videoUrl: _videoUrl, className }: ReelPlayerPro
   if (isLoading) {
     return (
       <div className={cn('flex items-center justify-center w-full min-h-[400px]', className)}>
-        <LoadingOverlay open={true} title={tC('loading')} />
+        <LoadingSpinner open={true} text={tC('loading')} />
       </div>
     )
   }

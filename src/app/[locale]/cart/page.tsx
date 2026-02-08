@@ -830,37 +830,39 @@ const tOverlay = useI18nTranslations('cart.mutationOverlay')
   const isLoadingData = isLoadingGeneralCart || isLoadingCarts
 
   // Header right content with filters
-  const headerRightContent = (
-    <div className="flex items-center gap-2">
-      {hasItems && (
+ const headerRightContent = (
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        {hasItems && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleClearAllClick}
+            disabled={clearCartMutation.isPending}
+            className="hover:bg-red-50 hover:border-red-400"
+            aria-label={tActions('clearAllAria')}
+          >
+            <Trash2 className="h-4 w-4 text-gray-600" />
+          </Button>
+        )}
         <Button
           type="button"
           variant="outline"
           size="icon"
-          onClick={handleClearAllClick}
-          disabled={clearCartMutation.isPending}
-          className="hover:bg-red-50 hover:border-red-400"
-          aria-label={tActions('clearAllAria')}
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="hover:border-brand-400"
+          aria-label={tActions('refreshAria')}
         >
-          <Trash2 className="h-4 w-4 text-gray-600" />
+          <RefreshCw
+            className={cn(
+              'h-4 w-4 text-gray-600',
+              isRefreshing && 'animate-spin'
+            )}
+          />
         </Button>
-      )}
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        onClick={handleRefresh}
-        disabled={isRefreshing}
-        className="hover:border-brand-400"
-        aria-label={tActions('refreshAria')}
-      >
-        <RefreshCw
-          className={cn(
-            'h-4 w-4 text-gray-600',
-            isRefreshing && 'animate-spin'
-          )}
-        />
-      </Button>
+      </div>
       <ServicesProductsFilter value={itemTypeFilter} onChange={setItemTypeFilter} />
     </div>
   )

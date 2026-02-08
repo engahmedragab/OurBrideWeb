@@ -269,7 +269,7 @@ const ProductServiceCard = ({
 
   return (
     <div 
-      className="group relative bg-transparent rounded-xl overflow-visible transition-shadow cursor-pointer flex flex-col"
+      className="group relative bg-transparent rounded-xl overflow-visible transition-shadow cursor-pointer flex flex-col border border-gray-200/70"
       onClick={handleCardClick}
     >
       {/* Action Icons - Floating above the card */}
@@ -303,7 +303,7 @@ const ProductServiceCard = ({
       </div>
 
       {/* Image Container - 75% of card height */}
-      <div className="relative flex-[3] min-h-[280px] overflow-hidden bg-gray-100 custom-shaped-card flex items-center justify-center">
+      <div className="relative flex-[3] min-h-[220px] sm:min-h-[260px] md:min-h-[280px] overflow-hidden bg-gray-100 custom-shaped-card flex items-center justify-center">
         {data.image && 
          data.image.trim() !== '' && 
          data.image !== '/' &&
@@ -345,10 +345,10 @@ const ProductServiceCard = ({
       </div>
 
       {/* Content */}
-      <div className="p-3 space-y-2 relative bg-transparent rounded-b-xl flex-1">
+      <div className="p-2 sm:p-3 space-y-2 relative bg-transparent rounded-b-xl flex-1">
         <div className="flex flex-col gap-2">
           {/* Title */}
-          <h3 className="text-18 font-medium text-gray-900 line-clamp-2 leading-[24px]">
+          <h3 className="text-16 sm:text-18 font-medium text-gray-900 line-clamp-2 leading-[22px] sm:leading-[24px]">
             {data.title}
           </h3>
 
@@ -358,15 +358,15 @@ const ProductServiceCard = ({
               <button
                 type="button"
                 onClick={(e) => handleProviderClick(e, data.providerId!)}
-                className="text-16 text-gray-500 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+                className="text-14 sm:text-16 text-gray-500 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
               >
                 {data.providerName}
               </button>
             ) : (
-              <span className="text-16 text-gray-500">{data.providerName}</span>
+              <span className="text-14 sm:text-16 text-gray-500">{data.providerName}</span>
             )}
             {data.verified && (
-              <CheckCircle2 className="h-6 w-6 text-blue-500 flex-shrink-0" />
+              <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500 flex-shrink-0" />
             )}
           </div>
         </div>
@@ -375,8 +375,8 @@ const ProductServiceCard = ({
         <div className="flex items-center justify-between gap-4">
           {/* Rating - Converted to 1-10 scale */}
           <div className="flex items-center gap-1">
-            <Star className="h-6 w-6 fill-brand-500 text-brand-500" />
-            <span className="text-16 font-normal text-gray-500">
+            <Star className="h-5 w-5 sm:h-6 sm:w-6 fill-brand-500 text-brand-500" />
+            <span className="text-14 sm:text-16 font-normal text-gray-500">
               {(data.rating / 5).toFixed(1)}
             </span>
           </div>
@@ -384,15 +384,15 @@ const ProductServiceCard = ({
           {/* Pricing */}
           <div className="flex items-center gap-2">
             {hasDiscount && (
-              <span className="text-14 font-normal text-gray-500 line-through">
+              <span className="text-12 sm:text-14 font-normal text-gray-500 line-through">
                 {data.originalPrice.toLocaleString()}
               </span>
             )}
             <div className="flex items-baseline gap-0.5">
-              <span className="text-24 font-semibold text-gray-900 leading-[32px]">
+              <span className="text-20 sm:text-24 font-semibold text-gray-900 leading-[28px] sm:leading-[32px]">
                 {data.discountedPrice.toLocaleString()}
               </span>
-              <span className="text-14 font-normal text-gray-900">
+              <span className="text-12 sm:text-14 font-normal text-gray-900">
                 {t('currency')}
               </span>
             </div>
@@ -407,7 +407,7 @@ const ProductServiceCard = ({
                 variant="outline"
                 size="icon"
                 className={cn(
-                  "h-12 w-12 rounded-full border-brand-500 bg-white hover:bg-white",
+                  "h-10 w-10 sm:h-12 sm:w-12 rounded-full border-brand-500 bg-white hover:bg-white",
                   "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
                 aria-label={isInCart ? "Item in cart" : "Add to cart"}
@@ -417,14 +417,14 @@ const ProductServiceCard = ({
                 {isInCart ? (
                   <Check
                     className={cn(
-                      'h-6 w-6 text-brand-500',
+                      'h-5 w-5 sm:h-6 sm:w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
                 ) : (
                   <ShoppingCart
                     className={cn(
-                      'h-6 w-6 text-brand-500',
+                      'h-5 w-5 sm:h-6 sm:w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
@@ -435,7 +435,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-20 font-medium bg-green-500 hover:bg-green-600 text-white h-12"
+                className="flex-1 rounded-full !text-14 sm:text-20 font-normal bg-green-500 hover:bg-green-600 text-white h-10 sm:h-12"
                 onClick={handleViewCart}
               >
                 View in Cart
@@ -444,7 +444,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white h-12"
+                className="flex-1 rounded-full !text-14 sm:text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white h-10 sm:h-12"
                 onClick={handleBuyNow}
                 disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
               >

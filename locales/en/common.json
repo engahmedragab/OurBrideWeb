@@ -1136,6 +1136,147 @@
     }
   },
   "community": {
+    "postCard": {
+      "failedToToggleLike": "Failed to toggle like",
+      "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
+      "failedToSharePost": "Failed to share post",
+      "failedToToggleFavorite": "Failed to toggle favorite",
+      "fallbackName": "User",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares",
+      "favorites": "Favorites"
+    },
+    "communityRightSidebar": {
+      "commentAdded": "Comment added!",
+      "linkCopied": "Link copied to clipboard!",
+      "noComments": "No comments yet. Be the first to comment!",
+      "shareYourComments": "Share your Comments",
+      "suggestsToFollow": "Suggests To Follow",
+      "provider": "Provider",
+      "popularTags": "Popular Tags",
+      "topArticles": "Top Articles",
+      "communityPosts": "Community Posts"
+    },
+    "articleDetails": {
+      "loading": "Loading article...",
+      "notFoundTitle": "Article Not Found",
+      "notFoundMessage": "The article you're looking for doesn't exist or has been removed.",
+      "commentAdded": "Comment added successfully!",
+      "failedToAddComment": "Failed to add comment",
+      "failedToToggleLike": "Failed to toggle like",
+      "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
+      "failedToShareArticle": "Failed to share article",
+      "failedToToggleFavorite": "Failed to toggle favorite",
+      "userIDNotAvailable": "User ID not available",
+      "unfollowedSuccessfully": "Unfollowed successfully",
+      "followedSuccessfully": "Followed successfully",
+      "failedToToggleFollow": "Failed to toggle follow",
+      "load": "Loading...",
+      "following": "Following",
+      "follow": "Follow",
+      "noComments": "No comments yet. Be the first to comment!",
+      "writeComment": "Write a comment...",
+      "postComment": "Post Comment",
+      "posting": "Posting...",
+      "articleCard": {
+        "readMore": "Read More",
+        "minRead": "min read"
+      }
+    },
+    "postDetails": {
+      "loading": "Loading post...",
+      "postNotFoundTitle": "Post Not Found",
+      "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
+    },
+    "contestDetails": {
+      "loading": "Loading contest...",
+      "contestNotFoundTitle": "Contest Not Found",
+      "contestNotFoundMessage": "The contest you're looking for doesn't exist or has been removed.",
+      "failedToShareContest": "Failed to share contest",
+      "alreadyJoined": "You have already joined this contest!",
+      "joinedSuccessfully": "Successfully joined the contest!",
+      "active": "Active",
+      "ended": "Ended",
+      "upcoming": "Upcoming",
+      "prize": "Prize",
+      "participants": "Participants",
+      "ends": "Ends",
+      "joinContest": "Join Contest",
+      "contestEnded": "Contest Ended",
+      "joined": "Joined",
+      "noContestsTitle": "No Contests Available",
+      "noContestsMessage": "There are no contests to display at the moment."
+    },
+    "decisionGroupDetails": {
+      "loading": "Loading decision group...",
+      "decisionGroupNotFoundTitle": "Decision Group Not Found",
+      "decisionGroupNotFoundMessage": "The decision group you're looking for doesn't exist or has been removed.",
+      "haveAlreadyVoted": "You have already voted!",
+      "voteCastSuccessfully": "Your vote has been cast successfully!",
+      "failedToVote": "Failed to vote",
+      "votes": "votes",
+      "participants": "participants",
+      "totalVotes": "total votes",
+      "noDecisionGroupsTitle": "No Decision Groups Available",
+      "noDecisionGroupsMessage": "There are no decision groups to display at the moment.",
+      "moreOptions": "more options"
+    },
+    "blogDetails": {
+      "loading": "Loading blog...",
+      "blogNotFoundTitle": "Blog Not Found",
+      "blogNotFoundMessage": "The blog you're looking for doesn't exist or has been removed.",
+      "Anonymous": "Anonymous",
+      "user": "User",
+      "failedToShareBlog": "Failed to share blog"
+    },
+    "createPostModal": {
+      "title": "Create Post",
+      "privacy": {
+        "public": "Public",
+        "friends": "Friends",
+        "private": "Private"
+      },
+      "fields": {
+        "titlePlaceholder": "Post Title (optional)",
+        "contentPlaceholder": "Share What's in your mind, {name}..."
+      },
+      "buttons": {
+        "post": "Post",
+        "posting": "Posting..."
+      },
+      "aria": {
+        "close": "Close modal",
+        "removeImage": "Remove image",
+        "uploadImage": "Upload image",
+        "generateAi": "Generate AI content",
+        "addReels": "Add reels",
+        "textFormat": "Text format"
+      },
+      "tooltips": {
+        "maxImages": "Maximum {max} images",
+        "uploadImage": "Upload image",
+        "generateAi": "Generate AI content",
+        "addVideoComingSoon": "Add video (coming soon)",
+        "textFormatComingSoon": "Text format (coming soon)"
+      },
+      "toasts": {
+        "uploadLimit": "You can only upload up to {max} images. Only the first {count} will be uploaded.",
+        "uploadFileFail": "Failed to upload {fileName}",
+        "uploadSuccess": "{count} image(s) uploaded successfully",
+        "uploadFail": "Failed to upload images",
+        "generateNeedInput": "Please enter a title or some content to generate from",
+        "generateSuccess": "Content generated successfully!",
+        "generateFail": "Failed to generate content. Please try again.",
+        "postNeedInput": "Please enter a title or content for your post",
+        "postSuccess": "Post created successfully!",
+        "postFail": "Failed to create post. Please try again.",
+        "postNoResponse": "Failed to create post: No response from server"
+      },
+      "fallback": {
+        "newPostTitle": "New Post"
+      }
+    },
     "communityFeed": {
       "createPostPlaceholder": "Share What's in your mind ,{name} ....",
       "emptyMessage": "There are no posts to display at the moment. Be the first to share something!",
@@ -1188,6 +1329,10 @@
       "noBlogsMessage": "There are no blogs to display at the moment.",
       "noArticlesTitle": "No Articles Available",
       "noArticlesMessage": "There are no articles to display at the moment.",
+      "noPostsTitle": "No Posts Available",
+      "noPostsMessage": "There are no posts to display at the moment.",
+      "noContestsTitle": "No Contests Available",
+      "noContestsMessage": "There are no contests to display at the moment.",
       "noContentTitle": "No Content Available",
       "noContentMessage": "There is no content to display at the moment. Check back later or be the first to share something!"
     },
@@ -1528,11 +1673,6 @@
     "loading": "Loading reel...",
     "reelNotFoundTitle": "Reel Not Found",
     "reelNotFoundMessage": "The reel you're looking for doesn't exist or has been removed."
-  },
-  "postDetails": {
-    "loading": "Loading post...",
-    "postNotFoundTitle": "Post Not Found",
-    "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
   },
   "social": {
     "instagram": "Visit our Instagram page",

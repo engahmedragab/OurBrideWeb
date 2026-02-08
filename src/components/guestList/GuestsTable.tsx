@@ -150,7 +150,7 @@ export const GuestsTable = ({
                                     </button>
                                 </div>
                                 <div className="col-span-8 md:col-span-4 flex items-center min-w-0">
-                                    <span className="text-14 font-semibold text-gray-900 truncate">{category.title}</span>
+                                    <span className="text-14 font-semibold text-gray-900 truncate mx-1">{category.title}</span>
                                     <span className="ml-2 text-12 text-gray-500 hidden md:inline">
                                         ({stats.total} {t('summary.guestsCount', { count: stats.total })}, {stats.confirmed} {t('status.confirmed')})
                                     </span>

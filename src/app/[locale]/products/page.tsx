@@ -82,7 +82,7 @@ export default function ProductIntroPage() {
     return categories.map((category, index) => ({
       id: String(category.id),
       title: category.nameEn || category.nameAr || '',
-      description: t('exclusiveCoupons.text'),
+      description: category.descriptionEn || category.descriptionAr || t('exclusiveCoupons.text'),
       href: `/products/category/${category.slug || category.id}`,
       icon: categoryIcons[index % categoryIcons.length] || defaultIcon,
     }))
@@ -520,7 +520,7 @@ export default function ProductIntroPage() {
                   t('newsletterBanner.description'),
                 variant: 'newsletter',
                 ctaText: t('newsletterBanner.ctaText'),
-                productImage: isRTL ? flowersImageRight : flowersImage,
+                productImage:  flowersImage,
               },
             ]}
             onSubscribe={handleSubscribe}

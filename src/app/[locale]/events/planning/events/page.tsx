@@ -10,7 +10,7 @@ import { formatDateSafe, getToday } from '@/lib/date-utils'
 import { ChevronLeft, Save } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { Button, LoadingOverlay, ErrorModal } from '@/components/ui'
+import { Button, LoadingOverlay, ErrorModal, LoadingSpinner } from '@/components/ui'
 import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
@@ -272,7 +272,7 @@ function EventsPageContent() {
 
     return (
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner size="lg" fullScreen={true} open={true} text={loadingTitle}  />
       </div>
     )
   }

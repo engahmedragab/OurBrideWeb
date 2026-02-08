@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import {
   ArrowLeft,
+  ArrowRight,
   Calendar,
   Clock,
   MapPin,
@@ -137,7 +138,7 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
     return (
       <UserPageLayout>
         <PageHeader title={t('details.pageTitle')} />
-        <LoadingSpinner size="xl" text={`${t('details.loading.title')} ${t('details.loading.subtitle')}`} />
+        <LoadingSpinner size="xl" fullScreen={true} text={`${t('details.loading.title')} ${t('details.loading.subtitle')}`} />
       </UserPageLayout>
     )
   }
@@ -264,16 +265,18 @@ const serviceName =
   return (
     <UserPageLayout>
       {/* Header with Back Button */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.back()}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('details.back')}
-        </Button>
+      <div className="mb-6 space-y-3">
+        <div className={cn('flex', isRTL ? 'justify-start' : 'justify-end')}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.back()}
+            className="flex items-center gap-2"
+          >
+            {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+            {t('details.back')}
+          </Button>
+        </div>
         <PageHeader
           title={t('details.header.title', { reservationId: reservation.reservationId })}
           subtitle={
@@ -327,7 +330,7 @@ const serviceName =
                   </div>
                 )}
                 {serviceDescription && (
-                  <p className="text-14 text-gray-600 line-clamp-3">
+                  <p className="text-14 text-gray-600 line-clamp-3 break-words">
                     {serviceDescription}
                   </p>
                 )}
@@ -450,7 +453,7 @@ const serviceName =
                     <p className="text-16 font-medium text-gray-900 mb-1">{placeName}</p>
                   )}
                   {placeAddress && (
-                    <p className="text-14 text-gray-600">{placeAddress}</p>
+                    <p className="text-14 text-gray-600 break-words">{placeAddress}</p>
                   )}
                 </div>
               </div>
@@ -511,9 +514,12 @@ const serviceName =
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {reservation.resources.map((resource) => (
-                  <div key={resource.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={resource.id}
+                    className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg min-w-0"
+                  >
                     <FileText className="h-4 w-4 text-gray-500" />
-                    <span className="text-14 text-gray-900">
+                    <span className="text-14 text-gray-900 break-words min-w-0">
                       {isRTL ? resource.nameAr:
                         resource.nameEn ??
                         t('details.resourcesCard.fallbackName', {
@@ -532,7 +538,7 @@ const serviceName =
               <h2 className="text-20 font-semibold text-gray-900 mb-4">
                 {t('details.notesCard.title')}
               </h2>
-              <p className="text-14 text-gray-700 whitespace-pre-wrap">
+              <p className="text-14 text-gray-700 whitespace-pre-wrap break-words">
                 {reservation.notes}
               </p>
             </div>
@@ -545,7 +551,9 @@ const serviceName =
                 <FileText className="h-5 w-5" />
                 {t('details.feedbackCard.title')}
               </h2>
-              <p className="text-14 text-blue-800 whitespace-pre-wrap">{reservation.clientFeedback}</p>
+              <p className="text-14 text-blue-800 whitespace-pre-wrap break-words">
+                {reservation.clientFeedback}
+              </p>
             </div>
           )}
 
@@ -562,7 +570,7 @@ const serviceName =
                 </p>
 
                 {reservation.isTestAccepted !== null && (
-                  <p className="text-14 font-medium text-yellow-900">
+                  <p className="text-14 font-medium text-yellow-900 break-words">
                     {t('details.testRequestCard.statusLabel')}{' '}
                     {reservation.isTestAccepted
                       ? t('details.testRequestCard.status.accepted')
@@ -571,7 +579,7 @@ const serviceName =
                 )}
 
                 {reservation.clientWantsToContinue !== null && (
-                  <p className="text-14 text-yellow-800">
+                  <p className="text-14 text-yellow-800 break-words">
                     {t('details.testRequestCard.continueLabel')}{' '}
                     {reservation.clientWantsToContinue
                       ? t('details.testRequestCard.continue.yes')
@@ -591,7 +599,7 @@ const serviceName =
           >
             <h3 className="text-16 font-semibold mb-4">
               {t('details.statusCard.title')}
-            </h3>
+            </h3> 
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -638,12 +646,12 @@ const serviceName =
               )}
               <div>
                 <p className="text-16 font-semibold text-gray-900">{providerName}</p>
-                {providerAddress && (
-                  <p className="text-14 text-gray-600 mt-1 flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {providerAddress}
-                  </p>
-                )}
+              {providerAddress && (
+                <p className="text-14 text-gray-600 mt-1 flex items-center gap-1 break-words">
+                  <MapPin className="h-3 w-3" />
+                  {providerAddress}
+                </p>
+              )}
               </div>
               {providerPhone && (
                 <div className="flex items-center gap-2 text-14 text-gray-600">

@@ -19,6 +19,7 @@ import { DecisionGroupCard } from '@/components/community/DecisionGroupCard'
 import { ContestCard } from '@/components/community/ContestCard'
 import type { UnifiedCommunityContentResponse } from '@/types/responses/community'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 
 export function CommunitySearchClient() {
     const t = useI18nTranslations("community.search")
@@ -350,7 +351,7 @@ export function CommunitySearchClient() {
                                 </div>
                             ) : isLoading ? (
                                 <div className="flex justify-center items-center py-12 min-h-[400px]">
-                                    <LoadingOverlay open={true} title={t("searchBar.searching")} />
+                                    <LoadingSpinner open={true} text={t("searchBar.searching")} />
                                 </div>
                             ) : error ? (
                                 <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">

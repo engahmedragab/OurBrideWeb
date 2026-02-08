@@ -111,6 +111,7 @@ export const UserSidebar = ({
           label: t('menuItems.reservations'),
           path: '/reservations',
           icon: Calendar,
+          comingSoon: true,
         },
         {
           label: t('menuItems.wishlist'),
@@ -286,13 +287,13 @@ export const UserSidebar = ({
                     {item.comingSoon ? (
                       <div
                         className={cn(
-                          'relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-lg text-14 font-normal cursor-not-allowed opacity-60',
-                          'text-gray-500'
+                          'relative flex items-center gap-2 pl-4 pr-2 py-2.5 rounded-lg text-14 font-normal cursor-not-allowed opacity-60',
+                          'text-gray-500 overflow-hidden'
                         )}
                       >
                         <Icon className="h-5 w-5 flex-shrink-0 text-gray-400" />
-                        <span className="flex-1">{item.label}</span>
-                        <span className="flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px] flex-shrink-0">
+                        <span className="flex-1 min-w-0 truncate">{item.label}</span>
+                        <span className="flex items-center justify-center rounded-full bg-gray-200 text-10 font-medium text-brand-500 px-2 h-5 whitespace-nowrap flex-shrink-0">
                           {t('comingSoon')}
                         </span>
                       </div>

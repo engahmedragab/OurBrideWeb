@@ -9,6 +9,7 @@ import { formatDateShort, getUserDisplayName, getUserAvatar } from './utils'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import { useI18nTranslations } from '@/i18n/hooks'
+import { LoadingSpinner } from '../ui'
 
 export interface CommunityPostsListProps {
   className?: string
@@ -46,7 +47,7 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm overflow-hidden flex flex-col">
         {isLoading ? (
           <div className="flex justify-center items-center py-8 min-h-[200px]">
-            <LoadingOverlay open={true}  />
+            <LoadingSpinner open={true}  />
           </div>
         ) : posts && posts.length > 0 ? (
           <div 

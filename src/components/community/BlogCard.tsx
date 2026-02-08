@@ -242,7 +242,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
       <div className="flex items-center justify-center gap-3 pt-4 mt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
             count={likes}
             label={t('postCard.likes')}
             onClick={handleLikeClick}
@@ -253,7 +253,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
 
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<MessageCircle className="h-5 w-5" />}
+            icon={<MessageCircle className="h-4 w-4" />}
             count={blog.reviewCount || blog.commentCount || 0}
             label={t('postCard.comments')}
             onClick={handleCommentClick}
@@ -262,7 +262,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
 
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Share2 className="h-5 w-5" />}
+            icon={<Share2 className="h-4 w-4" />}
             count={shares}
             label={t('postCard.shares')}
             onClick={handleShareClick}
@@ -272,7 +272,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
 
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+            icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
             count={favorites}
             label={t('postCard.favorites')}
             onClick={handleFavoriteClick}

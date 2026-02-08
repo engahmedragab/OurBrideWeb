@@ -15,6 +15,7 @@ import {
   WishlistServiceCard,
   WishlistProductCard,
   WishlistProviderCard,
+  LoadingSpinner,
 } from '@/components/ui'
 import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
@@ -259,10 +260,11 @@ export default function WishlistPage() {
           title={t('title')}
           rightContent={headerRightContent}
         />
-        <LoadingOverlay
+        <LoadingSpinner size="lg" fullScreen={true}
+        
           open={true}
-          title={t('loading.title')}
-          subtitle={t('loading.subtitle')}
+          text={`${t('loading.title')} ${t('loading.subtitle')}`}
+         
         />
       </UserPageLayout>
     )
@@ -399,10 +401,10 @@ export default function WishlistPage() {
       )}
 
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner size="lg"  fullScreen={true}
         open={deleteWishlistMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFavoriteMutation.isPending}
-        title={t('updating.title')}
-        subtitle={t('updating.subtitle')}
+        text={`${t('updating.title')} ${t('updating.subtitle')}`}
+     
       />
     </UserPageLayout>
   )

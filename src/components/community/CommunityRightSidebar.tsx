@@ -382,7 +382,7 @@ export const CommunityRightSidebar = ({
                     <Button
                       variant="brand"
                       size="sm"
-                      className="flex-shrink-0 text-10 text-white font-normal"
+                      className="flex-shrink-0 !text-14 text-white font-normal"
                       disabled={provider.isFollowing}
                     >
                       {provider.isFollowing ? t("actions.following") : t("actions.follow")}

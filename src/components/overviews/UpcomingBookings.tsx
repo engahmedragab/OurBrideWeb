@@ -144,6 +144,11 @@ export const UpcomingBookings = ({
             const iconFromName = hasIconName ? getIconFromName(line.iconName) : null
             const IconComponent = iconFromName || WeddingHallIcon
 
+            const localizedTitle = isRtl ? line.titleAr : line.titleEn
+            const displayTitle =
+              localizedTitle?.trim() || line.title?.trim() || t('common.untitledService')
+            const isCompleted = line.isDone === true
+
             return (
               <button
                 key={line.id}
@@ -159,8 +164,7 @@ export const UpcomingBookings = ({
 
                     <div className={cn("flex flex-col min-w-0 flex-1 items-start")}>
                       <p className="text-16 font-semibold text-gray-900 truncate">
-                       {isRtl ? line.titleAr : line.titleEn} || {line.title || t('common.untitledService')}
-                        {line.title || t('common.untitledService')}
+                        {displayTitle}
                       </p>
 
                       {date && date !== '0001-01-01T00:00:00' && (
@@ -172,17 +176,9 @@ export const UpcomingBookings = ({
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    {book.pending && book.pending > 0 && (
-                      <Badge
-                        variant="pending"
-                        className="text-11 flex items-center gap-1 whitespace-nowrap"
-                      >
-                        <Clock className="w-3 h-3" />
-                        <span>{tCards('upcomingBookings.badges.pending')}</span>
-                      </Badge>
-                    )}
+                    
 
-                    {((book.completed && book.completed > 0) || book.isSubDone) && (
+                    {isCompleted ? (
                       <Badge
                         variant="confirmed"
                         className="text-11 flex items-center gap-1 whitespace-nowrap"
@@ -190,7 +186,13 @@ export const UpcomingBookings = ({
                         <CheckCircle2 className="w-3 h-3" />
                         <span>{tCards('upcomingBookings.badges.completed')}</span>
                       </Badge>
-                    )}
+                    ):(   <Badge
+                        variant="pending"
+                        className="text-11 flex items-center gap-1 whitespace-nowrap"
+                      >
+                        <Clock className="w-3 h-3" />
+                        <span>{tCards('upcomingBookings.badges.pending')}</span>
+                      </Badge>)}
                   </div>
                 </div>
               </button>

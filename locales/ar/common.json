@@ -1208,6 +1208,10 @@
       "noBlogsMessage": "لا توجد مدونات للعرض في الوقت الحالي.",
       "noArticlesTitle": "لا توجد مقالات متاحة",
       "noArticlesMessage": "لا توجد مقالات للعرض في الوقت الحالي.",
+      "noPostsTitle": "لا توجد منشورات متاحة",
+      "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
+      "noContestsTitle": "لا توجد مسابقات متاحة",
+      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي.",
       "noContentTitle": "لا يوجد محتوى متاح",
       "noContentMessage": "لا يوجد محتوى للعرض في الوقت الحالي. تحققي لاحقًا أو كوني أول من يشارك شيئًا!"
     },
@@ -1329,80 +1333,6 @@
       "user": "مستخدم",
       "failedToShareBlog": "فشل مشاركة المدونة"
     },
-    "contestDetails": {
-      "loading": "جاري تحميل المسابقة...",
-      "contestNotFoundTitle": "المسابقة غير موجودة",
-      "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-      "failedToShareContest": "فشل مشاركة المسابقة",
-      "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
-      "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
-      "active": "نشطة",
-      "ended": "انتهت",
-      "upcoming": "قادمة",
-      "prize": "الجائزة",
-      "participants": "المشاركون",
-      "ends": "تنتهي",
-      "joinContest": "الانضمام إلى المسابقة",
-      "contestEnded": "انتهت المسابقة",
-      "joined": "منضم",
-      "noContestsTitle": "لا توجد مسابقات متاحة",
-      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
-    },
-    "decisionGroupDetails": {
-      "loading": "جاري تحميل مجموعة القرارات...",
-      "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
-      "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-      "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
-      "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
-      "failedToVote": "فشل التصويت",
-      "votes": "أصوات",
-      "participants": "مشاركون",
-      "totalVotes": "إجمالي الأصوات",
-      "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
-      "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
-      "moreOptions": "خيارات أخرى"
-    },
-    "profile": {
-      "profileIdRequired": "معرف الملف الشخصي مطلوب",
-      "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
-      "loading": "جاري تحميل الملف الشخصي...",
-      "profileNotFoundTitle": "الملف الشخصي غير موجود",
-      "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
-      "tabs": {
-        "all": "الكل",
-        "withCount": "{label} ({count})"
-      },
-      "headings": {
-        "featuredContent": "المحتوى المميز",
-        "allContent": "كل المحتوى"
-      },
-      "stats": {
-        "totalContent": "إجمالي المحتوى",
-        "followers": "متابعون",
-        "following": "متابع",
-        "likes": "إعجابات",
-        "views": "مشاهدات"
-      },
-      "states": {
-        "noContentFound": "لم يتم العثور على محتوى"
-      },
-      "aria": {
-        "goBack": "العودة",
-        "like": "إعجاب",
-        "unlike": "إلغاء الإعجاب",
-        "addToFavorites": "إضافة إلى المفضلة",
-        "removeFromFavorites": "إزالة من المفضلة",
-        "moreOptions": "خيارات أخرى",
-        "coverAlt": "غلاف {name}",
-        "avatarAlt": "صورة {name} الشخصية"
-      },
-      "toasts": {
-        "liked": "تم الإعجاب",
-        "unliked": "تم إلغاء الإعجاب",
-        "addedToFavorites": "تمت الإضافة إلى المفضلة",
-        "removedFromFavorites": "تمت الإزالة من المفضلة"
-      }
-    },
     "createPostModal": {
       "title": "إنشاء منشور",
       "privacy": {
@@ -1448,6 +1378,85 @@
       },
       "fallback": {
         "newPostTitle": "منشور جديد"
+      }
+    },
+    "contestDetails": {
+      "loading": "جاري تحميل المسابقة...",
+      "contestNotFoundTitle": "المسابقة غير موجودة",
+      "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "failedToShareContest": "فشل مشاركة المسابقة",
+      "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
+      "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
+      "active": "نشطة",
+      "ended": "انتهت",
+      "upcoming": "قادمة",
+      "prize": "الجائزة",
+      "participants": "المشاركون",
+      "ends": "تنتهي",
+      "joinContest": "الانضمام إلى المسابقة",
+      "contestEnded": "انتهت المسابقة",
+      "joined": "منضم",
+      "noContestsTitle": "لا توجد مسابقات متاحة",
+      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
+    },
+    "decisionGroupDetails": {
+      "loading": "جاري تحميل مجموعة القرارات...",
+      "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
+      "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
+      "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
+      "failedToVote": "فشل التصويت",
+      "votes": "أصوات",
+      "participants": "مشاركون",
+      "totalVotes": "إجمالي الأصوات",
+      "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
+      "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
+      "moreOptions": "خيارات أخرى"
+    },
+    "postDetails": {
+      "loading": "جاري تحميل المنشور...",
+      "postNotFoundTitle": "المنشور غير موجود",
+      "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
+    },
+    "profile": {
+      "profileIdRequired": "معرف الملف الشخصي مطلوب",
+      "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
+      "loading": "جاري تحميل الملف الشخصي...",
+      "profileNotFoundTitle": "الملف الشخصي غير موجود",
+      "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
+      "tabs": {
+        "all": "الكل",
+        "withCount": "{label} ({count})"
+      },
+      "headings": {
+        "featuredContent": "المحتوى المميز",
+        "allContent": "كل المحتوى"
+      },
+      "stats": {
+        "totalContent": "إجمالي المحتوى",
+        "followers": "متابعون",
+        "following": "متابع",
+        "likes": "إعجابات",
+        "views": "مشاهدات"
+      },
+      "states": {
+        "noContentFound": "لم يتم العثور على محتوى"
+      },
+      "aria": {
+        "goBack": "العودة",
+        "like": "إعجاب",
+        "unlike": "إلغاء الإعجاب",
+        "addToFavorites": "إضافة إلى المفضلة",
+        "removeFromFavorites": "إزالة من المفضلة",
+        "moreOptions": "خيارات أخرى",
+        "coverAlt": "غلاف {name}",
+        "avatarAlt": "صورة {name} الشخصية"
+      },
+      "toasts": {
+        "liked": "تم الإعجاب",
+        "unliked": "تم إلغاء الإعجاب",
+        "addedToFavorites": "تمت الإضافة إلى المفضلة",
+        "removedFromFavorites": "تمت الإزالة من المفضلة"
       }
     }
   },
@@ -3372,11 +3381,6 @@
     "loading": "جاري تحميل الريل...",
     "reelNotFoundTitle": "الريل غير موجود",
     "reelNotFoundMessage": "الريل الذي تبحثين عنه غير موجود أو تمت إزالتها."
-  },
-  "postDetails": {
-    "loading": "جاري تحميل المنشور...",
-    "postNotFoundTitle": "المنشور غير موجود",
-    "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
   },
   "footer": {
     "description": "منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",

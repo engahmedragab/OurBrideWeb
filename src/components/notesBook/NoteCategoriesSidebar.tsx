@@ -29,7 +29,7 @@ export const NoteCategoriesSidebar = ({
   const activeNotes = notes.filter(n => !n.isDeleted)
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 h-full flex flex-col">
+    <div className="bg-white rounded-xl border border-gray-200 p-4  flex flex-col">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <h2 className="text-16 font-semibold text-gray-900">{t('sidebar.title')}</h2>
 
