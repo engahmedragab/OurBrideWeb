@@ -84,6 +84,31 @@
       "removeRating": "Remove rating filter"
     }
   },
+  "alert": {
+      "wishlistToggleSuccess": "Product wishlist toggled successfully",
+      "wishlistToggleError": "Failed to toggle product wishlist",
+      "followSuccess": "Followed successfully",
+      "followError": "Failed to follow",
+      "followUpdateSuccess": "Follow updated successfully",
+      "followUpdateError": "Failed to update follow",
+      "unfollowSuccess": "Unfollowed successfully",
+      "unfollowError": "Failed to unfollow",
+      
+    "cartUpdatedSuccess": "Cart updated successfully",
+    "cartUpdatedError": "Failed to update cart",
+    "itemRemovedSuccess": "Item removed from cart successfully",
+    "itemRemovedError": "Failed to remove item from cart",
+    "checkoutSuccess": "Checkout completed successfully",
+    "checkoutError": "Failed to complete checkout",
+    "couponAppliedSuccess": "Coupon applied successfully",
+    "couponInvalidError": "Invalid coupon code",
+    "couponValidateError": "Failed to validate coupon",
+    "cartClearedSuccess": "Cart cleared successfully",
+    "cartClearedError": "Failed to clear cart",
+    "productAddedSuccess": "Product added to cart successfully",
+    "productAddedError": "Failed to add product to cart",
+    "providerIdRequired": "Provider ID is required"
+    },
   "auth": {
     "hero": {
       "backToHome": "Back To home",
@@ -1371,72 +1396,187 @@
         "search": "Search",
         "close": "Close",
         "clearSearch": "Clear search"
-      },
-      "postCard": {
-        "failedToToggleLike": "Failed to toggle like",
-        "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
-        "failedToSharePost": "Failed to share post",
-        "failedToToggleFavorite": "Failed to toggle favorite",
-        "fallbackName": "User",
-        "likes": "Likes",
-        "comments": "Comments",
-        "shares": "Shares",
-        "favorites": "Favorites"
-      },
-      "communityRightSidebar": {
-        "commentAdded": "Comment added!",
-        "linkCopied": "Link copied to clipboard!",
-        "noComments": "No comments yet. Be the first to comment!",
-        "shareYourComments": "Share your Comments",
-        "suggestsToFollow": "Suggests To Follow",
-        "provider": "Provider",
-        "popularTags": "Popular Tags",
-        "topArticles": "Top Articles",
-        "communityPosts": "Community Posts"
-      },
-      "profile": {
-        "profileIdRequired": "Profile ID required",
-        "profileIdRequiredMessage": "Please provide a profile ID in the URL.",
-        "loading": "Loading profile...",
-        "profileNotFoundTitle": "Profile Not Found",
-        "profileNotFoundMessage": "The profile you're looking for doesn't exist or has been removed.",
-        "tabs": {
-          "all": "All",
-          "withCount": "{label} ({count})"
-        },
-        "headings": {
-          "featuredContent": "Featured Content",
-          "allContent": "All Content"
-        },
-        "stats": {
-          "totalContent": "Total Content",
-          "followers": "Followers",
-          "following": "Following",
-          "likes": "Likes",
-          "views": "Views"
-        },
-        "states": {
-          "noContentFound": "No content found"
-        },
-        "aria": {
-          "goBack": "Go back",
-          "like": "Like",
-          "unlike": "Unlike",
-          "addToFavorites": "Add to favorites",
-          "removeFromFavorites": "Remove from favorites",
-          "moreOptions": "More options",
-          "coverAlt": "{name} cover",
-          "avatarAlt": "{name} avatar"
-        },
-        "toasts": {
-          "liked": "Liked",
-          "unliked": "Unliked",
-          "addedToFavorites": "Added to favorites",
-          "removedFromFavorites": "Removed from favorites"
-        }
       }
+    },
+    "profile": {
+      "profileIdRequired": "Profile ID required",
+      "profileIdRequiredMessage": "Please provide a profile ID in the URL.",
+      "loading": "Loading profile...",
+      "profileNotFoundTitle": "Profile Not Found",
+      "profileNotFoundMessage": "The profile you're looking for doesn't exist or has been removed.",
+      "tabs": {
+        "all": "All",
+        "withCount": "{label} ({count})"
+      },
+      "headings": {
+        "featuredContent": "Featured Content",
+        "allContent": "All Content"
+      },
+      "stats": {
+        "totalContent": "Total Content",
+        "followers": "Followers",
+        "following": "Following",
+        "likes": "Likes",
+        "views": "Views"
+      },
+      "states": {
+        "noContentFound": "No content found"
+      },
+      "aria": {
+        "goBack": "Go back",
+        "like": "Like",
+        "unlike": "Unlike",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "moreOptions": "More options",
+        "coverAlt": "{name} cover",
+        "avatarAlt": "{name} avatar"
+      },
+      "toasts": {
+        "liked": "Liked",
+        "unliked": "Unliked",
+        "addedToFavorites": "Added to favorites",
+        "removedFromFavorites": "Removed from favorites"
+      }
+    },
+    "createPostModal": {
+      "title": "Create Post",
+      "privacy": {
+        "public": "Public",
+        "friends": "Friends",
+        "private": "Private"
+      },
+      "fields": {
+        "titlePlaceholder": "Post Title (optional)",
+        "contentPlaceholder": "Share What's in your mind, {name}..."
+      },
+      "buttons": {
+        "post": "Post",
+        "posting": "Posting..."
+      },
+      "aria": {
+        "close": "Close modal",
+        "removeImage": "Remove image",
+        "uploadImage": "Upload image",
+        "generateAi": "Generate AI content",
+        "addReels": "Add reels",
+        "textFormat": "Text format"
+      },
+      "tooltips": {
+        "maxImages": "Maximum {max} images",
+        "uploadImage": "Upload image",
+        "generateAi": "Generate AI content",
+        "addVideoComingSoon": "Add video (coming soon)",
+        "textFormatComingSoon": "Text format (coming soon)"
+      },
+      "toasts": {
+        "uploadLimit": "You can only upload up to {max} images. Only the first {count} will be uploaded.",
+        "uploadFileFail": "Failed to upload {fileName}",
+        "uploadSuccess": "{count} image(s) uploaded successfully",
+        "uploadFail": "Failed to upload images",
+        "generateNeedInput": "Please enter a title or some content to generate from",
+        "generateSuccess": "Content generated successfully!",
+        "generateFail": "Failed to generate content. Please try again.",
+        "postNeedInput": "Please enter a title or content for your post",
+        "postSuccess": "Post created successfully!",
+        "postFail": "Failed to create post. Please try again.",
+        "postNoResponse": "Failed to create post: No response from server"
+      },
+      "fallback": {
+        "newPostTitle": "New Post"
+      }
+    },
+    "contestDetails": {
+      "loading": "Loading contest...",
+      "contestNotFoundTitle": "Contest Not Found",
+      "contestNotFoundMessage": "The contest you're looking for doesn't exist or has been removed.",
+      "failedToShareContest": "Failed to share contest",
+      "alreadyJoined": "You have already joined this contest!",
+      "joinedSuccessfully": "Successfully joined the contest!",
+      "active": "Active",
+      "ended": "Ended",
+      "upcoming": "Upcoming",
+      "prize": "Prize",
+      "participants": "Participants",
+      "ends": "Ends",
+      "joinContest": "Join Contest",
+      "contestEnded": "Contest Ended",
+      "joined": "Joined",
+      "noContestsTitle": "No Contests Available",
+      "noContestsMessage": "There are no contests to display at the moment."
+    },
+    "decisionGroupDetails": {
+      "loading": "Loading decision group...",
+      "decisionGroupNotFoundTitle": "Decision Group Not Found",
+      "decisionGroupNotFoundMessage": "The decision group you're looking for doesn't exist or has been removed.",
+      "haveAlreadyVoted": "You have already voted!",
+      "voteCastSuccessfully": "Your vote has been cast successfully!",
+      "failedToVote": "Failed to vote",
+      "votes": "votes",
+      "participants": "participants",
+      "totalVotes": "total votes",
+      "noDecisionGroupsTitle": "No Decision Groups Available",
+      "noDecisionGroupsMessage": "There are no decision groups to display at the moment.",
+      "moreOptions": "more options"
+    },
+    "postCard": {
+      "failedToToggleLike": "Failed to toggle like",
+      "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
+      "failedToSharePost": "Failed to share post",
+      "failedToToggleFavorite": "Failed to toggle favorite",
+      "fallbackName": "User",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares",
+      "favorites": "Favorites"
+    },
+    "communityRightSidebar": {
+      "commentAdded": "Comment added!",
+      "linkCopied": "Link copied to clipboard!",
+      "noComments": "No comments yet. Be the first to comment!",
+      "shareYourComments": "Share your Comments",
+      "suggestsToFollow": "Suggests To Follow",
+      "provider": "Provider",
+      "popularTags": "Popular Tags",
+      "topArticles": "Top Articles",
+      "communityPosts": "Community Posts"
+    },
+    "articleDetails": {
+      "loading": "Loading article...",
+      "notFoundTitle": "Article Not Found",
+      "notFoundMessage": "The article you're looking for doesn't exist or has been removed.",
+      "commentAdded": "Comment added successfully!",
+      "failedToAddComment": "Failed to add comment",
+      "failedToToggleLike": "Failed to toggle like",
+      "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
+      "failedToShareArticle": "Failed to share article",
+      "failedToToggleFavorite": "Failed to toggle favorite",
+      "userIDNotAvailable": "User ID not available",
+      "unfollowedSuccessfully": "Unfollowed successfully",
+      "followedSuccessfully": "Followed successfully",
+      "failedToToggleFollow": "Failed to toggle follow",
+      "load": "Loading...",
+      "following": "Following",
+      "follow": "Follow",
+      "noComments": "No comments yet. Be the first to comment!",
+      "writeComment": "Write a comment...",
+      "postComment": "Post Comment",
+      "posting": "Posting...",
+      "articleCard": {
+        "readMore": "Read More",
+        "minRead": "min read"
+      }
+    },
+    "blogDetails": {
+      "loading": "Loading blog...",
+      "blogNotFoundTitle": "Blog Not Found",
+      "blogNotFoundMessage": "The blog you're looking for doesn't exist or has been removed.",
+      "Anonymous": "Anonymous",
+      "user": "User",
+      "failedToShareBlog": "Failed to share blog"
     }
   },
+
   "items": {
     "title": "Items",
     "backToEvents": "Back to My Events",
@@ -4230,5 +4370,304 @@
         "thankYou": "Thank you"
       }
     }
-  }
+  },
+  "about": {
+    "pageTitle": "About OurBride",
+    "pageSubtitle": "Your trusted partner for creating the perfect wedding experience",
+    "mission": {
+      "title": "Our Mission",
+      "p1": "At OurBride, we believe that every wedding should be a perfect reflection of your unique love story. Our mission is to make wedding planning effortless, enjoyable, and memorable by connecting brides and grooms with the finest wedding products and services.",
+      "p2": "We are committed to providing a seamless experience where you can discover, compare, and book everything you need for your special day - all in one place."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "p1": "We envision a world where wedding planning is stress-free and accessible to everyone. Our platform brings together verified service providers, quality products, and a supportive community to help you create the wedding of your dreams.",
+      "p2": "Through innovation, trust, and dedication, we aim to be the leading destination for couples planning their perfect day."
+    },
+    "values": {
+      "title": "Our Values",
+      "trust": {
+        "title": "Trust & Transparency",
+        "desc": "We verify all service providers and maintain transparent pricing to ensure you make informed decisions."
+      },
+      "quality": {
+        "title": "Quality & Excellence",
+        "desc": "We curate only the best products and services, ensuring high standards and exceptional quality for your special day."
+      },
+      "community": {
+        "title": "Community & Support",
+        "desc": "Our vibrant community of brides, grooms, and wedding professionals supports and inspires each other throughout the planning journey."
+      },
+      "innovation": {
+        "title": "Innovation & Convenience",
+        "desc": "We continuously innovate to make wedding planning easier, faster, and more convenient through technology and user-friendly solutions."
+      }
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "desc": "Have questions or feedback? We love to hear from you!",
+      "helpCta": "Visit Help Center"
+    }
+  },
+  
+  "shipping": {
+    "meta": {
+      "title": "Shipping Information | OurBride",
+      "description": "Learn about OurBride shipping policies, delivery times, and tracking information"
+    },
+    "pageTitle": "Shipping Information",
+    "pageSubtitle": "Everything you need to know about shipping, delivery, and tracking your orders",
+    "deliveryTimes": {
+      "title": "Delivery Times",
+      "standard": {
+        "title": "Standard Shipping",
+        "time": "5-7 business days",
+        "note": "Delivery times may vary based on location and product availability."
+      },
+      "express": {
+        "title": "Express Shipping",
+        "time": "2-3 business days",
+        "note": "Available for select products. Additional charges apply."
+      },
+      "international": {
+        "title": "International",
+        "time": "10-21 business days",
+        "note": "Customs and import duties may apply."
+      }
+    },
+    "shippingCosts": {
+      "title": "Shipping Costs",
+      "intro": "Shipping costs are calculated at checkout based on:",
+      "bullets": {
+        "weight": "Product weight and dimensions",
+        "address": "Delivery address",
+        "method": "Selected shipping method",
+        "orderValue": "Order value (free shipping may apply for orders above a certain amount)"
+      },
+      "outro": "You can view the exact shipping cost before completing your purchase."
+    },
+    "tracking": {
+      "title": "Order Tracking",
+      "p1": "Once your order ships, you will receive a tracking number via email. You can use this tracking number to monitor your package&apos;s journey from our warehouse to your doorstep.",
+      "p2Prefix": "Track your order by visiting the ",
+      "ordersLinkText": "Orders",
+      "p2Suffix": " page in your account dashboard."
+    },
+    "address": {
+      "title": "Delivery Address",
+      "p1": "Please ensure your delivery address is complete and accurate. We are not responsible for delays or lost packages due to incorrect address information.",
+      "p2Prefix": "You can update your shipping addresses in your ",
+      "addressesLinkText": "Addresses",
+      "p2Suffix": " page."
+    },
+    "specialHandling": {
+      "title": "Special Handling",
+      "fragile": {
+        "title": "Fragile Items",
+        "desc": "Carefully packaged with extra protection. Please inspect upon delivery and report any damage immediately."
+      },
+      "signature": {
+        "title": "Signature Required",
+        "desc": "Some high-value orders may require a signature. You will be notified if signature confirmation is needed."
+      }
+    },
+    "contact": {
+      "title": "Questions About Shipping?",
+      "desc": "If you have any questions about shipping or need assistance with your order, we here to help.",
+      "helpCta": "Visit Help Center"
+    }
+  },
+  
+  "returns": {
+    "meta": {
+      "title": "Returns & Refunds | OurBride",
+      "description": "Learn about OurBride return policy, refund process, and exchange information"
+    },
+    "pageTitle": "Returns & Refunds",
+    "pageSubtitle": "Simple and hassle-free return process for your peace of mind",
+    "policy": {
+      "title": "Return Policy",
+      "introPrefix": "We want you to be completely satisfied with your purchase. If you&apos;re not happy with your order, you can return most items within",
+      "introHighlight": "30 days",
+      "introSuffix": "of delivery for a full refund or exchange.",
+      "eligible": {
+        "title": "Eligible Items",
+        "bullets": {
+          "unused": "Unused and in original condition",
+          "packaging": "Original packaging and tags included",
+          "proof": "Proof of purchase required"
+        }
+      },
+      "nonReturnable": {
+        "title": "Non-Returnable",
+        "bullets": {
+          "personalized": "Personalized or customized items",
+          "perishable": "Perishable goods",
+          "misuse": "Items damaged by misuse",
+          "digital": "Digital products or services"
+        }
+      }
+    },
+    "process": {
+      "title": "How to Return an Item",
+      "steps": {
+        "1": {
+          "title": "Initiate Return",
+          "p1Prefix": "Go to your",
+          "ordersLinkText": "Orders",
+          "p1Suffix": "page, select the item you want to return, and click \"Request Return\"."
+        },
+        "2": {
+          "title": "Get Return Authorization",
+          "desc": "Once approved, you&apos;ll receive a return authorization and shipping label via email."
+        },
+        "3": {
+          "title": "Package & Ship",
+          "desc": "Package the item securely with all original packaging and tags, attach the return label, and ship it back to us."
+        },
+        "4": {
+          "title": "Receive Refund",
+          "desc": "Once we receive and inspect your return, we&apos;ll process your refund to the original payment method within 5-10 business days."
+        }
+      }
+    },
+    "refund": {
+      "title": "Refund Information",
+      "processing": {
+        "title": "Refund Processing Time",
+        "desc": "Refunds are typically processed within 5-10 business days after we receive your return. The time it takes for the refund to appear in your account depends on your payment method and financial institution."
+      },
+      "shippingCosts": {
+        "title": "Shipping Costs",
+        "desc": "Original shipping costs are non-refundable unless the item was defective or we made an error. Return shipping costs are the responsibility of the customer unless the return is due to our error."
+      }
+    },
+    "exchanges": {
+      "title": "Exchanges",
+      "p1": "If you need a different size, color, or style, you can request an exchange during the return process. Exchanges are subject to product availability.",
+      "p2": "If the item you want is not available, we&apos;ll process a refund instead."
+    },
+    "damaged": {
+      "title": "Damaged or Defective Items",
+      "p1": "If you receive a damaged or defective item, please contact us immediately. We&apos;ll arrange for a replacement or full refund, including return shipping costs.",
+      "p2": "Please take photos of the damaged item and packaging to help us process your claim faster."
+    },
+    "contact": {
+      "title": "Need Help with Returns?",
+      "desc": "If you have questions about returns or need assistance, we&apos;re here to help.",
+      "helpCta": "Visit Help Center"
+    }
+  },
+
+  "mobileApps": {
+    "availableOn": "Available on",
+    "sectionTitle": "Download our mobile apps",
+    "sectionDesc": "Book unforgettable beauty and wellness experiences with our mobile app, or run your business with our powerful, award-winning iOS and Android booking platform.",
+    "customer": {
+      "title": "Booking app for customers",
+      "desc": "Book unforgettable beauty and wellness experiences with the OurBride mobile app - the best way to discover top-rated salons and spas."
+    },
+    "professional": {
+      "title": "Booking app for professionals",
+      "desc": "Get started with the OurBride for professionals and never miss an opportunity to connect with customers and build your business."
+    }
+  },
+  
+  "sitemap": {
+    "meta": {
+      "title": "Sitemap | OurBride",
+      "description": "Browse all pages and sections of OurBride website"
+    },
+    "pageTitle": "Sitemap",
+    "pageSubtitle": "Find all pages and sections of OurBride",
+    "sections": {
+      "main": {
+        "title": "Main Pages",
+        "links": {
+          "home": "Home",
+          "products": "Products",
+          "services": "Services",
+          "community": "Community"
+        }
+      },
+      "account": {
+        "title": "Account",
+        "links": {
+          "profile": "Profile",
+          "orders": "Orders",
+          "cart": "Cart",
+          "wishlist": "Wishlist",
+          "favorites": "Favorites",
+          "messages": "Messages",
+          "notifications": "Notifications"
+        }
+      },
+      "wedding": {
+        "title": "Wedding Planning",
+        "links": {
+          "events": "Events",
+          "myEvents": "My Events",
+          "calendar": "Calendar",
+          "budget": "Budget Planning",
+          "guestList": "Guest List",
+          "todo": "To-Do List"
+        }
+      },
+      "community": {
+        "title": "Community",
+        "links": {
+          "posts": "Posts",
+          "blogs": "Blogs",
+          "articles": "Articles",
+          "reels": "Reels",
+          "decisionGroups": "Decision Groups",
+          "contests": "Contests"
+        }
+      },
+      "gift": {
+        "title": "Gift Center",
+        "links": {
+          "giftCenter": "Gift Center",
+          "coupons": "Coupons",
+          "offers": "Offers",
+          "rewards": "Rewards",
+          "ranking": "Ranking"
+        }
+      },
+      "support": {
+        "title": "Support & Information",
+        "links": {
+          "helpCenter": "Help Center",
+          "about": "About Us",
+          "shipping": "Shipping",
+          "returns": "Returns",
+          "downloadApp": "Download App",
+          "sitemap": "Sitemap"
+        }
+      },
+      "settings": {
+        "title": "Settings",
+        "links": {
+          "settings": "Settings",
+          "privacy": "Privacy",
+          "terms": "Terms",
+          "communitySettings": "Community Settings"
+        }
+      }
+    }
+  },
+  "errors": {
+    "server500": {
+      "imageAlt": "Server Error",
+      "title": "500 — Server Error",
+      "desc": "We’re experiencing technical issues. Our team is working on it.",
+      "tryAgain": "Try Again"
+    },
+     "notFound404": {
+      "imageAlt": "Page Not Found",
+      "title": "404 — Page Not Found",
+      "desc": "The page you’re looking for doesn’t exist or was moved.",
+      "backHome": "Back to Home"
+    }
+  } 
 }

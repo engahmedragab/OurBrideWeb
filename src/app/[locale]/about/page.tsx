@@ -15,8 +15,12 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export default function AboutPage() {
+  const t = useI18nTranslations('about');
+  const isRtl = useIsRTL();
+
   return (
     <div className="min-h-screen flex flex-col bg-background-secondary">
       <Header />
@@ -30,12 +34,12 @@ export default function AboutPage() {
                   <Heart className="h-6 w-6 text-brand-500" />
                 </div>
                 <Typography variant="h1" className="text-24 md:text-32 font-normal">
-                  About OurBride
+                  {t('pageTitle')}
                 </Typography>
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
-              <Typography variant="bodyLarge" textColor="secondary" className="mt-4 max-w-2xl">
-                Your trusted partner for creating the perfect wedding experience
+              <Typography variant="bodyLarge" textColor="secondary" className={cn("mt-4 max-w-2xl" , isRtl ? 'text-right' : 'text-left')}>
+                {t('pageSubtitle')}
               </Typography>
             </div>
 
@@ -48,17 +52,14 @@ export default function AboutPage() {
                     <Target className="h-5 w-5 text-blue-600" />
                   </div>
                   <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                    Our Mission
+                    {t('mission.title')}
                   </Typography>
                 </div>
-                <Typography variant="body" textColor="default" className="mb-4 leading-relaxed">
-                  At OurBride, we believe that every wedding should be a perfect reflection of your unique love story. 
-                  Our mission is to make wedding planning effortless, enjoyable, and memorable by connecting brides and 
-                  grooms with the finest wedding products and services.
+                <Typography variant="body" textColor="default" className={cn("mb-4 leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                  {t('mission.p1')}
                 </Typography>
-                <Typography variant="body" textColor="default" className="leading-relaxed">
-                  We are committed to providing a seamless experience where you can discover, compare, and book everything 
-                  you need for your special day - all in one place.
+                <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                  {t('mission.p2')}
                 </Typography>
               </CardWrapper>
 
@@ -69,17 +70,14 @@ export default function AboutPage() {
                     <Eye className="h-5 w-5 text-purple-600" />
                   </div>
                   <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                    Our Vision
+                    {t('vision.title')}
                   </Typography>
                 </div>
-                <Typography variant="body" textColor="default" className="mb-4 leading-relaxed">
-                  We envision a world where wedding planning is stress-free and accessible to everyone. Our platform brings 
-                  together verified service providers, quality products, and a supportive community to help you create the 
-                  wedding of your dreams.
+                <Typography variant="body" textColor="default" className={cn("mb-4 leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                  {t('vision.p1')}
                 </Typography>
-                <Typography variant="body" textColor="default" className="leading-relaxed">
-                  Through innovation, trust, and dedication, we aim to be the leading destination for couples planning their 
-                  perfect day.
+                <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                  {t('vision.p2')}
                 </Typography>
               </CardWrapper>
 
@@ -90,7 +88,7 @@ export default function AboutPage() {
                     <Heart className="h-5 w-5 text-green-600" />
                   </div>
                   <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                    Our Values
+                    {t('values.title')}
                   </Typography>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -99,9 +97,9 @@ export default function AboutPage() {
                       <Shield className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <Typography variant="h5" className="mb-2">Trust & Transparency</Typography>
-                      <Typography variant="body" textColor="default" className="leading-relaxed">
-                        We verify all service providers and maintain transparent pricing to ensure you make informed decisions.
+                      <Typography variant="h5" className={cn("mb-2" , isRtl ? 'text-right' : 'text-left')}>{t('values.trust.title')}</Typography>
+                      <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                        {t('values.trust.desc')}
                       </Typography>
                     </div>
                   </div>
@@ -110,9 +108,9 @@ export default function AboutPage() {
                       <Star className="h-6 w-6 text-yellow-600" />
                     </div>
                     <div>
-                      <Typography variant="h5" className="mb-2">Quality & Excellence</Typography>
-                      <Typography variant="body" textColor="default" className="leading-relaxed">
-                        We curate only the best products and services, ensuring high standards and exceptional quality for your special day.
+                      <Typography variant="h5" className={cn("mb-2" , isRtl ? 'text-right' : 'text-left')}>{t('values.quality.title')}</Typography>
+                      <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                        {t('values.quality.desc')}
                       </Typography>
                     </div>
                   </div>
@@ -121,9 +119,9 @@ export default function AboutPage() {
                       <Users className="h-6 w-6 text-pink-600" />
                     </div>
                     <div>
-                      <Typography variant="h5" className="mb-2">Community & Support</Typography>
-                      <Typography variant="body" textColor="default" className="leading-relaxed">
-                        Our vibrant community of brides, grooms, and wedding professionals supports and inspires each other throughout the planning journey.
+                      <Typography variant="h5" className={cn("mb-2" , isRtl ? 'text-right' : 'text-left')}>{t('values.community.title')}</Typography>
+                      <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                        {t('values.community.desc')}
                       </Typography>
                     </div>
                   </div>
@@ -132,9 +130,9 @@ export default function AboutPage() {
                       <Lightbulb className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div>
-                      <Typography variant="h5" className="mb-2">Innovation & Convenience</Typography>
-                      <Typography variant="body" textColor="default" className="leading-relaxed">
-                        We continuously innovate to make wedding planning easier, faster, and more convenient through technology and user-friendly solutions.
+                      <Typography variant="h5" className={cn("mb-2" , isRtl ? 'text-right' : 'text-left')}>{t('values.innovation.title')}</Typography>
+                      <Typography variant="body" textColor="default" className={cn("leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                        {t('values.innovation.desc')}
                       </Typography>
                     </div>
                   </div>
@@ -148,11 +146,11 @@ export default function AboutPage() {
                     <Mail className="h-5 w-5 text-white" />
                   </div>
                   <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                    Get in Touch
+                    {t('contact.title')}
                   </Typography>
                 </div>
-                <Typography variant="body" textColor="default" className="mb-4 leading-relaxed">
-                  Have questions or feedback? We&apos;d love to hear from you!
+                <Typography variant="body" textColor="default" className={cn("mb-4 leading-relaxed" , isRtl ? 'text-right' : 'text-left')}>
+                  {t('contact.desc')}
                 </Typography>
                 <div className="flex flex-wrap gap-3">
                   <Button
@@ -163,7 +161,7 @@ export default function AboutPage() {
                   >
                     <a href="/dashboard/help-center">
                       <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Visit Help Center
+                      {t('contact.helpCta')}
                     </a>
                   </Button>
                 </div>
@@ -176,4 +174,3 @@ export default function AboutPage() {
     </div>
   )
 }
-

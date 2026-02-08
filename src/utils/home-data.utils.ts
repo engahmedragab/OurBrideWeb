@@ -226,13 +226,24 @@ const extractTestimonials = (
     return data.testimonials.filter((t): t is Record<string, unknown> =>
       isObject(t)
     ).map((t) => ({
-      quote: (t.commentEn ||
+      quoteAr: (t.commentAr ||
+        t.comment ||
+        t.quote ||
+        t.review ||
+        '') as string,
+      quoteEn: (t.commentEn ||
         t.comment ||
         t.quote ||
         t.review ||
         '') as string,
       rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
-      authorName: (t.customerNameEn ||
+      authorNameAr: (t.customerNameAr ||
+        t.customerName ||
+        t.authorName ||
+        t.userName ||
+        t.name ||
+        'Anonymous') as string,
+      authorNameEn: (t.customerNameEn ||
         t.customerName ||
         t.authorName ||
         t.userName ||
@@ -489,11 +500,14 @@ const extractStoreTestimonials = (
       .filter((t): t is Record<string, unknown> => isObject(t))
       .filter((t) => t.isActive === true)
       .map((t) => ({
-        quote: (t.comment || t.commentEn || t.commentAr || '') as string,
+        quoteEn: (t.commentEn || t.comment || '') as string,
+        quoteAr: (t.commentAr || t.comment || '') as string,
         rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
-        authorName: (t.customerName ||
+        authorNameAr: ( t.customerNameAr ||
           t.customerNameEn ||
-          t.customerNameAr ||
+          'Anonymous') as string,
+        authorNameEn: (t.customerNameEn ||
+          t.customerName ||
           'Anonymous') as string,
         authorImage: (t.imageUrl || '') as string,
         timeAgo: '', // Not provided in this API

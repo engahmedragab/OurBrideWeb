@@ -14,6 +14,7 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch all follows
@@ -99,6 +100,7 @@ export const useFollowsBySource = (
  * Hook to create a follow
  */
 export const useCreateFollow = () => {
+  const t =  useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
@@ -113,13 +115,13 @@ export const useCreateFollow = () => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Followed successfully',
-        'Failed to follow'
+        t('followSuccess'),
+        t('followError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to follow'
+      const errorMessage = error instanceof Error ? error.message : t('followError')
       addToast(errorMessage, 'error')
     },
   })
@@ -129,6 +131,7 @@ export const useCreateFollow = () => {
  * Hook to update a follow
  */
 export const useUpdateFollow = () => {
+  const t =  useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
@@ -145,13 +148,14 @@ export const useUpdateFollow = () => {
       queryClient.invalidateQueries({ queryKey: ['follow', variables.id] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Follow updated successfully',
-        'Failed to update follow'
+        t('followUpdateSuccess'),
+        t('followUpdateError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update follow'
+      const errorMessage = error instanceof Error ? error.message :  t('followUpdateError')
+
       addToast(errorMessage, 'error')
     },
   })
@@ -161,6 +165,7 @@ export const useUpdateFollow = () => {
  * Hook to delete a follow
  */
 export const useDeleteFollow = () => {
+  const t =  useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
@@ -175,10 +180,10 @@ export const useDeleteFollow = () => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
       queryClient.invalidateQueries({ queryKey: ['follow', variables.id] })
       queryClient.removeQueries({ queryKey: ['follow', variables.id] })
-      addToast('Unfollowed successfully', 'success')
+      addToast( t('unfollowSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to unfollow'
+      const errorMessage = error instanceof Error ? error.message : t('unfollowError')
       addToast(errorMessage, 'error')
     },
   })

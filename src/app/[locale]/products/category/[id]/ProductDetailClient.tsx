@@ -132,10 +132,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return (
       <ProductPageLayout>
         <ProductErrorState
-          title={t('productCommon.productNotFound')}
-          message={t('productCommon.productNotFoundMessage')}
+          title={tCommon('productCommon.productNotFound')}
+          message={tCommon('productCommon.productNotFoundMessage')}
           backHref="/products"
-          backLabel={t('productCommon.backToProducts')}
+          backLabel={tCommon('productCommon.backToProducts')}
         />
       </ProductPageLayout>
     )
@@ -187,7 +187,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         {/* Back Button */}
         <BackButton
           href="/products"
-          label={t('productCommon.backToProducts')}
+          label={tCommon('productCommon.backToProducts')}
           className="mb-6"
         />
 

@@ -92,6 +92,7 @@ export const WhyBridesChooseProductsSection = ({
             // - Start with lowercase letters or common prefixes
             // - Don't contain spaces (usually)
             // - Have dots in the middle (not just at the end as punctuation)
+            
             const isTranslationKey = (str: string): boolean => {
               // If it doesn't contain a dot, it's not a key
               if (!str.includes('.')) return false
@@ -122,7 +123,7 @@ export const WhyBridesChooseProductsSection = ({
             const isDescriptionKey = isTranslationKey(feature.description)
             const title = isTitleKey ? t(feature.title) : feature.title
             const description = isDescriptionKey ? t(feature.description) : feature.description
-            
+           
             return (
               <div
                 key={index}

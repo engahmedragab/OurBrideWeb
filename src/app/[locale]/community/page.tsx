@@ -38,10 +38,8 @@ import { useI18nTranslations } from '@/i18n'
 import { LoadingSpinner } from '@/components/ui'
 
 function CommunityContent() {
-  const t = useI18nTranslations('community')
- 
-  const tC =useI18nTranslations("common")
-  const router = useRouter()
+  const t =useI18nTranslations('community')
+    const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
   const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
