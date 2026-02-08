@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Button, Input, LoadingOverlay, LoadingSpinner } from '@/components/ui'
-import { Plus, Trash2, Edit2, Calendar, X, Save } from 'lucide-react'
+import { ChevronLeft, Plus, Trash2, Edit2, Calendar, X, Save } from 'lucide-react'
+import { useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import occasionImage from '@/assets/images/occasion.png'
@@ -26,7 +27,7 @@ import { OccasionDetailView } from '@/components/occasion/components/OccasionDet
 import { OccasionForm } from '@/components/occasion/components/OccasionForm'
 import type { OccasionFormData } from '@/schema/occasion.schema'
 import { generateTempId } from '@/utils/sync/tempIds'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
  
 /**
  * Format date from ISO string to readable format
@@ -96,6 +97,9 @@ const getOccasionTypeLabel = (type?: OccasionType): string => {
 
 function OccasionsPageContent() {
   const t = useI18nTranslations('eventsPlanning.occasions')
+  const tS = useI18nTranslations('eventsPlanning.sideMenu')
+  const isRTL = useIsRTL()
+  const router = useRouter()
   const eventId = useEventId()
   const [editingLineId, setEditingLineId] = useState<number | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
@@ -400,22 +404,36 @@ function OccasionsPageContent() {
         : t('page.loading.pleaseWait')
 
     return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text={`${loadingTitle} ${loadingSubtitle}`} fullScreen={true} />
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+        <div className="flex items-center gap-4 mb-6 sm:mb-8">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Go back"
+          >
+            <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL ? 'rotate-180' : 'rotate-0')} />
+          </button>
+          <h1 className="text-24 sm:text-28 font-semibold text-gray-900">
+            {tS('tabs.occasions')}
+          </h1>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text={`${loadingTitle} ${loadingSubtitle}`} fullScreen={true} />
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <ErrorModal
-          open={true}
-          title={t('page.error.failedToLoadTitle')}
-          message={t('page.error.failedToLoadMessage')}
-          onRetry={() => window.location.reload()}
-          onClose={() => { }}
-        />
+        <div className="flex flex-col items-center justify-center py-12">
+          <ErrorModal
+            open={true}
+            title={t('page.error.failedToLoadTitle')}
+            message={t('page.error.failedToLoadMessage')}
+            onRetry={() => window.location.reload()}
+            onClose={() => { }}
+          />
       </div>
     )
   }
@@ -423,38 +441,54 @@ function OccasionsPageContent() {
   return (
     <div>
       {/* Header with Save and Add Buttons */}
-      <div className="flex items-center justify-between flex-wrap gap-4 my-3">
-        {(hasUnsavedChanges || syncMutation.isPending) && (
-          <div className="flex items-center gap-3 ">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-6">
+        <div className="flex items-center gap-4 mb-6 sm:mb-8">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Go back"
+          >
+            <ChevronLeft className={cn('h-5 w-5 text-gray-700', isRTL ? 'rotate-180' : 'rotate-0')} />
+          </button>
+          <h1 className="text-24 sm:text-28 font-semibold text-gray-900">
+            {tS('tabs.occasions')}
+          </h1>
+        </div>
+
+        {/* Header with Save and Add Buttons */}
+        <div className="flex items-center justify-between flex-wrap gap-4 my-3">
+          <div className={cn("flex items-center gap-2", !hasUnsavedChanges && !syncMutation.isPending && "")}>
             <Button
               variant="brand"
               size="md"
-              onClick={handleSync}
-              disabled={syncMutation.isPending || !localOccasionBook || isLoading}
-              className="flex items-center gap-2 rounded-xl !text-white "
+              onClick={handleAddNew}
+              disabled={isFormOpen || !localOccasionBook || isLoading}
+              className="flex items-center gap-2 rounded-xl !text-white"
               type="button"
             >
-              <Save className="h-4 w-4" />
-              {syncMutation.isPending ? t('page.actions.saving') : t('page.actions.saveChanges')}
+              <Plus className="h-4 w-4" />
+              {t('page.actions.addNewOccasion')}
             </Button>
-
-            {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">{t('page.status.unsavedChanges')}</span>
-            )}
           </div>
-        )}
-        <div className={cn("flex items-center gap-2", !hasUnsavedChanges && !syncMutation.isPending && "ml-auto")}>
-          <Button
-            variant="brand"
-            size="md"
-            onClick={handleAddNew}
-            disabled={isFormOpen || !localOccasionBook || isLoading}
-            className="flex items-center gap-2 rounded-xl !text-white"
-            type="button"
-          >
-            <Plus className="h-4 w-4" />
-            {t('page.actions.addNewOccasion')}
-          </Button>
+          {(hasUnsavedChanges || syncMutation.isPending) && (
+            <div className="flex items-center gap-3  ">
+              <Button
+                variant="brand"
+                size="md"
+                onClick={handleSync}
+                disabled={syncMutation.isPending || !localOccasionBook || isLoading}
+                className="flex items-center gap-2 rounded-xl !text-white "
+                type="button"
+              >
+                <Save className="h-4 w-4" />
+                {syncMutation.isPending ? t('page.actions.saving') : t('page.actions.saveChanges')}
+              </Button>
+
+              {hasUnsavedChanges && (
+                <span className="text-16 text-brand-500 font-medium">{t('page.status.unsavedChanges')}</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
