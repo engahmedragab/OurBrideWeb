@@ -206,7 +206,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          aria-label="More options"
+          aria-label={t('postCard.aria.moreOptions')}
           onClick={handleMoreClick}
         >
           <MoreVertical className="h-5 w-5 text-gray-500" />

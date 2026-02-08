@@ -32,8 +32,34 @@
       "defaultError": "حدث خطأ"
     },
     "productsLoading": "جاري تحميل المنتجات...",
-    "Anonymous": "مجهول",
+    "anonymous": "مجهول",
     "recently": "مؤخرا",
+    "errors": {
+      "server500": {
+        "imageAlt": "خطأ في الخادم",
+        "title": "500 — خطأ في الخادم",
+        "desc": "نواجه مشاكل تقنية. فريقنا يعمل على حلها.",
+        "tryAgain": "حاول مرة أخرى"
+      },
+      "notFound404": {
+        "imageAlt": "الصفحة غير موجودة",
+        "title": "404 — الصفحة غير موجودة",
+        "desc": "الصفحة التي تبحثين عنها غير موجودة أو تم نقلها.",
+        "backHome": "العودة إلى الرئيسية"
+      },
+      "generalError": {
+        "imageAlt": "حدث خطأ ما",
+        "title": "عذراً! حدث خطأ ما",
+        "desc": "يرجى المحاولة مرة أخرى لاحقاً",
+        "backHome": "العودة إلى الرئيسية"
+      },
+      "offline": {
+        "imageAlt": "غير متصل",
+        "title": "أنت غير متصل",
+        "desc": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى",
+        "tryAgain": "حاول مرة أخرى"
+      }
+    },
     "viewAll": "عرض الكل",
     "suggestedForYou": "مقترح لك",
     "subscribe": "اشتركي",
@@ -214,6 +240,10 @@
         "title": "تمت إعادة تعيين كلمة المرور بنجاح",
         "description": "تم تحديث كلمة المرور. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
         "confirmLabel": "تأكيد"
+      },
+      "errors": {
+        "somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+        "successToast": "تمت إعادة تعيين كلمة المرور بنجاح"
       }
     },
     "mobileVerification": {
@@ -1165,6 +1195,15 @@
         "textFormat": "تنسيق النص"
       }
     },
+    "reelPlayer": {
+      "aria": {
+        "play": "تشغيل",
+        "pause": "إيقاف",
+        "mute": "كتم الصوت",
+        "unmute": "إلغاء كتم الصوت",
+        "sendComment": "إرسال تعليق"
+      }
+    },
     "recentPosts": "المنشورات الأخيرة",
     "recentArticles": "المقالات الأخيرة",
     "topProviders": "أفضل المزودين",
@@ -1286,7 +1325,10 @@
       "likes": "إعجابات",
       "comments": "تعليقات",
       "shares": "مشاركات",
-      "favorites": "مفضلة"
+      "favorites": "مفضلة",
+      "aria": {
+        "moreOptions": "خيارات أخرى"
+      }
     },
     "communityRightSidebar": {
       "commentAdded": "تمت إضافة التعليق!",
@@ -1297,7 +1339,10 @@
       "provider": "مزود",
       "popularTags": "العلامات الشائعة",
       "topArticles": "أفضل المقالات",
-      "communityPosts": "منشورات المجتمع"
+      "communityPosts": "منشورات المجتمع",
+      "aria": {
+        "sendComment": "إرسال تعليق"
+      }
     },
     "articleDetails": {
       "loading": "جاري تحميل المقال...",
@@ -1323,6 +1368,10 @@
       "articleCard": {
         "readMore": "اقرأي المزيد",
         "minRead": "دقيقة قراءة"
+      },
+      "aria": {
+        "goBack": "العودة",
+        "moreOptions": "خيارات أخرى"
       }
     },
     "blogDetails": {
@@ -1331,7 +1380,11 @@
       "blogNotFoundMessage": "المدونة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
       "Anonymous": "مجهول",
       "user": "مستخدم",
-      "failedToShareBlog": "فشل مشاركة المدونة"
+      "failedToShareBlog": "فشل مشاركة المدونة",
+      "aria": {
+        "goBack": "العودة",
+        "moreOptions": "خيارات أخرى"
+      }
     },
     "createPostModal": {
       "title": "إنشاء منشور",
@@ -1397,7 +1450,10 @@
       "contestEnded": "انتهت المسابقة",
       "joined": "منضم",
       "noContestsTitle": "لا توجد مسابقات متاحة",
-      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
+      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي.",
+      "aria": {
+        "goBack": "العودة"
+      }
     },
     "decisionGroupDetails": {
       "loading": "جاري تحميل مجموعة القرارات...",
@@ -1411,7 +1467,11 @@
       "totalVotes": "إجمالي الأصوات",
       "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
       "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
-      "moreOptions": "خيارات أخرى"
+      "moreOptions": "خيارات أخرى",
+      "aria": {
+        "goBack": "العودة",
+        "moreOptions": "خيارات أخرى"
+      }
     },
     "postDetails": {
       "loading": "جاري تحميل المنشور...",

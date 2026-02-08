@@ -190,7 +190,7 @@ export const DecisionGroupDetails = ({
           size="icon"
           onClick={() => router.push('/community?tab=decision-groups')}
           className="h-10 w-10"
-          aria-label="Go back"
+          aria-label={t('decisionGroupDetails.aria.goBack')}
         >
           <ArrowLeft className={cn("h-5 w-5 text-gray-600 ",
             isRTL?'rotate-180':'rotate-0' 
@@ -282,7 +282,7 @@ export const DecisionGroupDetails = ({
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              aria-label="More options"
+              aria-label={t('decisionGroupDetails.aria.moreOptions')}
             >
               <MoreVertical className="h-5 w-5 text-gray-500" />
             </Button>

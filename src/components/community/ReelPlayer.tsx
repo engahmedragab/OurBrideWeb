@@ -280,7 +280,7 @@ export const ReelPlayer = ({ id, videoUrl: _videoUrl, className }: ReelPlayerPro
                   size="icon"
                   onClick={handlePlayPause}
                   className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
+                  aria-label={isPlaying ? t('reelPlayer.aria.pause') : t('reelPlayer.aria.play')}
                 >
                   {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
                 </Button>
@@ -291,7 +291,7 @@ export const ReelPlayer = ({ id, videoUrl: _videoUrl, className }: ReelPlayerPro
                   size="icon"
                   onClick={handleMuteToggle}
                   className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  aria-label={isMuted ? t('reelPlayer.aria.unmute') : t('reelPlayer.aria.mute')}
                 >
                   {isMuted ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
                 </Button>
@@ -542,7 +542,7 @@ export const ReelPlayer = ({ id, videoUrl: _videoUrl, className }: ReelPlayerPro
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="h-10 w-10 flex-shrink-0"
-                  aria-label="Send comment"
+                  aria-label={t('reelPlayer.aria.sendComment')}
                 >
                   <Send className="h-5 w-5 text-white" />
                 </Button>

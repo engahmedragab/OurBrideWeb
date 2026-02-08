@@ -211,7 +211,7 @@ export const ContestDetails = ({
           size="icon"
           onClick={() => router.push('/community?tab=contests')}
           className="h-10 w-10"
-          aria-label="Go back"
+          aria-label={t('contestDetails.aria.goBack')}
         >
           <ArrowLeft className={cn("h-5 w-5 text-gray-600 ",
             isRTL?'rotate-180':'rotate-0' 

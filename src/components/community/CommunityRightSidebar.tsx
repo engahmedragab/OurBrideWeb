@@ -264,7 +264,7 @@ export const CommunityRightSidebar = ({
                   onClick={handleAddComment}
                   disabled={!commentText.trim()}
                   className="h-10 w-10 flex-shrink-0"
-                  aria-label="Send comment"
+                  aria-label={t('communityRightSidebar.aria.sendComment')}
                 >
                   <Send className="h-5 w-5 text-white" />
                 </Button>

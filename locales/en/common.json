@@ -34,6 +34,32 @@
     "productsLoading": "Loading products...",
     "anonymous": "Anonymous",
     "recently": "Recently",
+    "errors": {
+      "server500": {
+        "imageAlt": "Server Error",
+        "title": "500 — Server Error",
+        "desc": "We're experiencing technical issues. Our team is working on it.",
+        "tryAgain": "Try Again"
+      },
+      "notFound404": {
+        "imageAlt": "Page Not Found",
+        "title": "404 — Page Not Found",
+        "desc": "The page you're looking for doesn't exist or was moved.",
+        "backHome": "Back to Home"
+      },
+      "generalError": {
+        "imageAlt": "Something went wrong",
+        "title": "Oops! Something went wrong",
+        "desc": "Please try again later",
+        "backHome": "Back to Home"
+      },
+      "offline": {
+        "imageAlt": "Offline",
+        "title": "You're Offline",
+        "desc": "Please check your internet connection and try again",
+        "tryAgain": "Try Again"
+      }
+    },
     "viewAll": "View All",
     "suggestedForYou": "Suggested For You",
     "subscribe": "Subscribe",
@@ -1228,7 +1254,11 @@
       "blogNotFoundMessage": "The blog you're looking for doesn't exist or has been removed.",
       "Anonymous": "Anonymous",
       "user": "User",
-      "failedToShareBlog": "Failed to share blog"
+      "failedToShareBlog": "Failed to share blog",
+      "aria": {
+        "goBack": "Go back",
+        "moreOptions": "More options"
+      }
     },
     "createPostModal": {
       "title": "Create Post",
@@ -1284,6 +1314,15 @@
         "uploadImage": "Upload image",
         "addReels": "Add reels",
         "textFormat": "Text format"
+      }
+    },
+    "reelPlayer": {
+      "aria": {
+        "play": "Play",
+        "pause": "Pause",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "sendComment": "Send comment"
       }
     },
     "recentPosts": "Recent Posts",
@@ -4655,19 +4694,5 @@
         }
       }
     }
-  },
-  "errors": {
-    "server500": {
-      "imageAlt": "Server Error",
-      "title": "500 — Server Error",
-      "desc": "We’re experiencing technical issues. Our team is working on it.",
-      "tryAgain": "Try Again"
-    },
-     "notFound404": {
-      "imageAlt": "Page Not Found",
-      "title": "404 — Page Not Found",
-      "desc": "The page you’re looking for doesn’t exist or was moved.",
-      "backHome": "Back to Home"
-    }
-  } 
+  }
 }

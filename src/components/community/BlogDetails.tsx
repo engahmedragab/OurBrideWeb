@@ -186,7 +186,7 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
           size="icon"
           onClick={() => router.push('/community?tab=blogs')}
           className="h-10 w-10"
-          aria-label="Go back"
+          aria-label={t('blogDetails.aria.goBack')}
         >
         <ArrowLeft className={cn("h-5 w-5 text-gray-600 ",
             isRTL?'rotate-180':'rotate-0' 
@@ -272,7 +272,7 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              aria-label="More options"
+              aria-label={t('blogDetails.aria.moreOptions')}
             >
               <MoreVertical className="h-5 w-5 text-gray-500" />
             </Button>
