@@ -14,6 +14,7 @@ import { useArticles } from '@/hooks/community/useCommunityContent'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '../ui'
 
 export type CommunityTab = 'community' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests' | 'profile'
 
@@ -342,7 +343,7 @@ export const CommunitySidebar = ({
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             {isLoadingArticles ? (
               <div className="flex justify-center items-center py-8 min-h-[200px]">
-                <LoadingOverlay open={true}  />
+                <LoadingSpinner open={true}  />
               </div>
             ) : articles && articles.length > 0 ? (
               <div className="space-y-2">

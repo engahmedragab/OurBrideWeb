@@ -1,7 +1,8 @@
+'use client'
+
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { Typography, CardWrapper, Button } from '@/components/ui'
-import type { Metadata } from 'next'
 import {
   Package,
   Clock,
@@ -13,13 +14,12 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-export const metadata: Metadata = {
-  title: 'Shipping Information | OurBride',
-  description: 'Learn about OurBride shipping policies, delivery times, and tracking information',
-}
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export default function ShippingPage() {
+  const t = useI18nTranslations('shipping')
+  const isRtl = useIsRTL();
+
   return (
     <div className="min-h-screen flex flex-col bg-background-secondary">
       <Header />
@@ -33,12 +33,12 @@ export default function ShippingPage() {
                   <Truck className="h-6 w-6 text-brand-500" />
                 </div>
                 <Typography variant="h1" className="text-24 md:text-32 font-normal">
-                  Shipping Information
+                  {t('pageTitle')}
                 </Typography>
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
-              <Typography variant="bodyLarge" textColor="secondary" className="mt-4 max-w-2xl">
-                Everything you need to know about shipping, delivery, and tracking your orders
+              <Typography variant="bodyLarge" textColor="secondary" className={cn("mt-4 max-w-2xl", isRtl ? "text-right" : "text-left")}>
+                {t('pageSubtitle')}
               </Typography>
             </div>
 
@@ -51,170 +51,172 @@ export default function ShippingPage() {
                     <Clock className="h-5 w-5 text-blue-600" />
                   </div>
                   <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                    Delivery Times
+                    {t('deliveryTimes.title')}
                   </Typography>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <CardWrapper className="bg-blue-50 border-blue-100" padding="sm">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Package className="h-5 w-5 text-blue-600" />
-                        <Typography variant="h5">Standard Shipping</Typography>
-                      </div>
-                      <Typography variant="bodySmall" className="mb-2 leading-relaxed">
-                        5-7 business days
-                      </Typography>
-                      <Typography variant="bodyTiny" textColor="secondary">
-                        Delivery times may vary based on location and product availability.
-                      </Typography>
-                    </CardWrapper>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package className="h-5 w-5 text-blue-600" />
+                      <Typography variant="h5">{t('deliveryTimes.standard.title')}</Typography>
+                    </div>
+                    <Typography variant="bodySmall" className={cn("mb-2 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                      {t('deliveryTimes.standard.time')}
+                    </Typography>
+                    <Typography variant="bodyTiny" textColor="secondary" className={cn(isRtl ? 'text-right' : 'text-left')}>
+                      {t('deliveryTimes.standard.note')}
+                    </Typography>
+                  </CardWrapper>
+
                   <CardWrapper className="bg-green-50 border-green-100" padding="sm">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Truck className="h-5 w-5 text-green-600" />
-                        <Typography variant="h5">Express Shipping</Typography>
-                      </div>
-                      <Typography variant="bodySmall" className="mb-2 leading-relaxed">
-                        2-3 business days
-                      </Typography>
-                      <Typography variant="bodyTiny" textColor="secondary">
-                        Available for select products. Additional charges apply.
-                      </Typography>
-                    </CardWrapper>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Truck className="h-5 w-5 text-green-600" />
+                      <Typography variant="h5">{t('deliveryTimes.express.title')}</Typography>
+                    </div>
+                    <Typography variant="bodySmall" className={cn("mb-2 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                      {t('deliveryTimes.express.time')}
+                    </Typography>
+                    <Typography variant="bodyTiny" textColor="secondary" className={cn(isRtl ? 'text-right' : 'text-left')}>
+                      {t('deliveryTimes.express.note')}
+                    </Typography>
+                  </CardWrapper>
+
                   <CardWrapper className="bg-purple-50 border-purple-100" padding="sm">
-                      <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="h-5 w-5 text-purple-600" />
-                        <Typography variant="h5">International</Typography>
-                      </div>
-                      <Typography variant="bodySmall" className="mb-2 leading-relaxed">
-                        10-21 business days
-                      </Typography>
-                      <Typography variant="bodyTiny" textColor="secondary">
-                        Customs and import duties may apply.
-                      </Typography>
-                    </CardWrapper>
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="h-5 w-5 text-purple-600" />
+                      <Typography variant="h5">{t('deliveryTimes.international.title')}</Typography>
+                    </div>
+                    <Typography variant="bodySmall" className={cn("mb-2 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                      {t('deliveryTimes.international.time')}
+                    </Typography>
+                    <Typography variant="bodyTiny" textColor="secondary" className={cn(isRtl ? 'text-right' : 'text-left')}>
+                      {t('deliveryTimes.international.note')}
+                    </Typography>
+                  </CardWrapper>
                 </div>
               </CardWrapper>
 
               {/* Shipping Costs Section */}
               <CardWrapper padding="lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
-                      <DollarSign className="h-5 w-5 text-green-600" />
-                    </div>
-                    <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Shipping Costs
-                    </Typography>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <DollarSign className="h-5 w-5 text-green-600" />
                   </div>
-                  <div className="space-y-4">
-                    <Typography variant="body" className="mb-4 leading-relaxed">
-                      Shipping costs are calculated at checkout based on:
-                    </Typography>
-                    <ul className="list-disc list-inside space-y-2 ml-4">
-                      <li><Typography variant="body" as="span">Product weight and dimensions</Typography></li>
-                      <li><Typography variant="body" as="span">Delivery address</Typography></li>
-                      <li><Typography variant="body" as="span">Selected shipping method</Typography></li>
-                      <li><Typography variant="body" as="span">Order value (free shipping may apply for orders above a certain amount)</Typography></li>
-                    </ul>
-                    <Typography variant="body" className="mt-4 leading-relaxed">
-                      You can view the exact shipping cost before completing your purchase.
-                    </Typography>
-                  </div>
+                  <Typography variant="h3" className="text-20 md:text-24 font-normal">
+                    {t('shippingCosts.title')}
+                  </Typography>
+                </div>
+                <div className="space-y-4">
+                  <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('shippingCosts.intro')}
+                  </Typography>
+                  <ul className="list-disc list-inside space-y-2 ml-4">
+                    <li><Typography variant="body" as="span">{t('shippingCosts.bullets.weight')}</Typography></li>
+                    <li><Typography variant="body" as="span">{t('shippingCosts.bullets.address')}</Typography></li>
+                    <li><Typography variant="body" as="span">{t('shippingCosts.bullets.method')}</Typography></li>
+                    <li><Typography variant="body" as="span">{t('shippingCosts.bullets.orderValue')}</Typography></li>
+                  </ul>
+                  <Typography variant="body" className={cn("mt-4 leading-relaxed" , isRtl ? "text-right" : "text-left")}>
+                    {t('shippingCosts.outro')}
+                  </Typography>
+                </div>
               </CardWrapper>
 
               {/* Tracking Section */}
               <CardWrapper padding="lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                      <Package className="h-5 w-5 text-indigo-600" />
-                    </div>
-                    <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Order Tracking
-                    </Typography>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                    <Package className="h-5 w-5 text-indigo-600" />
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    Once your order ships, you will receive a tracking number via email. You can use this tracking number 
-                    to monitor your package&apos;s journey from our warehouse to your doorstep.
+                  <Typography variant="h3" className="text-20 md:text-24 font-normal">
+                    {t('tracking.title')}
                   </Typography>
-                  <Typography variant="body" className="leading-relaxed">
-                    Track your order by visiting the <a href="/orders" className="text-brand-500 hover:text-brand-600 underline">Orders</a> page 
-                    in your account dashboard.
-                  </Typography>
+                </div>
+                <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                  {t('tracking.p1')}
+                </Typography>
+                <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                  {t('tracking.p2Prefix')}
+                  <a href="/orders" className={cn("text-brand-500 hover:text-brand-600 underline" , isRtl ? "text-right" : "text-left")}>{t('tracking.ordersLinkText')}</a>{' '}
+                  {t('tracking.p2Suffix')}
+                </Typography>
               </CardWrapper>
 
               {/* Delivery Address Section */}
               <CardWrapper padding="lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="h-5 w-5 text-orange-600" />
-                    </div>
-                    <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Delivery Address
-                    </Typography>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-5 w-5 text-orange-600" />
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    Please ensure your delivery address is complete and accurate. We are not responsible for delays or 
-                    lost packages due to incorrect address information.
+                  <Typography variant="h3" className="text-20 md:text-24 font-normal">
+                    {t('address.title')}
                   </Typography>
-                  <Typography variant="body" className="leading-relaxed">
-                    You can update your shipping addresses in your <a href="/addresses" className="text-brand-500 hover:text-brand-600 underline">Addresses</a> page.
-                  </Typography>
+                </div>
+                <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                  {t('address.p1')}
+                </Typography>
+                <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                  {t('address.p2Prefix')}
+                  <a href="/addresses" className="text-brand-500 hover:text-brand-600 underline">{t('address.addressesLinkText')}</a>{t('address.p2Suffix')}
+                </Typography>
               </CardWrapper>
 
               {/* Special Handling Section */}
               <CardWrapper padding="lg">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
-                      <Shield className="h-5 w-5 text-yellow-600" />
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <Typography variant="h3" className="text-20 md:text-24 font-normal">
+                    {t('specialHandling.title')}
+                  </Typography>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CardWrapper className="bg-yellow-50 border-yellow-100" padding="sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package className="h-5 w-5 text-yellow-600" />
+                      <Typography variant="h5">{t('specialHandling.fragile.title')}</Typography>
                     </div>
-                    <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Special Handling
+                    <Typography variant="bodySmall" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                      {t('specialHandling.fragile.desc')}
                     </Typography>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CardWrapper className="bg-yellow-50 border-yellow-100" padding="sm">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Package className="h-5 w-5 text-yellow-600" />
-                          <Typography variant="h5">Fragile Items</Typography>
-                        </div>
-                        <Typography variant="bodySmall" className="leading-relaxed">
-                          Carefully packaged with extra protection. Please inspect upon delivery and report any damage immediately.
-                        </Typography>
-                    </CardWrapper>
-                    <CardWrapper className="bg-blue-50 border-blue-100" padding="sm">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                          <Typography variant="h5">Signature Required</Typography>
-                        </div>
-                        <Typography variant="bodySmall" className="leading-relaxed">
-                          Some high-value orders may require a signature. You will be notified if signature confirmation is needed.
-                        </Typography>
-                    </CardWrapper>
-                  </div>
+                  </CardWrapper>
+                  <CardWrapper className="bg-blue-50 border-blue-100" padding="sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                      <Typography variant="h5">{t('specialHandling.signature.title')}</Typography>
+                    </div>
+                    <Typography variant="bodySmall" className={cn("leading-relaxed" , isRtl ? "text-right" : "text-left")}>
+                      {t('specialHandling.signature.desc')}
+                    </Typography>
+                  </CardWrapper>
+                </div>
               </CardWrapper>
 
               {/* Contact Section */}
               <CardWrapper className={cn("bg-gradient-to-br from-brand-50 to-brand-100/50 border-brand-200")} padding="lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center flex-shrink-0">
-                      <HelpCircle className="h-5 w-5 text-white" />
-                    </div>
-                    <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Questions About Shipping?
-                    </Typography>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center flex-shrink-0">
+                    <HelpCircle className="h-5 w-5 text-white" />
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    If you have any questions about shipping or need assistance with your order, we&apos;re here to help.
+                  <Typography variant="h3" className="text-20 md:text-24 font-normal">
+                    {t('contact.title')}
                   </Typography>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-white border-brand-200 text-brand-500 hover:bg-brand-50"
-                    asChild
-                  >
-                    <a href="/dashboard/help-center">
-                      <HelpCircle className="h-4 w-4 mr-2" />
-                      Visit Help Center
-                    </a>
-                  </Button>
+                </div>
+                <Typography variant="body" className={cn("mb-4 leading-relaxed" , isRtl ? "text-right" : "text-left")}>
+                  {t('contact.desc')}
+                </Typography>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white border-brand-200 text-brand-500 hover:bg-brand-50"
+                  asChild
+                >
+                  <a href="/dashboard/help-center">
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    {t('contact.helpCta')}
+                  </a>
+                </Button>
               </CardWrapper>
             </div>
           </div>
@@ -224,4 +226,3 @@ export default function ShippingPage() {
     </div>
   )
 }
-

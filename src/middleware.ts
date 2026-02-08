@@ -64,15 +64,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // First, handle i18n routing
+  // First, handle i18n routing - this will automatically redirect routes without locale
+  // (e.g., /dashboard/my-events -> /en/dashboard/my-events)
   const intlResponse = intlMiddleware(request)
   
-  // If i18n middleware redirects, return that redirect
+  // If i18n middleware redirects (307 or 308), return that redirect immediately
+  // This handles locale prefix redirects
   if (intlResponse.status === 307 || intlResponse.status === 308) {
     return intlResponse
   }
 
   // Extract locale from pathname for auth checks
+  // At this point, the pathname should have a locale prefix
   const localeMatch = pathname.match(/^\/(ar|en)(\/|$)/)
   const locale = localeMatch ? localeMatch[1] : null
   const pathWithoutLocale = locale ? pathname.replace(`/${locale}`, '') || '/' : pathname

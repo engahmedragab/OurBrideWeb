@@ -293,7 +293,7 @@ export const ProductFilters = ({
       <Button
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden w-full justify-between"
+        className="lg:hidden justify-between"
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4" />
@@ -312,8 +312,8 @@ export const ProductFilters = ({
       {/* Filter Panel */}
       <div
         className={cn(
-          'bg-white border border-gray-200 rounded-xl p-6 space-y-6',
-          isOpen ? 'block' : 'hidden md:block'
+          'bg-white border border-gray-200 rounded-xl p-6 my-2 space-y-6',
+          isOpen ? 'block' : 'hidden lg:block'
         )}
       >
         {/* Categories */}

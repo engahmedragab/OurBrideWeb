@@ -152,7 +152,7 @@ const ProductListItem = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
+          <div  className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
             <div className="flex items-center gap-2">
               <PriceDisplay
                 original={product.price.original}
@@ -173,12 +173,12 @@ const ProductListItem = ({
             </div>
             <div className="flex items-center gap-2">
               <Button
-                variant={isInCart ? "default" : "outline"}
+                variant="outline"
                 size="icon"
                 className={cn(
                   "h-10 w-10 rounded-full",
                   isInCart
-                    ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
+                    ? "border-brand-500 text-brand-500"
                     : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
                 )}
                 onClick={() => onAddToCart?.(product.id)}
@@ -186,7 +186,7 @@ const ProductListItem = ({
                 aria-label={isInCart ? tCommon('productCommon.itemInCart') : tCommon('productCommon.addToCart')}
               >
                 {isInCart ? (
-                  <Check className="h-5 w-5 text-white" />
+                  <Check className="h-5 w-5 !text-brand-500" />
                 ) : (
                   <ShoppingCart className="h-5 w-5 text-brand-500" />
                 )}
@@ -194,7 +194,7 @@ const ProductListItem = ({
               <Button
                 variant="default"
                 className={cn(
-                  "h-10 px-6 rounded-full text-white",
+                  "h-10 px-6 rounded-full text-white !text-12 md:!text-14",
                   isInCart ? "bg-green-500 hover:bg-green-600" : "bg-brand-500 hover:bg-brand-600"
                 )}
                 onClick={() => onAddToCart?.(product.id)}
@@ -231,7 +231,7 @@ export const ProductList = ({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('grid grid-cols-2 gap-3 md:grid-cols-1 md:gap-4', className)}>
       {products.map(product => (
         <ProductListItem
           key={product.id}

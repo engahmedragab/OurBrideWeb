@@ -4,10 +4,10 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { CommunityProfile } from '@/components/community'
-import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useCommunityProfile } from '@/hooks/community'
 import { useSearchParams } from 'next/navigation'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 
 // Helper function to determine if a string is a GUID (user ID)
 const isGuid = (str: string): boolean => {
@@ -83,7 +83,7 @@ function CommunityProfileContent() {
     if (isLoading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center py-12">
-                <LoadingOverlay open={true} title={t("profile.loading")} />
+                <LoadingSpinner open={true} text={t("profile.loading")} />
             </div>
         )
     }
@@ -120,7 +120,7 @@ export function CommunityProfileClient() {
                         <Suspense
                             fallback={
                                 <div className="min-h-[60vh] flex items-center justify-center py-12">
-                                    <LoadingOverlay open={true}  />
+                                    <LoadingSpinner open={true}  />
                                 </div>
                             }
                         >

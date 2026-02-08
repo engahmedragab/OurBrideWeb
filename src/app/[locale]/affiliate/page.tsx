@@ -12,6 +12,7 @@ import {
   AddPaymentCardModal,
   WithdrawFundsModal,
   LoadingOverlay,
+  LoadingSpinner,
 } from '@/components/ui'
 import { useI18nTranslations } from '@/i18n/hooks'
 
@@ -165,7 +166,7 @@ export default function AffiliatePage() {
   if (isLoading) {
     return (
       <UserPageLayout>
-        <LoadingOverlay open={true} />
+        <LoadingSpinner size="lg" fullScreen={true} open={true} />
       </UserPageLayout>
     )
   }

@@ -5,7 +5,7 @@ import { CategoryCard } from '@/components/ui/CategoryCard'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { cn } from '@/lib/utils'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination } from 'swiper/modules'
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -62,10 +62,20 @@ export const ProductCategoriesSection = ({
       {/* Categories Slider */}
       <div className="relative">
         <Swiper
-          modules={[Navigation, Pagination]}
+          modules={[Autoplay, Navigation, Pagination]}
           spaceBetween={20}
           slidesPerView={1}
+          loop={true}
+          autoplay={{
+            delay: 2000,
+            disableOnInteraction: false,
+          }}
+          speed={3000}
           breakpoints={{
+            0: {
+              slidesPerView: 2,
+              spaceBetween: 16,
+            },
             640: {
               slidesPerView: 2,
               spaceBetween: 20,

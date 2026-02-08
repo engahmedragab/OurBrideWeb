@@ -132,10 +132,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return (
       <ProductPageLayout>
         <ProductErrorState
-          title={t('productCommon.productNotFound')}
-          message={t('productCommon.productNotFoundMessage')}
+          title={tCommon('productCommon.productNotFound')}
+          message={tCommon('productCommon.productNotFoundMessage')}
           backHref="/products"
-          backLabel={t('productCommon.backToProducts')}
+          backLabel={tCommon('productCommon.backToProducts')}
         />
       </ProductPageLayout>
     )
@@ -187,7 +187,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         {/* Back Button */}
         <BackButton
           href="/products"
-          label={t('productCommon.backToProducts')}
+          label={tCommon('productCommon.backToProducts')}
           className="mb-6"
         />
 
@@ -249,14 +249,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           {/* Right: Provider & Purchase Card (3 columns) */}
           <div className="lg:col-span-3">
             <div className="space-y-6">
-              <ProviderCardWithHandlers
-                provider={{
-                  ...product.provider,
-                  rating: product.rating?.value || 0,
-                  profession: t('provider.makeupArtist'),
-                }}
-              />
-              <OrderSummaryCard
+               <OrderSummaryCard
                 totalPrice={product.price.discounted * quantity}
                 currency={product.price.currency}
                 quantity={quantity}
@@ -268,6 +261,14 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 maxQuantity={product.stockQuantity || 99}
                 disabled={!product.inStock || isLoadingAddToCart}
               />
+              <ProviderCardWithHandlers
+                provider={{
+                  ...product.provider,
+                  rating: product.rating?.value || 0,
+                  profession: t('provider.makeupArtist'),
+                }}
+              />
+             
             </div>
           </div>
         </div>
@@ -513,18 +514,18 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         {relatedProducts.length > 0 && (
           <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-30 md:text-32 font-normal text-gray-900">
+              <h2 className="text-22 md:text-30 font-normal text-gray-900">
                 {tCommon('suggestedForYou')}
             </h2>
               <Link
                 href="/products"
-                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+                className="flex items-center gap-2 text-12 md:text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
               >
                 {tCommon('viewAll')}
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
               {relatedProducts.map(product => {
                 // Inline component to use hooks properly
                 const ProductCardItem = () => {

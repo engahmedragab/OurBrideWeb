@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { useCommunityHome } from '@/hooks/home/useHome'
 import {
@@ -39,7 +38,7 @@ import { useI18nTranslations } from '@/i18n'
 import { LoadingSpinner } from '@/components/ui'
 
 function CommunityContent() {
-  const t =useI18nTranslations("community")
+  const t =useI18nTranslations('community')
     const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
@@ -182,12 +181,12 @@ function CommunityContent() {
 
   // Determine loading state
   const isLoading = (activeTab === 'community' && isLoadingHome) ||
-    (activeTab === 'posts' && (isLoadingPosts || isLoadingSearch)) ||
-    (activeTab === 'articles' && (isLoadingArticles || isLoadingSearch)) ||
-    (activeTab === 'blogs' && (isLoadingBlogs || isLoadingSearch)) ||
-    (activeTab === 'reels' && (isLoadingReels || isLoadingSearch)) ||
-    (activeTab === 'decision-groups' && (isLoadingDecisionGroups || isLoadingSearch)) ||
-    (activeTab === 'contests' && (isLoadingContests || isLoadingSearch)) ||
+    (activeTab === 'posts' && isLoadingPosts) ||
+    (activeTab === 'articles' && isLoadingArticles) ||
+    (activeTab === 'blogs' && isLoadingBlogs) ||
+    (activeTab === 'reels' && isLoadingReels) ||
+    (activeTab === 'decision-groups' && isLoadingDecisionGroups) ||
+    (activeTab === 'contests' && isLoadingContests) ||
     (activeTab === 'profile' && false) // Profile tab redirects, so no loading needed
 
   // Handle search from sidebar
@@ -205,8 +204,8 @@ function CommunityContent() {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
-        <div className="fixed inset-0 z-50">
-              <LoadingOverlay open={true} />
+        <div className="flex-1">
+              <LoadingSpinner size='xl' fullScreen={true}  text={` ${tC('loading')} ${t(`tabs.${activeTab}`)} `} open={true} />
             </div>
         <Footer />
       </div>
@@ -449,7 +448,8 @@ export default function CommunityPage() {
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <LoadingOverlay
+            <LoadingSpinner
+              
               open={true}
               
             />

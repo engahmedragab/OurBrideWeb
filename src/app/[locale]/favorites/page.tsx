@@ -10,6 +10,7 @@ import {
   ErrorDisplay,
   LoadingOverlay,
   Button,
+  LoadingSpinner,
 } from '@/components/ui'
 import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
@@ -294,10 +295,10 @@ export default function FavoritesPage() {
           title={t('title')}
           rightContent={headerRightContent}
         />
-        <LoadingOverlay
+        <LoadingSpinner size="lg" fullScreen={true}
           open={true}
-          title={t('loading.title')}
-          subtitle={t('loading.subtitle')}
+          text={`${t('loading.title')} ${t('loading.subtitle')}`}
+          
         />
       </UserPageLayout>
     )
@@ -434,10 +435,10 @@ export default function FavoritesPage() {
       )}
 
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner size="lg" fullScreen={true}
         open={deleteFavoriteMutation.isPending || toggleServiceFavoriteMutation.isPending || toggleProductFavoriteMutation.isPending || toggleProviderFavoriteMutation.isPending}
-        title={t('updating.title')}
-        subtitle={t('updating.subtitle')}
+        text={`${t('updating.title')} ${t('updating.subtitle')}`}
+       
       />
     </UserPageLayout>
   )

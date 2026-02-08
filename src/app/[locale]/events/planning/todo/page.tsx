@@ -4,7 +4,7 @@ import React, { useMemo, useState, useCallback, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
 import { ChevronLeft, Save } from 'lucide-react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
-import { Button, LoadingOverlay } from '@/components/ui'
+import { Button, LoadingSpinner,   } from '@/components/ui'
 import { TodoLinesPanel } from '@/components/planning/todo/TodoLinesPanel'
 import { TodoListsSidebar } from '@/components/planning/todo/TodoListsSidebar'
 import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
@@ -379,7 +379,7 @@ function TodoPageContent() {
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner size="lg" fullScreen={true} open={true} text={loadingTitle}  />
       </div>
     )
   }
@@ -478,7 +478,7 @@ export default function TodoPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading todos..." />
+            <LoadingSpinner size="lg" fullScreen={true} open={true} text="Loading todos..." />
           </div>
         </div>
       }

@@ -25,6 +25,7 @@ const PAGE_SIZE = 10
 
 export default function NotificationsPage() {
   const t = useI18nTranslations('notifications')
+  const tCommon = useI18nTranslations('common')
   const [activeTab, setActiveTab] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [isMounted, setIsMounted] = useState(false)
@@ -213,6 +214,7 @@ export default function NotificationsPage() {
         <EmptyState
           illustration={messagesEmptySvg}
           title={t('empty.title')}
+          actionLabel={tCommon('startShopping')}
           description={
             activeTab === 'all'
               ? t('empty.description.all')

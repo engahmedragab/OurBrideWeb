@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout'
 import { PostDetailsClient } from './PostDetailsClient'
 import { useI18nTranslations } from '@/i18n'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { LoadingSpinner } from '@/components/ui'
 
 // Generate static params for static export
 export function generateStaticParams() {
@@ -25,7 +26,7 @@ export default function PostDetailsPage({
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <LoadingOverlay open={true} />
+            <LoadingSpinner open={true} />
           </main>
           <Footer />
         </div>

@@ -22,6 +22,7 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch cart data
@@ -57,11 +58,12 @@ export const useCartsWithProviders = (enabled = true) => {
  * Hook to fetch cart by provider ID
  */
 export const useCartByProvider = (providerId: number | null, enabled = true) => {
+  const t = useI18nTranslations('alert')
   return useQuery({
     queryKey: ['cart', 'provider', providerId],
     queryFn: async () => {
       if (!providerId) {
-        throw new Error('Provider ID is required')
+        throw new Error(t('providerIdRequired'))
       }
       const cart = await getCartByProvider(providerId)
       return cart
@@ -90,6 +92,7 @@ export const useCartProviders = (enabled = true) => {
  * Hook to update a purchase
  */
 export const useUpdatePurchase = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -112,13 +115,13 @@ export const useUpdatePurchase = () => {
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
-        'Cart updated successfully',
-        'Failed to update cart'
+        t('cartUpdatedSuccess'),
+        t('cartUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update cart'
+      const errorMessage = error instanceof Error ? error.message : t('cartUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -128,6 +131,7 @@ export const useUpdatePurchase = () => {
  * Hook to remove a purchase
  */
 export const useRemovePurchase = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -148,10 +152,10 @@ export const useRemovePurchase = () => {
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
       
       // Show success toast
-      addToast('Item removed from cart successfully', 'success')
+      addToast(t('itemRemovedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove item from cart'
+      const errorMessage = error instanceof Error ? error.message : t('itemRemovedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -161,6 +165,7 @@ export const useRemovePurchase = () => {
  * Hook to checkout
  */
 export const useCheckout = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -176,13 +181,13 @@ export const useCheckout = () => {
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
-        'Checkout completed successfully',
-        'Failed to complete checkout'
+        t('checkoutSuccess'),
+        t('checkoutError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to complete checkout'
+      const errorMessage = error instanceof Error ? error.message : t('checkoutError')
       addToast(errorMessage, 'error')
     },
   })
@@ -192,6 +197,7 @@ export const useCheckout = () => {
  * Hook to validate coupon code
  */
 export const useValidateCoupon = () => {
+  const t = useI18nTranslations('alert')
   const { addToast } = useToast()
 
   return useMutation({
@@ -201,13 +207,13 @@ export const useValidateCoupon = () => {
     onSuccess: (data) => {
       const { message, type } = handleApiResponseForToast(
         data,
-        'Coupon applied successfully',
-        'Invalid coupon code'
+       t('couponAppliedSuccess'),
+        t('couponInvalidError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to validate coupon'
+      const errorMessage = error instanceof Error ? error.message : t('couponValidateError')
       addToast(errorMessage, 'error')
     },
   })
@@ -217,6 +223,7 @@ export const useValidateCoupon = () => {
  * Hook to clear all items from cart
  */
 export const useClearCart = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -232,10 +239,10 @@ export const useClearCart = () => {
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
       
       // Show success toast
-      addToast('Cart cleared successfully', 'success')
+      addToast(t('cartClearedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to clear cart'
+      const errorMessage = error instanceof Error ? error.message : t('cartClearedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -245,6 +252,7 @@ export const useClearCart = () => {
  * Hook to add a product to cart
  */
 export const useAddToCart = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -276,13 +284,13 @@ export const useAddToCart = () => {
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
-        'Product added to cart successfully',
-        'Failed to add product to cart'
+        t('productAddedSuccess'),
+        t('productAddedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart'
+      const errorMessage = error instanceof Error ? error.message : t('productAddedError')
       addToast(errorMessage, 'error')
     },
   })

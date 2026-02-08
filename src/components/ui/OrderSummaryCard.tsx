@@ -52,7 +52,7 @@ export const OrderSummaryCard = ({
   return (
     <div
       className={cn(
-        'bg-white border border-gray-200 rounded-lg p-6 space-y-4 sticky top-6',
+        'bg-white border border-gray-200 rounded-lg p-6 md:p-4 space-y-4 md:space-y-3 md:static md:top-auto lg:sticky lg:top-6',
         className
       )}
     >

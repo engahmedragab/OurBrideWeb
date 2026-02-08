@@ -5,6 +5,7 @@ import {
 } from '@/services/api/products.api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to toggle product favorite
@@ -48,6 +49,7 @@ export const useToggleProductFavorite = () => {
  * Hook to toggle product wishlist
  */
 export const useToggleProductWishlist = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -71,13 +73,13 @@ export const useToggleProductWishlist = () => {
       
       const { message, type } = handleApiResponseForToast(
         response,
-        'Product wishlist toggled successfully',
-        'Failed to toggle product wishlist'
+        t('wishlistToggleSuccess'),
+        t('wishlistToggleError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle product wishlist'
+      const errorMessage = error instanceof Error ? error.message : t('wishlistToggleError')
       addToast(errorMessage, 'error')
     },
   })

@@ -47,7 +47,7 @@ export const ProductImageGallery = ({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
-      <div className="relative aspect-square md:aspect-[5/3] lg:aspect-square bg-gray-100 rounded-xl overflow-hidden group">
+      <div className="relative aspect-square md:aspect-[5/3] lg:aspect-square bg-gray-100 rounded-md border border-gray-400/40  overflow-hidden group">
 
         {validImages[selectedIndex] && !imageErrors.has(selectedIndex) ? (
           <Image
@@ -97,13 +97,13 @@ export const ProductImageGallery = ({
 
       {/* Thumbnail Gallery */}
       {validImages.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1">
           {validImages.map((image, index) => (
             <button
               key={index}
               onClick={() => setSelectedIndex(index)}
               className={cn(
-                'relative aspect-square rounded-lg overflow-hidden border-2 transition-all',
+                'relative h-14 w-14 md:h-16 md:w-16 shrink-0 rounded-md overflow-hidden border transition-all',
                 selectedIndex === index
                   ? 'border-brand-500 ring-2 ring-brand-200'
                   : 'border-gray-200 hover:border-gray-300'
@@ -114,7 +114,7 @@ export const ProductImageGallery = ({
                   src={image}
                   alt={`${productName} thumbnail ${index + 1}`}
                   fill
-                  sizes="(max-width: 768px) 25vw, 12vw"
+                  sizes="64px"
                   className="object-cover"
                   onError={() => setImageErrors(prev => new Set(prev).add(index))}
                 />

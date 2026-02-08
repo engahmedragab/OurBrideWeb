@@ -64,6 +64,7 @@ const mapProviderToFeatured = (provider: ProviderResponse): FeaturedProviderResp
 export const getProviderById = async (
   providerId: number
 ): Promise<ProviderResponse> => {
+  
   try {
     const response = await apiClient.api.getProviderGetById(providerId)
     const responseData = extractResponseData(response)

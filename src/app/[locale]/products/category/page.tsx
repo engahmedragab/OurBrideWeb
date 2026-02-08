@@ -69,14 +69,14 @@ function ProductsContent() {
   }, [t])
   // Read all filters from URL params on mount
   useEffect(() => {
-    const category = searchParams.get('category')
-    const subCategory = searchParams.get('subCategory')
-    const priceMin = searchParams.get('priceMin')
-    const priceMax = searchParams.get('priceMax')
-    const rating = searchParams.get('rating')
-    const inStock = searchParams.get('inStock')
-    const sort = searchParams.get('sort')
-    const search = searchParams.get('search')
+    const category = searchParams?.get('category')
+    const subCategory = searchParams?.get('subCategory')
+    const priceMin = searchParams?.get('priceMin')
+    const priceMax = searchParams?.get('priceMax')
+    const rating = searchParams?.get('rating')
+    const inStock = searchParams?.get('inStock')
+    const sort = searchParams?.get('sort')
+    const search = searchParams?.get('search')
 
     const newFilters: ProductFilter = {}
 
@@ -370,7 +370,7 @@ function ProductsContent() {
                   {filteredAndSortedProducts.length} {tCommon('productCommon.productsFound')}
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between w-full md:w-auto   md:justify-end gap-3">
                 <ProductSort
                   sortOptions={PRODUCT_SORT_OPTIONS}
                   currentSort={sortBy}
@@ -447,7 +447,7 @@ function ProductsContent() {
                 t('categoryBanner.description'),
               variant: 'newsletter',
               ctaText: t('categoryBanner.ctaText'),
-              productImage: isRTL ? flowersImageRight : flowersImage,
+              productImage: flowersImage,
             },
           ]}
           onSubscribe={_email => {
