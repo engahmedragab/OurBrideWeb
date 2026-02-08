@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense, useMemo } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -37,12 +37,14 @@ import { CommunityHomeFeed } from '@/components/community/CommunityHomeFeed'
 import { useI18nTranslations } from '@/i18n'
 import { LoadingSpinner } from '@/components/ui'
 
+const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
+
 function CommunityContent() {
-  const t =useI18nTranslations('community')
-    const router = useRouter()
+  const t = useI18nTranslations('community')
+  const tCommon = useI18nTranslations('common')
+  const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
-  const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
   const [activeTab, setActiveTab] = useState<CommunityTab>(
     (tabParam && validTabs.includes(tabParam as CommunityTab))
       ? (tabParam as CommunityTab)
@@ -114,32 +116,32 @@ function CommunityContent() {
   }, [searchQuery])
 
   // Search hooks - only enabled when there's a debounced search query
-  const { data: searchPostsData, isLoading: isLoadingPostsSearch } = usePostsSearch({
+  const { data: searchPostsData } = usePostsSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'posts' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
-  const { data: searchArticlesData, isLoading: isLoadingArticlesSearch } = useArticlesSearch({
+  const { data: searchArticlesData } = useArticlesSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'articles' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
-  const { data: searchBlogsData, isLoading: isLoadingBlogsSearch } = useBlogsSearch({
+  const { data: searchBlogsData } = useBlogsSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'blogs' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
-  const { data: searchReelsData, isLoading: isLoadingReelsSearch } = useReelsSearch({
+  const { data: searchReelsData } = useReelsSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'reels' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
-  const { data: searchDecisionGroupsData, isLoading: isLoadingDecisionGroupsSearch } = useDecisionGroupsSearch({
+  const { data: searchDecisionGroupsData } = useDecisionGroupsSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'decision-groups' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
-  const { data: searchContestsData, isLoading: isLoadingContestsSearch } = useContestsSearch({
+  const { data: searchContestsData } = useContestsSearch({
     searchTerm: debouncedSearchQuery,
     enabled: activeTab === 'contests' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
@@ -151,14 +153,6 @@ function CommunityContent() {
   const displayReels = debouncedSearchQuery ? searchReelsData : reels
   const displayDecisionGroups = debouncedSearchQuery ? searchDecisionGroupsData : decisionGroups
   const displayContests = debouncedSearchQuery ? searchContestsData : contests
-
-  // Determine loading state including search
-  const isLoadingSearch = (activeTab === 'posts' && isLoadingPostsSearch) ||
-    (activeTab === 'articles' && isLoadingArticlesSearch) ||
-    (activeTab === 'blogs' && isLoadingBlogsSearch) ||
-    (activeTab === 'reels' && isLoadingReelsSearch) ||
-    (activeTab === 'decision-groups' && isLoadingDecisionGroupsSearch) ||
-    (activeTab === 'contests' && isLoadingContestsSearch)
 
   useEffect(() => {
     if (tabParam && validTabs.includes(tabParam as CommunityTab)) {
@@ -205,7 +199,7 @@ function CommunityContent() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <div className="flex-1">
-              <LoadingSpinner size='xl' fullScreen={true}  text={` ${tC('loading')} ${t(`tabs.${activeTab}`)} `} open={true} />
+              <LoadingSpinner size='xl' fullScreen={true} text={`${tCommon('loading')} ${t(`tabs.${activeTab}`)}`} open={true} />
             </div>
         <Footer />
       </div>
