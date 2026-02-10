@@ -260,7 +260,7 @@ export function TopMembersSection({
                 className="text-10 lg:text-12 font-medium text-brand-500 hover:text-brand-600 flex items-center gap-0.5 sm:gap-1 flex-shrink-0"
               >
                 <span>View Profile</span>
-                <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 rtl:rotate-180" />
               </Link>
             </div>
           )

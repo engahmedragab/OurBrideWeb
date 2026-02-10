@@ -160,15 +160,17 @@ export default function AddressesPage() {
             : undefined
         }
         rightContent={
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleAddAddress}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            {t('addAddress')}
-          </Button>
+          addresses.length > 0 ? (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleAddAddress}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('addAddress')}
+            </Button>
+          ) : null
         }
       />
 
@@ -179,6 +181,7 @@ export default function AddressesPage() {
           title={t('emptyTitle')}
           description={t('emptyDescription')}
           actionLabel={t('addAddress')}
+          actionHref=""
           onAction={handleAddAddress}
         />
       ) : (

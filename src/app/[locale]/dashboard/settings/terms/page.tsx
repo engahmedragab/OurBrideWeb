@@ -56,7 +56,7 @@ export default function TermsPage() {
   return (
     <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Page Header with Back Button */}
-      <div className={cn("mb-6 flex items-center gap-2", isRTL && "flex-row-reverse")}>
+      <div className={cn("mb-6 flex items-center gap-2")}>
         <button
           onClick={handleBack}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"

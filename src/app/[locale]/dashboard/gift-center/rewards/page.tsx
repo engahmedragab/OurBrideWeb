@@ -4,6 +4,8 @@ import { ChevronLeft } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
 import { RewardTierCard, ReceivedRewardCard } from '@/components/gift-center'
 import type { RankType } from '@/components/gift-center'
+import { useIsRTL } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 /**
  * Mock data for reward tiers
@@ -94,6 +96,7 @@ const receivedRewards: Array<{
  */
 export default function RewardsPage() {
   const router = useRouter()
+  const isRTL = useIsRTL()
 
   return (
     <div className="w-full">
@@ -104,7 +107,7 @@ export default function RewardsPage() {
           className="flex items-center justify-center relative rounded-full shrink-0 size-10"
           aria-label="Go back"
         >
-          <ChevronLeft className="h-5 w-5 text-brand-500" />
+          <ChevronLeft className={cn('h-5 w-5 text-brand-500', isRTL && 'rotate-180')} />
         </button>
         <h1 className="text-20 font-normal text-black">Rewards</h1>
       </div>
