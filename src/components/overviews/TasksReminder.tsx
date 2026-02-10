@@ -87,7 +87,7 @@ export const TasksReminder = ({ book, onInit, onNavigate }: TasksReminderProps) 
                 <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                   <p
                     className={cn(
-                      'text-13 font-semibold',
+                      'text-13 font-semibold text-left rtl:text-right',
                       line.isDone ? 'line-through text-gray-400' : 'text-gray-900'
                     )}
                   >
@@ -95,7 +95,7 @@ export const TasksReminder = ({ book, onInit, onNavigate }: TasksReminderProps) 
                   </p>
 
                   {dueDate && dueDate !== '0001-01-01T00:00:00' && (
-                    <p className="text-11 text-gray-500">
+                    <p className="text-11 text-gray-500 text-left rtl:text-right">
                       {format(new Date(dueDate), 'dd MMM, yyyy')}
                     </p>
                   )}

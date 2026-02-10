@@ -71,7 +71,7 @@ export const EmptyState = ({
       )}
 
       {/* Primary Message */}
-      <h2 className="text-24 font-semibold text-gray-900 mb-3">{title}</h2>
+      <h2 className="text-24 font-semibold text-gray-900 mb-3 text-center">{title}</h2>
 
       {/* Secondary Message */}
       <p className="text-16 text-gray-600 mb-8 text-center max-w-md">

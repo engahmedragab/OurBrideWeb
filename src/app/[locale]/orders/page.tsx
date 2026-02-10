@@ -512,7 +512,7 @@ export default function OrdersPage() {
                       variant="outline"
                     />
                   )}
-                  {ordersInProgress.length > 0 && (
+                  {/* {ordersInProgress.length > 0 && (
                     <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
                       <Button
                         variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -533,7 +533,7 @@ export default function OrdersPage() {
                         <List className="h-4 w-4" />
                       </Button>
                     </div>
-                  )}
+                  )} */}
                 </div>
               }
             />

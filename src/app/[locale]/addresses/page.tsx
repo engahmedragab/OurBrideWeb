@@ -112,6 +112,7 @@ export default function AddressesPage() {
           }
         />
         <LoadingSpinner
+        fullScreen={true} size="xl"
           open={true}
           text={`${t('loadingTitle')} ${t('loadingSubtitle')}`}
       

@@ -35,23 +35,19 @@ export const Pagination = ({
         pages.push(i)
       }
     } else {
+      // Always show first and last page, and a moving window in between
+      const windowSize = Math.max(1, maxVisiblePages - 2)
+      let startPage = Math.max(2, currentPage - Math.floor(windowSize / 2))
+      let endPage = startPage + windowSize - 1
+
+      if (endPage > totalPages - 1) {
+        endPage = totalPages - 1
+        startPage = Math.max(2, endPage - windowSize + 1)
+      }
+
       // Always show first page
       pages.push(1)
 
-      let startPage = Math.max(2, currentPage - halfVisible)
-      let endPage = Math.min(totalPages - 1, currentPage + halfVisible)
-
-      // Adjust if we're near the start
-      if (currentPage <= halfVisible + 1) {
-        endPage = Math.min(totalPages - 1, maxVisiblePages)
-      }
-
-      // Adjust if we're near the end
-      if (currentPage >= totalPages - halfVisible) {
-        startPage = Math.max(2, totalPages - maxVisiblePages + 1)
-      }
-
-      // Add ellipsis after first page if needed
       if (startPage > 2) {
         pages.push('ellipsis-start')
       }
@@ -67,9 +63,7 @@ export const Pagination = ({
       }
 
       // Always show last page
-      if (totalPages > 1) {
-        pages.push(totalPages)
-      }
+      pages.push(totalPages)
     }
 
     return pages
@@ -98,7 +92,7 @@ export const Pagination = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-center gap-2 relative z-10 pointer-events-auto',
+        'flex items-center justify-center gap-1.5 sm:gap-2 relative z-10 pointer-events-auto',
         className
       )}
     >
@@ -106,7 +100,7 @@ export const Pagination = ({
       <Button
         variant="default"
         size="icon"
-        className="h-10 w-10 rounded-lg bg-brand-500 hover:bg-brand-600 text-white border-0 relative z-10"
+        className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-brand-500 hover:bg-brand-600 text-white border-0 relative z-10"
         onClick={handlePrevious}
         disabled={currentPage === 1}
         aria-label="Previous page"
@@ -116,13 +110,13 @@ export const Pagination = ({
       </Button>
 
       {/* Page Numbers */}
-      <div className="flex items-center gap-1 relative z-10">
+      <div className="flex items-center gap-1 sm:gap-1.5 relative z-10 min-w-[140px] sm:min-w-[160px] justify-center">
         {pageNumbers.map((page, index) => {
           if (page === 'ellipsis-start' || page === 'ellipsis-end') {
             return (
               <button
                 key={`ellipsis-${index}`}
-                className="h-10 min-w-10 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center justify-center relative z-10"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg border border-gray-300 bg-white text-gray-700 flex items-center justify-center relative z-10 text-14 sm:text-16"
                 disabled
                 aria-label="More pages"
                 type="button"
@@ -140,9 +134,9 @@ export const Pagination = ({
               key={pageNumber}
               variant="outline"
               className={cn(
-                'h-10 min-w-10 rounded-lg bg-white text-gray-900 relative z-10',
+                'h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-white text-gray-900 relative z-10 text-14 sm:text-16',
                 isActive
-                  ? 'border-brand-500 hover:border-brand-600'
+                  ? 'border-brand-500 hover:border-brand-600 bg-brand-50'
                   : 'border-gray-300 hover:border-gray-400'
               )}
               onClick={e => handlePageClick(pageNumber, e)}
@@ -160,7 +154,7 @@ export const Pagination = ({
       <Button
         variant="default"
         size="icon"
-        className="h-10 w-10 rounded-lg bg-brand-500 hover:bg-brand-600 text-white border-0 relative z-10"
+        className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-brand-500 hover:bg-brand-600 text-white border-0 relative z-10"
         onClick={handleNext}
         disabled={currentPage === totalPages}
         aria-label="Next page"

@@ -449,27 +449,32 @@ function ItemsPageContent() {
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="w-full overflow-x-hidden">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-1">
           <Link
             href="/dashboard/my-events"
             className="inline-flex h-9 w-9 items-center justify-center"
             aria-label="Back to My Events"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
+            <ChevronLeft
+              className={cn(
+                'w-5 h-5 text-gray-700',
+                isRtl ? 'rotate-180' : 'rotate-0'
+              )}
+            />
           </Link>
           <h1 className="text-xl font-semibold text-gray-900">{t('title')}</h1>
         </div>
 
         {(hasUnsavedChanges || syncMutation.isPending) && (
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Button
               variant="brand"
               size="md"
               onClick={handleSync}
               disabled={syncMutation.isPending || !localItemBook || isLoading}
-              className="flex items-center gap-2 rounded-xl !text-white"
+              className="flex items-center gap-2 rounded-xl !text-white w-full sm:w-auto"
               type="button"
             >
               <Save className="h-4 w-4" />
@@ -483,8 +488,9 @@ function ItemsPageContent() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <ItemLinesPanel
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_320px] lg:items-start">
+        <div className="min-w-0">
+          <ItemLinesPanel
           categoryName={ isRtl ? (selectedCategory?.nameAr || t('lists.untitled')) : (selectedCategory?.nameEn || t('lists.untitled'))}
           stats={stats}
           items={visibleItems}
@@ -492,17 +498,20 @@ function ItemsPageContent() {
           onDeleteItem={handleDeleteItem}
           onAddNewLine={handleAddNewLine}
           onEditItem={handleEditItem}
-        />
+          />
+        </div>
 
-        <ItemListsSidebar
-          title={t('lists.yourLists')}
-          actionLabel={t('actions.addNew')}
-          onAction={handleAddNewList}
-          categories={categories}
-          selectedCategoryId={selectedCategoryId || 0}
-          onSelectCategory={setSelectedCategoryId}
-          onDeleteCategory={handleDeleteList}
-        />
+        <div className="min-w-0">
+          <ItemListsSidebar
+            title={t('lists.yourLists')}
+            actionLabel={t('actions.addNew')}
+            onAction={handleAddNewList}
+            categories={categories}
+            selectedCategoryId={selectedCategoryId || 0}
+            onSelectCategory={setSelectedCategoryId}
+            onDeleteCategory={handleDeleteList}
+          />
+        </div>
       </div>
 
       <CreateItemListModal

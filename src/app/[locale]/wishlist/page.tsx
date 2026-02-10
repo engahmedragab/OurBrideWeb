@@ -34,7 +34,7 @@ import { useLocale, useI18nTranslations } from '@/i18n'
 export default function WishlistPage() {
   const locale = useLocale()
   const t = useI18nTranslations('wishlist')
-  const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
+  const [wishlistType, setWishlistType] = useState<'services' | 'products'>('products')
 
   // Fetch wishlists using WishlistResponse from API
   const {
@@ -260,7 +260,7 @@ export default function WishlistPage() {
           title={t('title')}
           rightContent={headerRightContent}
         />
-        <LoadingSpinner size="lg" fullScreen={true}
+        <LoadingSpinner size="xl" fullScreen={true}
         
           open={true}
           text={`${t('loading.title')} ${t('loading.subtitle')}`}
@@ -401,7 +401,7 @@ export default function WishlistPage() {
       )}
 
       {/* Loading Overlay for Mutations */}
-      <LoadingSpinner size="lg"  fullScreen={true}
+      <LoadingSpinner size="xl"  fullScreen={true}
         open={deleteWishlistMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFavoriteMutation.isPending}
         text={`${t('updating.title')} ${t('updating.subtitle')}`}
      

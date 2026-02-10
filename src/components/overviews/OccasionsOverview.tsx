@@ -131,7 +131,7 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
                     ) : null}
                   </div>
 
-                  <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 rtl:rotate-180" />
                 </button>
               )
             })}

@@ -409,7 +409,7 @@ export const AddressModal = ({ isOpen, onClose, address, onSuccess }: AddressMod
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+        <div className="flex gap-3 pt-4 border-t border-gray-200">
           <Button
             variant="outline"
             onClick={onClose}

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatDateSafe, isSameDay, getToday } from '@/lib/date-utils'
+import { useIsRTL } from '@/i18n/hooks'
 
 export type PlanningMiniCalendarValue = Date | string
 
@@ -124,6 +125,7 @@ export const PlanningMiniCalendar = ({
   bigDay,
   className,
 }: PlanningMiniCalendarProps) => {
+  const isRtl = useIsRTL()
   const selectedDate = valueToDate(value)
   const today = getToday()
   
@@ -317,7 +319,12 @@ export const PlanningMiniCalendar = ({
           className="flex items-center justify-center size-4 hover:opacity-70 transition-opacity flex-shrink-0"
           aria-label="Previous month"
         >
-          <ChevronDown className="size-4 text-gray-500 rotate-90" />
+          <ChevronDown
+            className={cn(
+              'size-4 text-gray-500',
+              isRtl ? '-rotate-90' : 'rotate-90'
+            )}
+          />
         </button>
 
         {/* Month Dropdown */}
@@ -389,7 +396,12 @@ export const PlanningMiniCalendar = ({
           className="flex items-center justify-center size-4 hover:opacity-70 transition-opacity flex-shrink-0"
           aria-label="Next month"
         >
-          <ChevronDown className="size-4 text-gray-500 -rotate-90" />
+          <ChevronDown
+            className={cn(
+              'size-4 text-gray-500',
+              isRtl ? 'rotate-90' : '-rotate-90'
+            )}
+          />
         </button>
       </div>
 

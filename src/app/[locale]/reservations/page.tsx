@@ -149,7 +149,7 @@ export default function ReservationsPage() {
     return (
       <UserPageLayout>
         <PageHeader title={t('page.title')} />
-        <LoadingSpinner fullScreen={true} size="lg" text={`${t('loading.title')} ${t('loading.subtitle')}`} />
+        <LoadingSpinner fullScreen={true} size="xl" text={`${t('loading.title')} ${t('loading.subtitle')}`} />
       </UserPageLayout>
     )
   }
@@ -172,7 +172,7 @@ export default function ReservationsPage() {
   return (
     <UserPageLayout>
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 sm:gap-4 ">
         <PageHeader
           title={t('page.title')}
           subtitle={
@@ -259,6 +259,7 @@ export default function ReservationsPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingSpinner
+      fullScreen={true} size='xl'
         open={cancelReservationMutation.isPending}
         text={t('details.mutation.cancelling.title')}
        

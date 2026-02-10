@@ -23,12 +23,14 @@ import type { NoteLineResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { BookClass, UserType as LocalUserType } from '@/types/responses/book-enums'
-import { useI18nTranslations } from '@/i18n' // ✅ add
+import { useI18nTranslations, useIsRTL } from '@/i18n' // ✅ add
+import { cn } from '@/lib'
 
 function NotesPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const eventId = useEventId()
+  const isRtl = useIsRTL()
 
   // ✅ translations
   const t = useI18nTranslations('eventsPlanning.notes')
@@ -351,33 +353,33 @@ function NotesPageContent() {
         : t('loading.loadingSubtitle')
 
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner text={`${loadingTitle} ${loadingSubtitle}`}/>
+      <div className="flex items-center justify-center">
+        <LoadingSpinner fullScreen={true} size='xl' text={`${loadingTitle} ${loadingSubtitle}`}/>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => router.back()} className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className={cn('h-4 w-4', isRtl ? 'rotate-180' : 'rotate-0')} />
             </Button>
 
             <h1 className="text-24 font-semibold text-gray-900">{t('page.title')}</h1>
           </div>
 
           {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
-            <div className="flex items-center gap-3">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <Button
                 variant="brand"
                 size="md"
                 onClick={handleSync}
                 disabled={!hasUnsavedChanges || syncDeltaMutation.isPending}
-                className="flex items-center gap-2 rounded-xl !text-white"
+                className="flex items-center gap-2 rounded-xl !text-white w-full sm:w-auto"
                 type="button"
               >
                 <Save className="h-4 w-4" />

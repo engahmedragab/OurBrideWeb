@@ -18,6 +18,7 @@ import { getServiceIcon, getServiceIconByClass, getServiceClassName } from '@/ut
 import { preparationLineSchema, type PreparationLineFormValues } from '@/schema/preparations.schema'
 import { Sparkles } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useIsRTL } from '@/i18n/hooks'
 
 export interface ServiceModalFormData {
   completed: boolean
@@ -63,6 +64,7 @@ export const ServiceModal = ({
   onClose,
   onSave,
 }: ServiceModalProps) => {
+  const isRtl = useIsRTL()
   // Fetch services from API
   const { data: services = [], isLoading: isLoadingServices } = usePreparations({
     enabled: open, // Only fetch when modal is open
@@ -298,7 +300,10 @@ export const ServiceModal = ({
       headerClassName="hidden"
       contentClassName="p-0"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={cn('p-4 sm:p-6 space-y-4', isRtl ? 'text-right' : 'text-left')}
+      >
         {/* Top Section: Icon + Title */}
         <div className="flex flex-col items-center space-y-2">
           {/* Icon in soft circle - Always show Sparkles by default */}
@@ -342,7 +347,7 @@ export const ServiceModal = ({
         )}
 
         {/* Header Row: Completed + Service Type */}
-        <div className="flex items-center justify-between gap-4">
+        <div className={cn('flex flex-wrap items-center gap-4', isRtl ? 'justify-between' : 'justify-between')}>
           <div className="flex items-center gap-2">
             {mode === 'view' ? (
               <div className="flex items-center gap-2">
@@ -408,7 +413,7 @@ export const ServiceModal = ({
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-xl border border-gray-200/50 shadow-sm p-6 space-y-3">
+        <div className="bg-white rounded-xl border border-gray-200/50 shadow-sm p-4 sm:p-6 space-y-3">
           {/* Title Input */}
           <div>
             <label
@@ -462,7 +467,7 @@ export const ServiceModal = ({
           </div>
 
           {/* Cost Section: Left Inputs + Right Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Left Column: Cost & Advance */}
             <div className="space-y-4">
               <div>
@@ -585,11 +590,16 @@ export const ServiceModal = ({
         </div>
 
         {/* Footer Buttons */}
-        <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
-          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+        <div
+          className={cn(
+            'flex flex-col-reverse gap-3 pt-4 border-t border-gray-200 sm:flex-row sm:justify-end',
+            isRtl && 'sm:flex-row-reverse'
+          )}
+        >
+          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="w-full sm:w-auto">
             Cancel
           </Button>
-          <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting}>
+          <Button type="submit" variant="brand" className="text-white w-full sm:w-auto" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
         </div>
