@@ -108,7 +108,27 @@
       "removeCategory": "إزالة الفئة",
       "removeStockFilter": "إزالة فلتر التوفر",
       "removeRating": "إزالة فلتر التقييم"
-    }
+    },
+    
+  "errorModalTitle": "فشل التحميل",
+  "errorModalMessage": "حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.",
+  "retry": "إعادة المحاولة",
+  "close": "إغلاق",
+  "closeModalAriaLabel": "إغلاق النافذة",
+  "errorAlt": "خطأ",
+  
+  "errorDisplayTitle": "عذرًا! حدث خطأ ما",
+  "errorDisplayMessage": "يرجى المحاولة مرة أخرى لاحقًا",
+  "errorDisplayAction": "العودة إلى الصفحة الرئيسية",
+  "somethingWentWrongAlt": "حدث خطأ ما",
+  
+  "back": "رجوع",
+  "goBackAriaLabel": "العودة للخلف"
+  },
+   "blockUser": {
+    "defaultUserName": "هذا المستخدم",
+    "blockUserAlt": "حظر المستخدم",
+    "successAlt": "نجاح"
   },
   "alert": {
     "wishlistToggleSuccess": "تم تحديث المنتج في قائمة المفضلة بنجاح",

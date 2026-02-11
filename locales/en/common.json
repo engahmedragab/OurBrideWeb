@@ -108,7 +108,26 @@
       "removeCategory": "Remove category",
       "removeStockFilter": "Remove stock filter",
       "removeRating": "Remove rating filter"
-    }
+    },
+  "errorModalTitle": "Failed to Load",
+  "errorModalMessage": "Something went wrong. Please try again later.",
+  "retry": "Retry",
+  "close": "Close",
+  "closeModalAriaLabel": "Close modal",
+  "errorAlt": "Error",
+  
+  "errorDisplayTitle": "Oops! Something went wrong",
+  "errorDisplayMessage": "Please try again later",
+  "errorDisplayAction": "Back to Home",
+  "somethingWentWrongAlt": "Something went wrong",
+  
+  "back": "Back",
+  "goBackAriaLabel": "Go back"
+  },
+  "blockUser": {
+    "defaultUserName": "this user",
+    "blockUserAlt": "Block User",
+    "successAlt": "Success"
   },
   "alert": {
     "wishlistToggleSuccess": "Product wishlist toggled successfully",

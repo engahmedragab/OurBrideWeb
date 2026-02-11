@@ -6,6 +6,7 @@ import { ArrowLeft, ChevronLeft } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
 import { useIsRTL } from '@/i18n/hooks'
+import { useI18nTranslations } from '@/i18n'
 
 export interface BackButtonProps {
   href?: string
@@ -22,12 +23,16 @@ export interface BackButtonProps {
 export const BackButton = ({
   href,
   onClick,
-  label = 'Back',
+  label,
   variant = 'link',
   className,
 }: BackButtonProps) => {
   const router = useRouter()
   const isRTL = useIsRTL()
+  const t = useI18nTranslations('common')
+
+  const resolvedLabel = label ?? t('back')
+
   const handleClick = () => {
     if (onClick) {
       onClick()
@@ -46,9 +51,14 @@ export const BackButton = ({
           'flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors',
           className
         )}
-        aria-label="Go back"
+        aria-label={t('goBackAriaLabel')}
       >
-        <ChevronLeft className= {cn("h-6 w-6 text-gray-600", isRTL ? "rotate-180" : "rotate-0")} />
+        <ChevronLeft
+          className={cn(
+            'h-6 w-6 text-gray-600',
+            isRTL ? 'rotate-180' : 'rotate-0'
+          )}
+        />
       </button>
     )
   }
@@ -62,8 +72,10 @@ export const BackButton = ({
           className
         )}
       >
-        <ArrowLeft className={cn("h-5 w-5", isRTL && "scale-x-[-1]")} />
-        {label && <span className="text-14 font-medium">{label}</span>}
+        <ArrowLeft className={cn('h-5 w-5', isRTL && 'scale-x-[-1]')} />
+        {resolvedLabel && (
+          <span className="text-14 font-medium">{resolvedLabel}</span>
+        )}
       </button>
     )
   }
@@ -78,8 +90,13 @@ export const BackButton = ({
           className
         )}
       >
-              <ArrowLeft className= {cn("h-5 w-5", isRTL ? "!rotate-180" : "!rotate-0")} />
-        {label}
+        <ArrowLeft
+          className={cn(
+            'h-5 w-5',
+            isRTL ? '!rotate-180' : '!rotate-0'
+          )}
+        />
+        {resolvedLabel}
       </Link>
     )
   }
@@ -92,9 +109,8 @@ export const BackButton = ({
         className
       )}
     >
-      <ArrowLeft className={cn("h-4 w-4", isRTL && "scale-x-[-1]")} />
-      {label}
+      <ArrowLeft className={cn('h-4 w-4', isRTL && 'scale-x-[-1]')} />
+      {resolvedLabel}
     </button>
   )
 }
-

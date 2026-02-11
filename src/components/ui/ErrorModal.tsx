@@ -26,17 +26,18 @@ export interface ErrorModalProps {
  */
 export const ErrorModal = ({
   open,
-  title = 'Failed to Load',
-  message = 'Something went wrong. Please try again later.',
-  retryLabel = 'Retry',
-  closeLabel = 'Close',
+  title,
+  message,
+  retryLabel,
+  closeLabel,
   onRetry,
   onClose,
   className,
   containerClassName,
   showRetry = true,
 }: ErrorModalProps) => {
- 
+  const t = useI18nTranslations('common')
+
   if (!open) return null
 
   const handleRetry = () => {
@@ -52,10 +53,7 @@ export const ErrorModal = ({
 
   return (
     <div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center p-4',
-        className
-      )}
+      className={cn('fixed inset-0 z-50 flex items-center justify-center p-4', className)}
       onClick={handleOverlayClick}
     >
       {/* Dark blurred overlay */}
@@ -75,7 +73,7 @@ export const ErrorModal = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label="Close modal"
+          aria-label={t('closeModalAriaLabel')}
         >
           <X className="h-5 w-5" />
         </button>
@@ -85,12 +83,8 @@ export const ErrorModal = ({
           {/* Error icon */}
           <div className="flex items-center justify-center mb-4">
             <Image
-              src={
-                typeof somethingWrongSvg === 'string'
-                  ? somethingWrongSvg
-                  : somethingWrongSvg.src
-              }
-              alt="Error"
+              src={typeof somethingWrongSvg === 'string' ? somethingWrongSvg : somethingWrongSvg.src}
+              alt={t('errorAlt')}
               width={64}
               height={64}
               className="h-16 w-16"
@@ -99,13 +93,13 @@ export const ErrorModal = ({
 
           {/* Title */}
           <h2 className="text-16 font-semibold text-gray-900 mb-2 text-center">
-            {title}
+            {title ?? t('errorModalTitle')}
           </h2>
 
           {/* Message */}
-          {message && (
+          {(message ?? t('errorModalMessage')) && (
             <p className="text-14 text-gray-500 mb-6 text-center">
-              {message}
+              {message ?? t('errorModalMessage')}
             </p>
           )}
 
@@ -118,7 +112,7 @@ export const ErrorModal = ({
                 className="flex-1 text-white"
                 onClick={handleRetry}
               >
-                {retryLabel}
+                {retryLabel ?? t('retry')}
               </Button>
             )}
             <Button
@@ -127,7 +121,7 @@ export const ErrorModal = ({
               className={showRetry ? 'flex-1' : 'w-full'}
               onClick={onClose}
             >
-              {closeLabel}
+              {closeLabel ?? t('close')}
             </Button>
           </div>
         </div>
@@ -135,6 +129,3 @@ export const ErrorModal = ({
     </div>
   )
 }
-
-
-

@@ -25,10 +25,12 @@ export const BlockUserModal = ({
   onClose,
   onConfirm,
   onReport,
-  userName = 'this user',
+  userName,
 }: BlockUserModalProps) => {
   const t = useI18nTranslations('messages')
   const [step, setStep] = useState<'confirm' | 'success'>('confirm')
+
+  const resolvedUserName = userName ?? t('blockUser.defaultUserName')
 
   const handleClose = () => {
     setStep('confirm')
@@ -64,7 +66,7 @@ export const BlockUserModal = ({
           <div className="flex items-center justify-center mt-2">
             <Image
               src={deleteXIcon}
-              alt="Block User"
+              alt={t('blockUser.blockUserAlt')}
               width={120}
               height={120}
               className="w-20 h-20"
@@ -74,7 +76,7 @@ export const BlockUserModal = ({
           {/* Content */}
           <div className="flex flex-col items-center gap-3 text-center w-full">
             <h3 className="text-16 font-semibold text-gray-900 leading-tight">
-              {t('blockUser.confirmTitle', { userName })}
+              {t('blockUser.confirmTitle', { userName: resolvedUserName })}
             </h3>
             <p className="text-14 font-normal text-gray-400 leading-relaxed">
               {t('blockUser.confirmDescription')}
@@ -107,7 +109,7 @@ export const BlockUserModal = ({
           <div className="flex items-center justify-center mt-2">
             <Image
               src={successCheck}
-              alt="Success"
+              alt={t('blockUser.successAlt')}
               width={120}
               height={120}
               className="w-20 h-20"
@@ -148,4 +150,3 @@ export const BlockUserModal = ({
     </Modal>
   )
 }
-
