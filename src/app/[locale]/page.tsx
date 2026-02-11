@@ -604,7 +604,7 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-1 md:p-2">
+                <div className=" p-4 lg:p-3">
                   <Button
                     variant="outlineBrand"
                     size="sm"
@@ -641,7 +641,7 @@ export default function Home() {
                     style={{ objectPosition: 'center 16%' }}
                   />
                 </div>
-                <div className="p-1 md:p-2 space-y-2">
+                <div className="p-4 lg:p-3 space-y-2">
                   <Button
                     variant="outlineBrand"
                     size="sm"
@@ -1141,7 +1141,7 @@ export default function Home() {
         )}
 
         {/* Section 10: Wedding Journey */}
-        <section className="relative py-8 md:py-12 overflow-hidden min-h-[700px] md:min-h-[800px] lg:min-h-[900px]">
+        <section className="relative py-8 md:py-12 overflow-hidden min-h-[700px]  lg:min-h-[900px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
