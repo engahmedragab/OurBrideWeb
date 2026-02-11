@@ -3,6 +3,7 @@ import { initEventBooks } from '@/services/api/eventBooksApi'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface UseInitEventBooksParams {
   clientId?: string
@@ -14,6 +15,7 @@ export interface UseInitEventBooksParams {
  * Hook to initialize event books
  */
 export const useInitEventBooks = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -22,18 +24,18 @@ export const useInitEventBooks = () => {
     onSuccess: (response) => {
       // Invalidate event books query to refetch after initialization
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Event books initialized successfully',
-        'Failed to initialize event books'
+        t('eventBooksInitSuccess'),
+        t('eventBooksInitError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize event books'
+      const errorMessage =
+        error instanceof Error ? error.message : t('eventBooksInitError')
       addToast(errorMessage, 'error')
     },
   })
 }
-

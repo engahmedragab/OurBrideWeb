@@ -1,16 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  getOrders,
-  getClientOrders,
-  getOrdersByStatus,
-  cancelOrder,
-} from '@/services/api/orderApi'
+import { getOrders, getClientOrders, getOrdersByStatus, cancelOrder } from '@/services/api/orderApi'
 import type { OrderResponse, PaginatedList } from '@/types/responses'
 import { searchOrders as searchPurchaseOrders } from '@/services/api/purchaseApi'
 import type { ServiceOrderResponse } from '@/types/responses'
 import type { ServiceOrderSearchRequest } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch orders
@@ -107,6 +103,7 @@ export const useServiceOrders = (params?: {
  * Hook to cancel an order
  */
 export const useCancelOrder = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -119,17 +116,18 @@ export const useCancelOrder = () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['client-orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders-by-status'] })
-      
+
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
-        'Order cancelled successfully',
-        'Failed to cancel order'
+        t('orderCancelledSuccess'),
+        t('orderCancelledError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order'
+      const errorMessage =
+        error instanceof Error ? error.message : t('orderCancelledError')
       addToast(errorMessage, 'error')
     },
   })

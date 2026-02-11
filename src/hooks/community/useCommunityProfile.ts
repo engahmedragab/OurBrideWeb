@@ -18,6 +18,8 @@ import type { CommunityProfileResponse } from '@/types/responses/community'
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
+
 
 /**
  * Hook to fetch user profile
@@ -108,6 +110,7 @@ export const useCommunityProfile = (
  * Hook to toggle like on a profile
  */
 export const useToggleProfileLike = () => {
+  const t = useI18nTranslations('alert.profile')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -124,16 +127,17 @@ export const useToggleProfileLike = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Like toggled successfully',
-        'Failed to toggle like'
+        t('likeToggleSuccess'),
+        t('likeToggleError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle like'
+      const errorMessage =
+        error instanceof Error ? error.message : t('likeToggleError')
       addToast(errorMessage, 'error')
     },
   })
@@ -143,6 +147,7 @@ export const useToggleProfileLike = () => {
  * Hook to toggle follow on a profile
  */
 export const useToggleProfileFollow = () => {
+  const t = useI18nTranslations('alert.profile')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -159,16 +164,17 @@ export const useToggleProfileFollow = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Follow toggled successfully',
-        'Failed to toggle follow'
+        t('followToggleSuccess'),
+        t('followToggleError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle follow'
+      const errorMessage =
+        error instanceof Error ? error.message : t('followToggleError')
       addToast(errorMessage, 'error')
     },
   })
@@ -178,6 +184,7 @@ export const useToggleProfileFollow = () => {
  * Hook to toggle favorite on a profile
  */
 export const useToggleProfileFavorite = () => {
+  const t = useI18nTranslations('alert.profile')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -194,16 +201,17 @@ export const useToggleProfileFavorite = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Favorite toggled successfully',
-        'Failed to toggle favorite'
+        t('favoriteToggleSuccess'),
+        t('favoriteToggleError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle favorite'
+      const errorMessage =
+        error instanceof Error ? error.message : t('favoriteToggleError')
       addToast(errorMessage, 'error')
     },
   })
@@ -262,21 +270,3 @@ export const useProfileIsFavorited = (params: {
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

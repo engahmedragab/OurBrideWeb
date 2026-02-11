@@ -4,13 +4,12 @@ import type { ProductReview } from '@/types/product'
 import type { ReviewResponse } from '@/types/responses/review-response'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Map API review response to ProductReview type
  */
-const mapReviewResponseToProductReview = (
-  review: ReviewResponse
-): ProductReview => ({
+const mapReviewResponseToProductReview = (review: ReviewResponse): ProductReview => ({
   id: String(review.id || ''),
   userId: review.userId || '',
   userName: review.title || 'Anonymous',
@@ -34,13 +33,15 @@ export const useProductReviews = (
   },
   enabled = true
 ) => {
+  const t = useI18nTranslations('alert')
+
   return useQuery({
     queryKey: ['product-reviews', productId, params],
     queryFn: async (): Promise<ProductReview[]> => {
       if (!productId) return []
 
       const response = await getProductReviews(productId, params)
-      
+
       // Handle different response structures
       const responseData = response as unknown as Record<string, unknown>
       let reviews: ReviewResponse[] = []
@@ -55,7 +56,13 @@ export const useProductReviews = (
         }
       }
 
-      return reviews.map(mapReviewResponseToProductReview)
+      return reviews.map((r) => {
+        const mapped = mapReviewResponseToProductReview(r)
+        return {
+          ...mapped,
+          userName: mapped.userName === 'Anonymous' ? t('anonymousUser') : mapped.userName,
+        }
+      })
     },
     enabled: enabled && !!productId,
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -66,6 +73,7 @@ export const useProductReviews = (
  * Hook to submit product review
  */
 export const useSubmitProductReview = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -106,18 +114,18 @@ export const useSubmitProductReview = () => {
       queryClient.invalidateQueries({
         queryKey: ['product', variables.productId],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Review submitted successfully',
-        'Failed to submit review'
+        t('reviewSubmittedSuccess'),
+        t('reviewSubmittedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review'
+      const errorMessage =
+        error instanceof Error ? error.message : t('reviewSubmittedError')
       addToast(errorMessage, 'error')
     },
   })
 }
-

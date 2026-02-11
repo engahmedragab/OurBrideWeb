@@ -11,6 +11,7 @@ import {
 import type { UpdateProviderPublicProfileSettingsRequest } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch provider public profile settings
@@ -35,6 +36,7 @@ export const useProviderPublicProfileSettings = (
  * Hook to update provider public profile settings
  */
 export const useUpdateProviderPublicProfileSettings = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -53,38 +55,18 @@ export const useUpdateProviderPublicProfileSettings = () => {
       queryClient.invalidateQueries({
         queryKey: ['providerPublicProfileSettings', variables.providerId],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Provider settings updated successfully',
-        'Failed to update provider settings'
+        t('providerSettingsUpdatedSuccess'),
+        t('providerSettingsUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update provider settings'
+      const errorMessage =
+        error instanceof Error ? error.message : t('providerSettingsUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
