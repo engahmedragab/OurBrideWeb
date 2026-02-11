@@ -87,7 +87,7 @@ export function LanguageSwitcher({ variant = 'dropdown', className }: LanguageSw
         }))}
         placeholder="Select Language"
         className=""
-        optionClassName="hover:bg-transparent hover:text-brand-500"
+        optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
         selectedOptionClassName="bg-transparent text-brand-500"
         selectedIconClassName="text-brand-500"
       />

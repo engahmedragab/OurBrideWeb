@@ -11,6 +11,8 @@ import {
   ArrowLeft,
   Star,
   UserPlus,
+  CheckCircle2,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
@@ -250,7 +252,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-start md:self-auto">
             {/* Follow Button */}
             {post.userId && (
               <Button
@@ -260,12 +262,20 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                 disabled={toggleFollowMutation.isPending}
                 className={cn('!text-14 flex-shrink-0', !isFollowing && 'text-white')}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
-                {toggleFollowMutation.isPending
-                  ? tC('loading')
-                  : isFollowing
-                    ? t('actions.following')
-                    : t('actions.follow')}
+                {toggleFollowMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isFollowing ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <UserPlus className="h-4 w-4" />
+                )}
+                <span className="hidden md:inline">
+                  {toggleFollowMutation.isPending
+                    ? tC('loading')
+                    : isFollowing
+                      ? t('actions.following')
+                      : t('actions.follow')}
+                </span>
               </Button>
             )}
 

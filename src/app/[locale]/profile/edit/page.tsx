@@ -319,7 +319,7 @@ export default function ProfileEditPage() {
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   {t('fields.gender')}
-                </label>
+                </label> 
                 <SelectPopover
                   value={formData.gender || ''}
                   onChange={value => handleInputChange('gender', value as Gender)}
@@ -330,6 +330,9 @@ export default function ProfileEditPage() {
                     { value: Gender.Female, label: t('genderOptions.female') },
                   ]}
                   placeholder={t('placeholders.selectGender')}
+                   optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
+        selectedOptionClassName="bg-transparent text-brand-500"
+        selectedIconClassName="text-brand-500"
                 />
               </div>
 
@@ -387,6 +390,9 @@ export default function ProfileEditPage() {
                     { value: PersonalType.Passport, label: t('personalIdTypes.passport') },
                   ]}
                   placeholder={t('placeholders.selectType')}
+                    optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
+        selectedOptionClassName="bg-transparent text-brand-500"
+        selectedIconClassName="text-brand-500"
                 />
               </div>
 
@@ -458,6 +464,9 @@ export default function ProfileEditPage() {
                     { value: Language.English, label: t('languages.english') },
                   ]}
                   placeholder={t('placeholders.selectLanguage')}
+                    optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
+        selectedOptionClassName="bg-transparent text-brand-500"
+        selectedIconClassName="text-brand-500"
                 />
               </div>
 
@@ -476,6 +485,9 @@ export default function ProfileEditPage() {
                     })) || []),
                   ]}
                   placeholder={t('placeholders.selectCountry')}
+                    optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
+        selectedOptionClassName="bg-transparent text-brand-500"
+        selectedIconClassName="text-brand-500"
                   disabled={isLoadingCountries}
                 />
               </div>
