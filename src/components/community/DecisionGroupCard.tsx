@@ -179,17 +179,17 @@ export const DecisionGroupCard = ({
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-col gap-0.5 mb-1">
             {decisionGroup.userId && getProfileUrl(decisionGroup.userId, decisionGroup.user?.type) ? (
               <Link
                 href={getProfileUrl(decisionGroup.userId, decisionGroup.user?.type)!}
                 onClick={(e) => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
-                <span className="text-14 font-semibold text-gray-900">{displayName}</span>
+                <span className="text-13 font-semibold text-gray-900">{displayName}</span>
               </Link>
             ) : (
-              <span className="text-14 font-semibold text-gray-900">{displayName}</span>
+              <span className="text-13 font-semibold text-gray-900">{displayName}</span>
             )}
             <span className="text-12 text-gray-500">{timestamp}</span>
           </div>

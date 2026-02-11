@@ -574,15 +574,15 @@ function MyEventsPageContent() {
           <div className="order-2 lg:order-1 flex-1 min-w-0">
             {/* Loading State for Event Info - Only show on overview tab */}
             {isMounted && isLoadingEventInfo && activePlanningTab === 'overview' && (
-              <div className="flex items-center justify-center py-12">
-                <LoadingSpinner size="lg" text={t('loading.eventDetails')} />
+              <div className=" ">
+                <LoadingSpinner fullScreen={true} size="xl" text={t('loading.eventDetails')} />
               </div>
             )}
 
             {/* Loading State for Book Initialization - Only show on overview tab */}
             {isMounted && isAnyInitPending && !isLoadingEventInfo && activePlanningTab === 'overview' && (
-              <div className="flex items-center justify-center py-12">
-                <LoadingSpinner size="lg" text={isInitializingTab ? `${t('loading.settingUpBook', { book: planningTabs.find(t => t.value === isInitializingTab)?.label || 'book' })}...` : t('loading.pleaseWait')} />
+              <div className=" ">
+                <LoadingSpinner fullScreen={true} size="xl" text={isInitializingTab ? `${t('loading.settingUpBook', { book: planningTabs.find(t => t.value === isInitializingTab)?.label || 'book' })}...` : t('loading.pleaseWait')} />
                  
                  
                
@@ -609,12 +609,13 @@ function MyEventsPageContent() {
                       title={t('stats.completedServices')}
                       book={eventInfo.serviceBook}
                       eventId={selectedEventId || undefined}
+                      onNavigate={() => handleBookNavigate('service')}
                     />
                     <QuickStatsCard
                       title={t('stats.completeLists')}
                       book={eventInfo.todoBook}
                       eventId={selectedEventId || undefined}
-
+                      onNavigate={() => handleBookNavigate('todo')}
                     />
                     <ItemsOverview
                       book={eventInfo.itemBook}
@@ -800,7 +801,7 @@ function MyEventsPageContent() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full p-3">
       {/* Header with Tabs and Add Button */}
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-6 sm:gap-8 w-full">
@@ -822,7 +823,7 @@ function MyEventsPageContent() {
             )
           })}
         </div>
-        <div className={cn("mt-4 flex", isRTL ? "justify-start" : "justify-end")}>
+        <div className={cn("mt-4 flex", "justify-center md:justify-start" )}>
           {/* Add New Event Button */}
           <Button
             variant="outlineBrand"
@@ -837,7 +838,7 @@ function MyEventsPageContent() {
 
       {/* Loading State */}
       {isMounted && isLoading && (
-        <div className="flex items-center justify-center py-12">
+        <div className="">
           <LoadingSpinner size="lg" fullScreen={true} open={true} text={t('loading.events')} />
         </div>
       )}
@@ -859,7 +860,7 @@ function MyEventsPageContent() {
       {isMounted && !isLoading && !error && (
         <>
           {currentEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 py-6">
               {currentEvents.map(event => (
                 <div
                   key={event.id}
@@ -883,7 +884,7 @@ function MyEventsPageContent() {
               <p className="text-16 text-gray-500 mb-4">
                 {activeTab === 'my-events' ? t('empty.noMyEvents') : t('empty.noSharedEvents')}
               </p>
-              {activeTab === 'my-events' && (
+              {/* {activeTab === 'my-events' && (
                 <Button
                   variant="brand"
                   onClick={() => setIsModalOpen(true)}
@@ -892,7 +893,7 @@ function MyEventsPageContent() {
                   <Plus className="size-4" />
                   {t('actions.addNewEvent')}
                 </Button>
-              )}
+              )} */}
             </div>
           )}
         </>
@@ -912,8 +913,8 @@ export default function MyEventsPage() {
   return (
     <Suspense
       fallback={
-        <div className="w-full min-h-screen flex items-center justify-center">
-          <LoadingSpinner fullScreen={true} size="lg" />
+        <div className="w-full ">
+          <LoadingSpinner fullScreen={true} size="xl" />
         </div>
       }
     >

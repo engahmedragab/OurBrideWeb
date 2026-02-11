@@ -73,7 +73,12 @@ export function ItemListRow({
             </span>
           ) : null}
 
-          <ChevronRight className="h-4 w-4 text-gray-400" />
+          <ChevronRight
+            className={cn(
+              'h-4 w-4 text-gray-400',
+              isRtl ? 'rotate-180' : 'rotate-0'
+            )}
+          />
         </div>
       </div>
     </button>

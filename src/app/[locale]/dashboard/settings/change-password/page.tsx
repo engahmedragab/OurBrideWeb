@@ -203,12 +203,12 @@ export default function ChangePasswordPage() {
       <div className="w-full">
         {/* Page Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-xl font-normal text-gray-900">{t('title')}</h1>
+          <h1 className="text-lg sm:text-xl font-normal text-gray-900">{t('title')}</h1>
 
           <button
             type="submit"
             form="change-password-form"
-            className="text-16 font-medium text-brand-500 hover:text-brand-600 transition-colors"
+            className="text-14 sm:text-16 font-medium text-brand-500 hover:text-brand-600 transition-colors"
           >
             {t('saveChanges')}
           </button>

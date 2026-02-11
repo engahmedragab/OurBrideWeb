@@ -143,7 +143,7 @@ export const Header = ({ className }: HeaderProps) => {
       },
       {
         label: t('links.products'),
-        path: '/products/intro',
+        path: 'products',
         icon: Store,
         hasDropdown: true,
         dropdownItems: [

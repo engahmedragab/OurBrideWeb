@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { Eye, EyeOff, Check, X, Lock } from 'lucide-react'
 
 const passwordInputVariants = cva(
-  'flex w-full items-center gap-2 rounded-xl border bg-white px-3 py-1.5 text-16 font-normal leading-6 transition-colors focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex w-full items-center gap-1 md:gap-2 rounded-xl border bg-white px-2 sm:px-3 py-1.5 text-16 font-normal leading-6 transition-colors focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -57,13 +57,13 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       <div className="w-full">
         <div
           className={cn(
-            'relative flex w-full items-center gap-2',
+            'relative flex w-full items-center',
             passwordInputVariants({ variant, size, className })
           )}
         >
           <Lock
             className={cn(
-              'h-5 w-5 flex-shrink-0',
+              'h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0',
               variant === 'error'
                 ? 'text-red-500'
                 : variant === 'focused'
@@ -78,7 +78,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <input
             type={showPassword ? 'text' : 'password'}
             className={cn(
-              'flex-1 bg-transparent outline-none focus:outline-none font-normal md:text-14 text-10 leading-6',
+              'flex-1 min-w-0 bg-transparent outline-none focus:outline-none font-normal md:text-14 text-10 leading-6',
               variant === 'error' && 'text-red-500 placeholder:text-red-500',
               variant === 'default' &&
               'text-gray-900 placeholder:text-gray-400',
@@ -108,9 +108,9 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             )}
           >
             {showPassword ? (
-              <Eye className="h-5 w-5" />
+              <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
             ) : (
-              <EyeOff className="h-5 w-5" />
+              <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
             )}
           </button>
           {showSuccessIcon && variant === 'success' && (

@@ -47,7 +47,7 @@ const MobileAppCard = ({
           {t('availableOn')}
         </p>
         <div className="flex items-center gap-2">
-          <StoreBadges size="sm" appStoreUrl={appStoreUrl} playStoreUrl={playStoreUrl} />
+          <StoreBadges size="3xl" appStoreUrl={appStoreUrl} playStoreUrl={playStoreUrl} />
         </div>
       </div>
 

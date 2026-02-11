@@ -17,6 +17,9 @@ export interface SelectPopoverProps {
   options: SelectOption[]
   placeholder?: string
   className?: string
+  optionClassName?: string
+  selectedOptionClassName?: string
+  selectedIconClassName?: string
   errorMessage?: string
   disabled?: boolean
 }
@@ -27,6 +30,9 @@ export const SelectPopover = ({
   options,
   placeholder = 'Select...',
   className,
+  optionClassName,
+  selectedOptionClassName,
+  selectedIconClassName,
   errorMessage,
   disabled,
 }: SelectPopoverProps) => {
@@ -96,12 +102,14 @@ export const SelectPopover = ({
                     'w-full my-1 flex items-center justify-between md:px-3 px-2 md:py-2.5 py-1 rounded-xl md:text-16 text-12 font-normal transition-colors',
                     'hover:bg-brand/10 hover:text-brand-500',
                     isRTL && 'flex-row-reverse',
-                    isSelected && 'bg-brand-500 text-white mb-2'
+                    isSelected && 'bg-brand-500 text-white mb-2',
+                    optionClassName,
+                    isSelected && selectedOptionClassName
                   )}
                 >
                   <span className={cn('flex-1 md:text-16 text-12', isRTL ? 'text-right' : 'text-left')} dir="auto">{option.label}</span>
                   {isSelected && (
-                    <Check className="h-4 w-4 text-white flex-shrink-0" />
+                    <Check className={cn('h-4 w-4 text-white flex-shrink-0', selectedIconClassName)} />
                   )}
                 </button>
               )

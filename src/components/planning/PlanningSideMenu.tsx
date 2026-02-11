@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export type PlanningSideMenuTab = {
     label: string
@@ -34,14 +34,15 @@ export const PlanningSideMenu = ({
   const tSideMenu = useI18nTranslations('eventsPlanning.sideMenu')
   const tTabs = useI18nTranslations('eventsPlanning.sideMenu.tabs')
   const tStatus = useI18nTranslations('eventsPlanning.sideMenu.status')
+  const isRtl = useIsRTL()
 
   return (
-    <div className={cn('bg-white rounded-2xl p-2 lg:border lg:border-gray-200 lg:shadow-sm', className)}>
+    <div className={cn('bg-white rounded-2xl p-3 lg:p-2 lg:border lg:border-gray-200 lg:shadow-sm', className)}>
       <div className="hidden lg:block px-3 py-2 text-12 font-semibold text-gray-500 uppercase tracking-wide">
         {tSideMenu('title')}
       </div>
 
-      <div className="grid grid-cols-3 gap-2 lg:flex lg:flex-col lg:items-stretch lg:gap-1">
+      <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-col lg:items-stretch lg:gap-1">
         {tabs.map(tab => {
           const isActive = activeValue === tab.value
           const isLoading = isInitializingTab === tab.value
@@ -53,14 +54,15 @@ export const PlanningSideMenu = ({
               href={tab.href}
               onClick={(event) => onTabClick?.(tab, event)}
               className={cn(
-                'flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[12px] font-semibold transition-colors',
+                'flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-semibold transition-colors',
                 'whitespace-nowrap',
                 'lg:shrink-0 lg:flex-row lg:items-center lg:justify-between lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+                isRtl ? 'text-right' : 'text-left',
                 isActive ? ' text-brand-500' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               )}
             >
-              <div className="flex items-center gap-2 min-w-0 justify-center lg:flex-1 lg:justify-start">
+              <div className="flex items-center gap-2.5 min-w-0 justify-center lg:flex-1 lg:justify-start">
                 {tab.icon && (
                   <tab.icon
                     className={cn(
@@ -70,11 +72,13 @@ export const PlanningSideMenu = ({
                   />
                 )}
                 
-                <span className="whitespace-nowrap capitalize text-center lg:text-left lg:truncate">{tTabs(tab.label)}</span>
+                <span className={cn('whitespace-nowrap capitalize lg:truncate', isRtl ? 'text-right' : 'text-left')}>
+                  {tTabs(tab.label)}
+                </span>
               </div>
 
               {showIndicators && (
-                <span className="flex items-center gap-1 h-4 lg:h-auto lg:ml-2">
+                <span className="flex items-center gap-1.5 h-4 lg:h-auto lg:ml-2">
                   {isLoading && (
                     <span
                       className={cn(

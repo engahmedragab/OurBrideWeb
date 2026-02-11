@@ -704,7 +704,7 @@ function BudgetPageContent() {
         : t('loading.loadingBudgetSubtitle')
 
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
         <div className="flex items-center gap-4 mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
@@ -727,7 +727,7 @@ function BudgetPageContent() {
   // Error
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
         <div className="flex flex-col items-center justify-center py-12">
           <p className="text-16 text-red-600 mb-4">{t('error.failedToLoad')}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
@@ -741,7 +741,7 @@ function BudgetPageContent() {
   // Missing event
   if (!eventId) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
         <div className="text-center py-12 text-gray-500">
           <p className="text-16">{t('event.eventIdRequired')}</p>
         </div>
@@ -750,10 +750,10 @@ function BudgetPageContent() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+    <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
       {/* Header */}
       <div className="mb-4">
-        <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -766,7 +766,7 @@ function BudgetPageContent() {
           </div>
 
           {localDraft && (
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
               {/* Search Input */}
               <div className="relative w-full sm:w-auto sm:min-w-[250px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -795,13 +795,13 @@ function BudgetPageContent() {
         </div>
 
         {(hasUnsavedChanges || syncMutation.isPending) && (
-          <div className="flex items-center gap-3 ml-2 mt-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3 sm:ml-2 mt-3">
             <Button
               variant="brand"
               size="md"
               onClick={handleSave}
               disabled={!hasUnsavedChanges || syncMutation.isPending || !localDraft}
-              className="flex items-center gap-2 rounded-xl !text-white"
+              className="flex items-center gap-2 rounded-xl !text-white w-full sm:w-auto"
               type="button"
             >
               <Save className="h-4 w-4" />

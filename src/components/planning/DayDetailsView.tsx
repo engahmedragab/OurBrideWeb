@@ -16,6 +16,7 @@ import { useToast } from '@/components/ui/Toaster'
 import { generateTempId } from '@/utils/sync/tempIds'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n/hooks'
 
 /**
  * Extended EventBook type with categories for local state management
@@ -82,6 +83,7 @@ const HourlyTimelineView = ({
   onEventClick,
   onDelete,
 }: HourlyTimelineViewProps) => {
+  const isRtl = useIsRTL()
   // Generate hours from 7 AM (7) to 12 AM (midnight, which is 0)
   // Hours: 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0
   const hours = [...Array.from({ length: 17 }, (_, i) => i + 7), 0] // 7-23, then 0
@@ -117,7 +119,7 @@ const HourlyTimelineView = ({
         return (
           <div key={hour} className="flex gap-4 items-center">
             {/* Left column: Hour label */}
-            <div className="w-32 flex-shrink-0">
+            <div className={cn('w-32 flex-shrink-0', isRtl && 'text-right')}>
               <p className="text-12 text-gray-500">{formatHourLabel(hour)}</p>
             </div>
 
@@ -138,25 +140,27 @@ const HourlyTimelineView = ({
               }}
             >
               {isEmpty ? (
-                <div className="p-4 min-h-[60px] flex items-center">
+                <div className={cn('p-4 min-h-[60px] flex items-center', isRtl && 'justify-end text-right')}>
                   <p className="text-14 text-gray-400">Click to add event</p>
                 </div>
               ) : (
-                <div className="p-4 relative">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(event)
-                    }}
-                    className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-500 hover:text-red-600"
-                    aria-label="Delete event"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                  <h3 className="text-16 font-semibold text-gray-900 mb-2 pr-8">
+                <div className={cn('p-4', isRtl && 'text-right')}>
+                  <div className={cn('flex items-center justify-end mb-2', isRtl && 'justify-start')}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete(event)
+                      }}
+                      className="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-500 hover:text-red-600"
+                      aria-label="Delete event"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <h3 className="text-16 font-semibold text-gray-900">
                     {event.title}
                   </h3>
-                  <div className="flex items-center gap-2 text-14 text-gray-600">
+                  <div className={cn('mt-2 flex items-center gap-2 text-14 text-gray-600', isRtl && 'justify-end')}>
                     <Clock className="h-4 w-4" />
                     <span>{formatTimeRange(event.startTime, event.duration)}</span>
                   </div>

@@ -1,6 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n'
 
 export type RankKey =
   | 'bronze'
@@ -51,7 +52,7 @@ const rankConfig: Record<
 }
 
 const rankBadgeVariants = cva(
-  'relative rounded-l-lg overflow-hidden transition-all duration-200',
+  'relative overflow-hidden transition-all duration-200',
   {
     variants: {
       clickable: {
@@ -108,6 +109,7 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
     const displayTitle = title || config.label
     const hasClickHandler = !!onClick
     const hasContent = Boolean(showText && (displayTitle || rankingValue !== undefined))
+    const isRTL = useIsRTL()
 
     return (
       <div
@@ -117,6 +119,7 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
             clickable: hasClickHandler || clickable,
             showContent: hasContent,
           }),
+          isRTL ? 'rounded-r-lg rounded-l-none' : 'rounded-l-lg rounded-r-none',
           className
         )}
         style={{

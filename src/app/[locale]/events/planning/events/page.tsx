@@ -17,6 +17,7 @@ import { useEventId } from '@/hooks/planning'
 import { useAddEventBookModels } from '@/hooks/bookInit'
 import { usePlanningBookController, type SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { useToast } from '@/components/ui/Toaster'
+import { useIsRTL } from '@/i18n/hooks'
 import type { EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import {
@@ -48,6 +49,7 @@ function EventsPageContent() {
   const { addToast } = useToast()
   const eventId = useEventId()
   const today = getToday()
+  const isRtl = useIsRTL()
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
   const [isMounted, setIsMounted] = useState(false)
 
@@ -271,8 +273,8 @@ function EventsPageContent() {
           : 'Please wait a moment'
 
     return (
-      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <LoadingSpinner size="lg" fullScreen={true} open={true} text={loadingTitle}  />
+      <div className="w-full sm:p-6 lg:p-8 flex items-center justify-center">
+        <LoadingSpinner size="xl" fullScreen={true} open={true} text={loadingTitle}  />
       </div>
     )
   }
@@ -293,14 +295,14 @@ function EventsPageContent() {
   }
 
   return (
-    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="w-full min-h-screen px-0 sm:px-2 lg:px-4 py-4 sm:py-6 lg:py-8">
       {/* Navigation Header */}
       <div className="mb-4">
         <Link
           href="/dashboard/my-events"
           className="flex items-center gap-3 text-gray-900 hover:opacity-80 transition-opacity"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className={cn('h-5 w-5', isRtl ? 'rotate-180' : 'rotate-0')} />
           <h1 className="text-24 font-semibold text-gray-900">Event</h1>
         </Link>
       </div>
@@ -368,7 +370,7 @@ function EventsPageContent() {
       {/* Single Layout with Responsive Order */}
       <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-2">
         {/* Mini Calendar - Mobile: order-1 (top), Desktop: right sidebar */}
-        <div className="order-1 lg:order-2  flex justify-center items-start px-4 pb-3">
+        <div className="order-1 lg:order-2 flex justify-center items-start px-0 sm:px-2 pb-3">
           <PlanningMiniCalendar
             value={selectedDayId}
             onChange={handleDateSelect}

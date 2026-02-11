@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getEventsForDate } from './mockEvents'
 import { formatDateSafe } from '@/lib/date-utils'
+import { useIsRTL } from '@/i18n/hooks'
 
 const BIG_DAY_STORAGE_KEY = 'ourbride_big_days'
 
@@ -31,6 +32,7 @@ export const EventMiniMonth = ({
   className,
   checkBigDays = false,
 }: EventMiniMonthProps) => {
+  const isRtl = useIsRTL()
   const [currentMonth, setCurrentMonth] = useState(() => {
     return new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   })
@@ -163,7 +165,12 @@ export const EventMiniMonth = ({
           onClick={() => handleMonthChange('prev')}
           className="flex items-center justify-center size-5 hover:opacity-70 transition-opacity"
         >
-          <ChevronDown className="size-5 text-gray-500 rotate-90" />
+          <ChevronDown
+            className={cn(
+              'size-5 text-gray-500',
+              isRtl ? '-rotate-90' : 'rotate-90'
+            )}
+          />
         </button>
         <div className="flex h-6 items-center justify-center px-2 py-0.5 rounded">
           <p className="text-11 font-normal text-gray-500 text-center whitespace-nowrap">
@@ -174,7 +181,12 @@ export const EventMiniMonth = ({
           onClick={() => handleMonthChange('next')}
           className="flex items-center justify-center size-5 hover:opacity-70 transition-opacity"
         >
-          <ChevronDown className="size-5 text-gray-500 -rotate-90" />
+          <ChevronDown
+            className={cn(
+              'size-5 text-gray-500',
+              isRtl ? 'rotate-90' : '-rotate-90'
+            )}
+          />
         </button>
       </div>
 

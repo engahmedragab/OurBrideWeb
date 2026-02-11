@@ -25,8 +25,8 @@ export const ItemsSummaryCard = ({
   return (
     <div className={cn('rounded-xl border border-gray-200 bg-white p-4', className)}>
       {/* Header */}
-      <div className="mb-1 flex items-start justify-between gap-3">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+        <h3 className="min-w-0 text-lg font-semibold text-gray-900 truncate">{title}</h3>
         {rightSlot ? <div className="shrink-0">{rightSlot}</div> : null}
       </div>
 

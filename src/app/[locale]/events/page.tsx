@@ -243,7 +243,7 @@ export default function EventsPage() {
                     "absolute -top-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-4 border border-white/50",
                     isRTL ? "-left-4" : "-right-4"
                   )}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-center text-center gap-3 sm:flex-row sm:items-center">
                       <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
                         <CheckCircle2 className="w-6 h-6 text-green-600" />
                       </div>
@@ -259,7 +259,7 @@ export default function EventsPage() {
                     "absolute -bottom-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-4 border border-white/50",
                     isRTL ? "-right-4" : "-left-4"
                   )}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-center text-center gap-3 sm:flex-row sm:items-center">
                       <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center">
                         <Calendar className="w-6 h-6 text-brand-600" />
                       </div>
@@ -307,7 +307,7 @@ export default function EventsPage() {
                 return (
                   <div
                     key={index}
-                    className="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-white/50 hover:border-transparent hover:shadow-2xl hover:bg-white transition-all duration-300 cursor-pointer overflow-hidden"
+                    className="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-white/50 hover:border-transparent hover:shadow-2xl hover:bg-white transition-all duration-300 cursor-pointer overflow-hidden text-center"
                   >
                     {/* Gradient Background on Hover */}
                     <div className={cn(
@@ -318,7 +318,7 @@ export default function EventsPage() {
                     <div className="relative z-10">
                       {/* Icon with colored ring */}
                       <div
-                        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110"
+                        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 mx-auto"
                         style={{ backgroundColor: `${event.accent}15` }}
                       >
                         <Icon className="w-8 h-8" style={{ color: event.accent }} />
@@ -333,7 +333,7 @@ export default function EventsPage() {
 
                       {/* Arrow */}
                       <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+                        className="w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 mx-auto"
                         style={{ backgroundColor: event.accent }}
                       >
                         <ArrowRight className={cn("w-5 h-5 text-white", isRTL && "scale-x-[-1]")} />
@@ -390,11 +390,11 @@ export default function EventsPage() {
 
                       {/* Card */}
                       <div className={cn(
-                        "bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg transition-all duration-300 lg:mt-12 border border-white/50",
+                        "bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg transition-all duration-300 lg:mt-12 border border-white/50 text-center",
                         isActive ? "shadow-2xl transform -translate-y-2 bg-white" : "hover:shadow-xl hover:bg-white"
                       )}>
                         <div className={cn(
-                          "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors",
+                          "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors mx-auto",
                           isActive ? "bg-brand-500" : "bg-brand-50"
                         )}>
                           <Icon className={cn(
@@ -443,7 +443,7 @@ export default function EventsPage() {
                     return (
                       <div
                         key={index}
-                        className="group p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-brand-100 hover:bg-white hover:border-brand-200 hover:shadow-lg transition-all cursor-pointer"
+                        className="group p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-brand-100 hover:bg-white hover:border-brand-200 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center "
                       >
                         <Icon className="w-6 h-6 text-brand-500 mb-3 group-hover:scale-110 transition-transform" />
                         <div className="text-14 font-medium text-gray-900 mb-1">{tool.label}</div>
@@ -466,7 +466,7 @@ export default function EventsPage() {
               {/* Right - Stats */}
               <div className="relative">
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-brand-500 to-pink-500 rounded-3xl p-8 text-center shadow-xl">
+                  <div className="bg-gradient-to-br from-brand-500 to-pink-500 rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-xl">
                     <div className="text-48 md:text-56 font-bold mb-2 text-white">+500</div>
                     <div className="text-16 text-white/90">{t('statistics.eventsPlanned')}</div>
                   </div>

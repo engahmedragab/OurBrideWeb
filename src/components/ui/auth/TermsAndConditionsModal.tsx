@@ -1,7 +1,7 @@
 import { Modal } from '../Modal'
 import { Button } from '../Button'
 import { Typography } from '../Typography'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface TermsAndConditionsModalProps {
   isOpen: boolean
@@ -19,6 +19,7 @@ export const TermsAndConditionsModal = ({
   onAccept,
 }: TermsAndConditionsModalProps) => {
   const t = useI18nTranslations('auth.terms')
+  const isRTL = useIsRTL()
   const handleAccept = () => {
     onAccept?.()
     onClose()
@@ -36,21 +37,24 @@ export const TermsAndConditionsModal = ({
     >
       <div className="flex flex-col flex-1 min-h-0">
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 max-h-[70vh]">
+        <div
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className="flex-1 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 max-h-[70vh]"
+        >
           <div className="space-y-3 sm:space-y-4">
             {/* Introduction */}
             <div className="space-y-1.5 sm:space-y-2">
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.introduction.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.introduction.body')}
               </Typography>
@@ -61,14 +65,14 @@ export const TermsAndConditionsModal = ({
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.accountUsage.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.accountUsage.body')}
               </Typography>
@@ -79,14 +83,14 @@ export const TermsAndConditionsModal = ({
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.bookingsServices.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.bookingsServices.body')}
               </Typography>
@@ -97,14 +101,14 @@ export const TermsAndConditionsModal = ({
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.paymentsFees.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                  { t('sections.paymentsFees.body')}
               </Typography>
@@ -115,14 +119,14 @@ export const TermsAndConditionsModal = ({
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.contentCommunity.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                  {t('sections.contentCommunity.body')}
               </Typography>
@@ -133,14 +137,14 @@ export const TermsAndConditionsModal = ({
               <Typography
                 variant="h6"
                 weight="semibold"
-                className="text-gray-900 text-14 sm:text-16"
+                className={`text-gray-900 text-14 sm:text-16 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.privacySecurity.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
-                className="text-gray-700 text-12 sm:text-13"
+                className={`text-gray-700 text-12 sm:text-13 ${isRTL ? 'text-right' : 'text-left'}`}
               >
                 {t('sections.privacySecurity.body')}
               </Typography>
@@ -149,7 +153,7 @@ export const TermsAndConditionsModal = ({
         </div>
 
         {/* Sticky Footer with Accept Button */}
-        <div className="border-t border-gray-200 px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 bg-white">
+        <div className="border-t rounded-b-2xl border-gray-200 px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 bg-white">
           <Button
             variant="brand"
             size="lg"

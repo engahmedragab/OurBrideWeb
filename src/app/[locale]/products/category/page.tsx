@@ -430,6 +430,8 @@ function ProductsContent() {
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={setCurrentPage}
+                  maxVisiblePages={4}
+                  className="max-w-full w-fit "
                 />
               </div>
             )}

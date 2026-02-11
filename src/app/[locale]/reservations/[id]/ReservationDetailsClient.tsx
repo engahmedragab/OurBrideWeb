@@ -266,7 +266,7 @@ const serviceName =
     <UserPageLayout>
       {/* Header with Back Button */}
       <div className="mb-6 space-y-3">
-        <div className={cn('flex', isRTL ? 'justify-start' : 'justify-end')}>
+        <div className={cn('flexjustify-start')}>
           <Button
             variant="outline"
             size="sm"
@@ -280,8 +280,12 @@ const serviceName =
         <PageHeader
           title={t('details.header.title', { reservationId: reservation.reservationId })}
           subtitle={
-            <div className="flex items-center gap-2 mt-1">
-              <StatusBadge status={mapReservationStatusToBadgeType(status)} label={getTranslatedStatus(status)} />
+            <div className="flex items-center gap-2">
+              <StatusBadge
+                status={mapReservationStatusToBadgeType(status)}
+                label={getTranslatedStatus(status)}
+                className="gap-1 px-1.5 py-0.5 text-[10px] leading-none sm:px-2 sm:py-1.5 sm:text-[12px]"
+              />
             </div>
           }
         />

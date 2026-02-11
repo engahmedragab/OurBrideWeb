@@ -208,16 +208,16 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
           </button>
           <span>/</span>
           <span>{tCommunity("tabs.articles")}</span>
-          <span>/</span>
-          <span className="text-gray-900">{article.title}</span>
+          {/* <span>/</span>
+          <span className="text-gray-900 truncate break-words ">{article.title}</span> */}
         </div>
       </div>
 
       {/* Article Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Article Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
               {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
                 <Image
@@ -242,19 +242,19 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   href={getProfileUrl(article.userId, article.user?.type)!}
                   className="hover:text-brand-500 transition-colors"
                 >
-                  <h4 className="text-16 font-normal text-gray-900 truncate">
+                  <h4 className="text-14 md:text-16 font-normal text-gray-900 truncate">
                     {displayName}
                   </h4>
                 </Link>
               ) : (
-                <h4 className="text-16 font-normal text-gray-900 truncate">
+                <h4 className="text-14 md:text-16 font-normal text-gray-900 truncate">
                   {displayName}
                 </h4>
               )}
               <p className="text-12 text-gray-500">{date}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end md:self-auto">
             {/* Follow Button */}
             {article.userId && (
               <Button
@@ -267,7 +267,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   !isFollowing && 'text-white'
                 )}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2 ', isFollowing && 'hidden')} />
+                <UserPlus className={cn('h-4 w-4  ', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
                   ? tC("loading")
                   : isFollowing
