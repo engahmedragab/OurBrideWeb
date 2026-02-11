@@ -25,7 +25,7 @@ import {
   convertLineToRequest,
   convertCategoryToRequest,
 } from '@/utils/planning/mappers/todoMappers'
-import { useIsRTL } from '@/i18n'
+import { useIsRTL, useI18nTranslations } from '@/i18n'
 import { cn } from '@/lib'
 
 function TodoPageContent() {
@@ -33,6 +33,8 @@ function TodoPageContent() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [createListOpen, setCreateListOpen] = useState(false)
   const isRtl = useIsRTL()
+  const t = useI18nTranslations('eventsPlanning.sideMenu.tabs')
+  const tTodo = useI18nTranslations('eventsPlanning.todo')
 
   // Fetch todo book (includes lines and categories) - GET endpoint only
   const { data: todoBook, isLoading, error, refetch } = useTodoBook({
@@ -182,10 +184,10 @@ function TodoPageContent() {
         .map((cat: TodoLineCategoryResponse) => [cat.id, cat.name || cat.nameEn || cat.nameAr || ''])
     )
     return categoryLines.map((line: TodoLineResponse) => {
-      const categoryName = categoryMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+      const categoryName = categoryMap.get(line.lineCategoryId || 0) || tTodo('common.uncategorized')
       return convertLineToUiTodo(line, categoryName)
     })
-  }, [selectedCategoryId, getLinesByCategory, localTodoBook])
+  }, [selectedCategoryId, getLinesByCategory, localTodoBook, tTodo])
 
   const stats = useMemo(() => {
     const total = visibleTodos.length
@@ -370,15 +372,10 @@ function TodoPageContent() {
 
   if (isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing todo book...'
+      ? tTodo('loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading todos...'
-    const loadingSubtitle = isInitializing
-      ? 'Setting up your todo book'
-      : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? tTodo('loading.addingModelsTitle')
+        : tTodo('loading.loadingTodos')
 
     return (
       <div className="flex items-center justify-center py-12">
@@ -392,8 +389,8 @@ function TodoPageContent() {
       <div className="flex flex-col items-center justify-center py-12">
         <ErrorModal
           open={true}
-          title="Failed to Load Todos"
-          message="Failed to load todos. Please try again."
+          title={tTodo('error.failedToLoadTitle')}
+          message={tTodo('error.failedToLoadMessage')}
           onRetry={() => window.location.reload()}
           onClose={() => { }}
         />
@@ -404,7 +401,7 @@ function TodoPageContent() {
   if (!localTodoBook) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-gray-500">No todo book found. Please initialize it first.</p>
+        <p className="text-16 text-gray-500">{tTodo('error.todoBookNotFound')}</p>
       </div>
     )
   }
@@ -416,7 +413,7 @@ function TodoPageContent() {
           <Link
             href="/dashboard/my-events"
             className="inline-flex h-9 w-9 items-center justify-center"
-            aria-label="Back to My Events"
+            aria-label={tTodo('common.backToMyEvents')}
           >
             <ChevronLeft
               className={cn(
@@ -425,7 +422,7 @@ function TodoPageContent() {
               )}
             />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Todo</h1>
+          <h1 className="text-xl font-semibold text-gray-900">{t('ToDo')}</h1>
         </div>
 
         {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
@@ -439,11 +436,11 @@ function TodoPageContent() {
               type="button"
             >
               <Save className="h-4 w-4" />
-              {(syncMutation.isPending || syncDeltaMutation.isPending) ? 'Saving...' : 'Save Changes'}
+              {(syncMutation.isPending || syncDeltaMutation.isPending) ? tTodo('header.saving') : tTodo('header.saveChanges')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">{tTodo('header.unsavedChanges')}</span>
             )}
           </div>
         )}
@@ -451,7 +448,7 @@ function TodoPageContent() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <TodoLinesPanel
-          categoryName={selectedCategory?.name ?? 'Untitled List'}
+          categoryName={selectedCategory?.name ?? tTodo('common.untitledList')}
           stats={stats}
           todos={visibleTodos}
           onToggleDone={handleToggleDone}
@@ -461,8 +458,8 @@ function TodoPageContent() {
         />
 
         <TodoListsSidebar
-          title="Your Lists"
-          actionLabel="Add New"
+          title={tTodo('sidebar.title')}
+          actionLabel={tTodo('sidebar.addNew')}
           onAction={handleAddNewList}
           categories={categories}
           selectedCategoryId={selectedCategoryId || 0}

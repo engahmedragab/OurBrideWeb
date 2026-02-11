@@ -9,6 +9,7 @@ import { useEventId } from '@/hooks/planning'
 import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
 import { useInitServiceBooks, useAddServiceBookModels } from '@/hooks/bookInit'
 import { useToast } from '@/components/ui/Toaster'
+import { useI18nTranslations } from '@/i18n/hooks'
 import type { ServiceBookResponse, ServiceLineResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
@@ -53,6 +54,8 @@ function PreparationsPageContent() {
   const router = useRouter()
   const eventId = useEventId()
   const { addToast } = useToast()
+  const t = useI18nTranslations('eventsPlanning.sideMenu.tabs')
+  const tPrep = useI18nTranslations('eventsPlanning.preparations')
 
   const [isMounted, setIsMounted] = useState(false)
   const [currentService, setCurrentService] = useState<PreparationService | undefined>()
@@ -239,7 +242,7 @@ function PreparationsPageContent() {
   }) => {
     try {
       if (!localServiceBook) {
-        addToast('Service book not found', 'error')
+        addToast(tPrep('error.serviceBookNotFound'), 'error')
         return
       }
 
@@ -345,14 +348,14 @@ function PreparationsPageContent() {
         if (!result.ok) return
         setIsModalOpen(false)
         setCurrentService(undefined)
-        addToast('Preparation saved. Click "Save Changes" to persist.', 'info')
+        addToast(tPrep('toasts.preparationSaved'), 'info')
       } else {
         // View mode - just close the modal
         setIsModalOpen(false)
         setCurrentService(undefined)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save preparation'
+      const errorMessage = error instanceof Error ? error.message : tPrep('toasts.failedToSavePreparation')
       addToast(errorMessage, 'error')
     }
   }
@@ -371,7 +374,7 @@ function PreparationsPageContent() {
     if (result.ok) {
       setIsConfirmDialogOpen(false)
       setServiceToDelete(undefined)
-      addToast('Preparation deleted. Click "Save Changes" to persist.', 'info')
+      addToast(tPrep('toasts.preparationDeleted'), 'info')
     }
   }
 
@@ -379,14 +382,14 @@ function PreparationsPageContent() {
     const result = await save()
     if (!result.ok) {
       if (result.reason === 'loading' || result.reason === 'no-changes') {
-        addToast(result.message || 'No changes to save', 'info')
+        addToast(result.message || tPrep('toasts.noChangesToSave'), 'info')
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      addToast(result.message || 'Failed to save changes', 'error')
+      addToast(result.message || tPrep('toasts.failedToSave'), 'error')
       return
     }
-    addToast(result.message || 'Changes saved successfully', 'success')
+    addToast(result.message || tPrep('toasts.changesSaved'), 'success')
   }
 
   const handleBack = () => {
@@ -403,10 +406,10 @@ function PreparationsPageContent() {
 
   if (showLoading) {
     const loadingText = isInitializing
-      ? 'Initializing preparations book...'
+      ? tPrep('loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading preparations...'
+        ? tPrep('loading.addingModelsTitle')
+        : tPrep('loading.loadingPreparations')
 
     return (
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -426,11 +429,11 @@ function PreparationsPageContent() {
             <button
               onClick={handleBack}
               className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
-              aria-label="Back to My Events"
+              aria-label={tPrep('common.backToMyEvents')}
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            <h1 className="text-24 font-semibold text-gray-900">Preparations</h1>
+            <h1 className="text-24 font-semibold text-gray-900">{t('preparations')}</h1>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             {(hasUnsavedChanges || syncMutation.isPending) && (
@@ -444,11 +447,11 @@ function PreparationsPageContent() {
                   type="button"
                 >
                   <Save className="h-4 w-4" />
-                  {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+                  {syncMutation.isPending ? tPrep('header.saving') : tPrep('header.saveChanges')}
                 </Button>
 
                 {hasUnsavedChanges && (
-                  <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+                  <span className="text-16 text-brand-500 font-medium">{tPrep('header.unsavedChanges')}</span>
                 )}
               </>
             )}
@@ -459,7 +462,7 @@ function PreparationsPageContent() {
               className="text-white w-full sm:w-auto h-9 sm:h-10 px-3 sm:px-4 text-sm"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Add new Preparation
+              {tPrep('header.addNew')}
             </Button>
           </div>
         </div>
@@ -524,10 +527,10 @@ function PreparationsPageContent() {
 
         <ConfirmDialog
           open={isConfirmDialogOpen}
-          title="Are you sure?"
-          description="This action cannot be undone."
-          confirmText="Delete"
-          cancelText="Cancel"
+          title={tPrep('confirmDialog.title')}
+          description={tPrep('confirmDialog.description')}
+          confirmText={tPrep('confirmDialog.delete')}
+          cancelText={tPrep('confirmDialog.cancel')}
           onConfirm={handleConfirmDelete}
           onCancel={() => {
             setIsConfirmDialogOpen(false)

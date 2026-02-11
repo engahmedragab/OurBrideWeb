@@ -2430,6 +2430,95 @@
           "Noteisrequired": "Note is required"
         }
       }
+    },
+    "events": {
+      "header": {
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "unsavedChanges": "Unsaved changes"
+      },
+      "loading": {
+        "loadingEvents": "Loading events...",
+        "loadingSubtitle": "Please wait a moment",
+        "initializingTitle": "Initializing event book...",
+        "initializingSubtitle": "Setting up your event book",
+        "addingModelsTitle": "Adding default models...",
+        "addingModelsSubtitle": "Please wait while we add default categories"
+      },
+      "error": {
+        "failedToLoadTitle": "Failed to Load Events",
+        "failedToLoadMessage": "Failed to load events. Please try again."
+      },
+      "toasts": {
+        "failedToSave": "Failed to save changes",
+        "changesSaved": "Changes saved successfully"
+      },
+      "common": {
+        "eventDay": "Event Day"
+      }
+    },
+    "preparations": {
+      "header": {
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "unsavedChanges": "Unsaved changes",
+        "addNew": "Add new Preparation"
+      },
+      "loading": {
+        "loadingPreparations": "Loading preparations...",
+        "initializingTitle": "Initializing preparations book...",
+        "addingModelsTitle": "Adding default models...",
+        "loadingSubtitle": "Please wait a moment"
+      },
+      "error": {
+        "serviceBookNotFound": "Service book not found"
+      },
+      "toasts": {
+        "preparationSaved": "Preparation saved. Click \"Save Changes\" to persist.",
+        "preparationDeleted": "Preparation deleted. Click \"Save Changes\" to persist.",
+        "noChangesToSave": "No changes to save",
+        "failedToSave": "Failed to save changes",
+        "changesSaved": "Changes saved successfully",
+        "failedToSavePreparation": "Failed to save preparation"
+      },
+      "common": {
+        "backToMyEvents": "Back to My Events"
+      },
+      "confirmDialog": {
+        "title": "Are you sure?",
+        "description": "This action cannot be undone.",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "todo": {
+      "header": {
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "unsavedChanges": "Unsaved changes"
+      },
+      "loading": {
+        "loadingTodos": "Loading todos...",
+        "loadingSubtitle": "Please wait a moment",
+        "initializingTitle": "Initializing todo book...",
+        "initializingSubtitle": "Setting up your todo book",
+        "addingModelsTitle": "Adding default models...",
+        "addingModelsSubtitle": "Please wait while we add default categories"
+      },
+      "error": {
+        "failedToLoadTitle": "Failed to Load Todos",
+        "failedToLoadMessage": "Failed to load todos. Please try again.",
+        "todoBookNotFound": "No todo book found. Please initialize it first."
+      },
+      "sidebar": {
+        "title": "Your Lists",
+        "addNew": "Add New"
+      },
+      "common": {
+        "backToMyEvents": "Back to My Events",
+        "uncategorized": "Uncategorized",
+        "untitledList": "Untitled List"
+      }
     }
   },
   "reservations": {

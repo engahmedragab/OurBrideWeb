@@ -17,7 +17,7 @@ import { useEventId } from '@/hooks/planning'
 import { useAddEventBookModels } from '@/hooks/bookInit'
 import { usePlanningBookController, type SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { useToast } from '@/components/ui/Toaster'
-import { useIsRTL } from '@/i18n/hooks'
+import { useIsRTL, useI18nTranslations } from '@/i18n/hooks'
 import type { EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import {
@@ -50,6 +50,8 @@ function EventsPageContent() {
   const eventId = useEventId()
   const today = getToday()
   const isRtl = useIsRTL()
+  const t = useI18nTranslations('eventsPlanning.sideMenu.tabs')
+  const tEvents = useI18nTranslations('eventsPlanning.events')
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
   const [isMounted, setIsMounted] = useState(false)
 
@@ -249,28 +251,21 @@ function EventsPageContent() {
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      addToast(result.message || 'Failed to save changes', 'error')
+      addToast(result.message || tEvents('toasts.failedToSave'), 'error')
       return
     }
-    addToast(result.message || 'Changes saved successfully', 'success')
+    addToast(result.message || tEvents('toasts.changesSaved'), 'success')
   }
 
   // Loading State - Show loading only after mount to avoid hydration mismatch
   if (!isMounted || isLoading || isInitializing || isAddingModels) {
     const loadingTitle = !isMounted
-      ? 'Loading events...'
+      ? tEvents('loading.loadingEvents')
       : isInitializing
-        ? 'Initializing event book...'
+        ? tEvents('loading.initializingTitle')
         : isAddingModels
-          ? 'Adding default models...'
-          : 'Loading events...'
-    const loadingSubtitle = !isMounted
-      ? 'Please wait a moment'
-      : isInitializing
-        ? 'Setting up your event book'
-        : isAddingModels
-          ? 'Please wait while we add default categories'
-          : 'Please wait a moment'
+          ? tEvents('loading.addingModelsTitle')
+          : tEvents('loading.loadingEvents')
 
     return (
       <div className="w-full sm:p-6 lg:p-8 flex items-center justify-center">
@@ -285,8 +280,8 @@ function EventsPageContent() {
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
         <ErrorModal
           open={true}
-          title="Failed to Load Events"
-          message="Failed to load events. Please try again."
+          title={tEvents('error.failedToLoadTitle')}
+          message={tEvents('error.failedToLoadMessage')}
           onRetry={() => window.location.reload()}
           onClose={() => { }}
         />
@@ -303,7 +298,7 @@ function EventsPageContent() {
           className="flex items-center gap-3 text-gray-900 hover:opacity-80 transition-opacity"
         >
           <ChevronLeft className={cn('h-5 w-5', isRtl ? 'rotate-180' : 'rotate-0')} />
-          <h1 className="text-24 font-semibold text-gray-900">Event</h1>
+          <h1 className="text-24 font-semibold text-gray-900">{t('events')}</h1>
         </Link>
       </div>
 
@@ -319,11 +314,11 @@ function EventsPageContent() {
             type="button"
           >
             <Save className="h-4 w-4" />
-            {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {syncMutation.isPending ? tEvents('header.saving') : tEvents('header.saveChanges')}
           </Button>
 
           {hasUnsavedChanges && (
-            <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+            <span className="text-16 text-brand-500 font-medium">{tEvents('header.unsavedChanges')}</span>
           )}
         </div>
       )}
@@ -336,8 +331,8 @@ function EventsPageContent() {
               {eventDaysWithData.map((dayData) => {
                 const isSelected = selectedDayId === dayData.dayId
                 const categoryName = dayData.category
-                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || 'Event Day')
-                  : 'Event Day'
+                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || tEvents('common.eventDay'))
+                  : tEvents('common.eventDay')
 
                 return (
                   <button

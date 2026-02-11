@@ -2324,6 +2324,95 @@
           "Noteisrequired": "الملاحظة مطلوبة"
         }
       }
+    },
+    "events": {
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingEvents": "جاري تحميل المناسبات...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر المناسبات...",
+        "initializingSubtitle": "جاري إعداد دفتر المناسبات",
+        "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية"
+      },
+      "error": {
+        "failedToLoadTitle": "تعذر تحميل المناسبات",
+        "failedToLoadMessage": "تعذر تحميل المناسبات. حاول مرة أخرى."
+      },
+      "toasts": {
+        "failedToSave": "فشل حفظ التغييرات",
+        "changesSaved": "تم حفظ التغييرات بنجاح"
+      },
+      "common": {
+        "eventDay": "يوم المناسبة"
+      }
+    },
+    "preparations": {
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة",
+        "addNew": "إضافة تحضير جديد"
+      },
+      "loading": {
+        "loadingPreparations": "جاري تحميل التحضيرات...",
+        "initializingTitle": "جاري تهيئة دفتر التحضيرات...",
+        "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+        "loadingSubtitle": "من فضلك انتظر لحظة"
+      },
+      "error": {
+        "serviceBookNotFound": "دفتر الخدمات غير موجود"
+      },
+      "toasts": {
+        "preparationSaved": "تم حفظ التحضير. اضغط \"حفظ التغييرات\" للحفظ.",
+        "preparationDeleted": "تم حذف التحضير. اضغط \"حفظ التغييرات\" للحفظ.",
+        "noChangesToSave": "لا توجد تغييرات للحفظ",
+        "failedToSave": "فشل حفظ التغييرات",
+        "changesSaved": "تم حفظ التغييرات بنجاح",
+        "failedToSavePreparation": "فشل حفظ التحضير"
+      },
+      "common": {
+        "backToMyEvents": "الرجوع إلى مناسباتي"
+      },
+      "confirmDialog": {
+        "title": "هل أنت متأكد؟",
+        "description": "لا يمكن التراجع عن هذا الإجراء.",
+        "delete": "حذف",
+        "cancel": "إلغاء"
+      }
+    },
+    "todo": {
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingTodos": "جاري تحميل المهام...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر المهام...",
+        "initializingSubtitle": "جاري إعداد دفتر المهام",
+        "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية"
+      },
+      "error": {
+        "failedToLoadTitle": "تعذر تحميل المهام",
+        "failedToLoadMessage": "تعذر تحميل المهام. حاول مرة أخرى.",
+        "todoBookNotFound": "لم يتم العثور على دفتر المهام. يرجى تهيئته أولاً."
+      },
+      "sidebar": {
+        "title": "قوائمك",
+        "addNew": "إضافة جديد"
+      },
+      "common": {
+        "backToMyEvents": "الرجوع إلى مناسباتي",
+        "uncategorized": "غير مصنف",
+        "untitledList": "قائمة بدون عنوان"
+      }
     }
   },
   "reservations": {
