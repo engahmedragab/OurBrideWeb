@@ -8,15 +8,18 @@ import {
 } from '@/services/api/orderApi'
 import type { ReviewResponse } from '@/types/responses'
 import type { CreateOrderReviewRequest } from '@/../client/common/api/gen/ourbride-api'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch order reviews
  */
 export const useOrderReviews = (orderId: number | null, enabled: boolean = true) => {
+  const t = useI18nTranslations('alert')
+
   return useQuery<ReviewResponse[]>({
     queryKey: ['order', orderId, 'reviews'],
     queryFn: async () => {
-      if (!orderId) throw new Error('Order ID is required')
+      if (!orderId) throw new Error(t('orderIdRequired'))
       return await getOrderReviews(orderId)
     },
     enabled: enabled && !!orderId,
@@ -28,10 +31,12 @@ export const useOrderReviews = (orderId: number | null, enabled: boolean = true)
  * Hook to fetch a single order review by ID
  */
 export const useOrderReview = (reviewId: number | null, enabled: boolean = true) => {
+  const t = useI18nTranslations('alert')
+
   return useQuery<ReviewResponse>({
     queryKey: ['order-review', reviewId],
     queryFn: async () => {
-      if (!reviewId) throw new Error('Review ID is required')
+      if (!reviewId) throw new Error(t('reviewIdRequired'))
       return await getOrderReviewById(reviewId)
     },
     enabled: enabled && !!reviewId,
@@ -107,6 +112,3 @@ export const useDeleteOrderReview = () => {
     },
   })
 }
-
-
-

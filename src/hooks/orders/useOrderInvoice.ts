@@ -6,6 +6,7 @@ import {
   downloadPaymentReceipt,
 } from '@/services/api/orderApi'
 import type { ServiceInvoiceResponse, ServiceReceiptResponse } from '@/types/responses'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to generate order invoice
@@ -17,12 +18,13 @@ export const useOrderInvoice = (
     enabled?: boolean
   }
 ) => {
+  const t = useI18nTranslations('alert')
   const { enabled = true, ...queryParams } = query || {}
 
   return useQuery<ServiceInvoiceResponse>({
     queryKey: ['order', orderId, 'invoice', queryParams],
     queryFn: async () => {
-      if (!orderId) throw new Error('Order ID is required')
+      if (!orderId) throw new Error(t('orderIdRequired'))
       return await generateOrderInvoice(orderId, queryParams)
     },
     enabled: enabled && !!orderId,
@@ -76,12 +78,13 @@ export const usePaymentReceipt = (
     enabled?: boolean
   }
 ) => {
+  const t = useI18nTranslations('alert')
   const { enabled = true, ...queryParams } = query || {}
 
   return useQuery<ServiceReceiptResponse>({
     queryKey: ['order', orderId, 'payment', paymentId, 'receipt', queryParams],
     queryFn: async () => {
-      if (!orderId || !paymentId) throw new Error('Order ID and Payment ID are required')
+      if (!orderId || !paymentId) throw new Error(t('orderIdAndPaymentIdRequired'))
       return await generatePaymentReceipt(orderId, paymentId, queryParams)
     },
     enabled: enabled && !!orderId && !!paymentId,
@@ -126,4 +129,3 @@ export const useDownloadPaymentReceipt = () => {
     },
   })
 }
-

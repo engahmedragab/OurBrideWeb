@@ -10,6 +10,7 @@ import type { Notification } from '@/types/notification'
 import type { PaginatedList } from '@/types/responses/service-types'
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch user notifications
@@ -19,6 +20,7 @@ export const useNotifications = (query?: {
   pageSize?: number
   enabled?: boolean
 }) => {
+  const t = useI18nTranslations('alert')
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
   const { addToast } = useToast()
@@ -37,16 +39,16 @@ export const useNotifications = (query?: {
   // Handle errors using useEffect (onError is deprecated in newer React Query versions)
   useEffect(() => {
     if (queryResult.isError && queryResult.error) {
-      const errorMessage = queryResult.error instanceof Error ? queryResult.error.message : 'Failed to fetch notifications'
+      const errorMessage =
+        queryResult.error instanceof Error
+          ? queryResult.error.message
+          : t('notificationsFetchError')
       addToast(errorMessage, 'error')
     }
   }, [queryResult.isError, queryResult.error, addToast])
 
   const notifications = queryResult.data?.items || []
-  const unreadCount = useMemo(
-    () => notifications.filter(n => !n.isRead).length,
-    [notifications]
-  )
+  const unreadCount = useMemo(() => notifications.filter(n => !n.isRead).length, [notifications])
 
   const queryClient = useQueryClient()
 
@@ -55,7 +57,7 @@ export const useNotifications = (query?: {
     mutationFn: async (id: string) => {
       const notificationId = parseInt(id, 10)
       if (isNaN(notificationId)) {
-        throw new Error('Invalid notification ID')
+        throw new Error(t('notificationIdInvalidError'))
       }
       await markNotificationAsRead(notificationId)
     },
@@ -64,7 +66,10 @@ export const useNotifications = (query?: {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
       // Snapshot previous value
-      const previousData = queryClient.getQueryData<{ items: Notification[] }>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<{ items: Notification[] }>([
+        'notifications',
+        queryParams,
+      ])
 
       // Optimistically update
       if (previousData) {
@@ -82,7 +87,7 @@ export const useNotifications = (query?: {
         queryClient.setQueryData(['notifications', queryParams], context.previousData)
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to mark notification as read'
+      const errorMessage = err instanceof Error ? err.message : t('notificationMarkAsReadError')
       addToast(errorMessage, 'error')
     },
     onSettled: () => {
@@ -98,7 +103,7 @@ export const useNotifications = (query?: {
         .filter(n => !n.isRead)
         .map(n => parseInt(n.id, 10))
         .filter(id => !isNaN(id))
-      
+
       if (unreadIds.length === 0) {
         return
       }
@@ -108,7 +113,10 @@ export const useNotifications = (query?: {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
-      const previousData = queryClient.getQueryData<{ items: Notification[] }>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<{ items: Notification[] }>([
+        'notifications',
+        queryParams,
+      ])
 
       if (previousData) {
         queryClient.setQueryData<{ items: Notification[] }>(['notifications', queryParams], {
@@ -124,7 +132,8 @@ export const useNotifications = (query?: {
         queryClient.setQueryData(['notifications', queryParams], context.previousData)
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to mark all notifications as read'
+      const errorMessage =
+        err instanceof Error ? err.message : t('notificationsMarkAllAsReadError')
       addToast(errorMessage, 'error')
     },
     onSettled: () => {
@@ -137,7 +146,7 @@ export const useNotifications = (query?: {
     mutationFn: async (id: string) => {
       const notificationId = parseInt(id, 10)
       if (isNaN(notificationId)) {
-        throw new Error('Invalid notification ID')
+        throw new Error(t('notificationIdInvalidError'))
       }
       // For now, delete is handled optimistically since API endpoint may not exist
       // The notification will be filtered out from the list
@@ -145,7 +154,10 @@ export const useNotifications = (query?: {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
-      const previousData = queryClient.getQueryData<PaginatedList<Notification>>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<PaginatedList<Notification>>([
+        'notifications',
+        queryParams,
+      ])
 
       if (previousData) {
         queryClient.setQueryData<PaginatedList<Notification>>(['notifications', queryParams], {
@@ -162,7 +174,7 @@ export const useNotifications = (query?: {
         queryClient.setQueryData(['notifications', queryParams], context.previousData)
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete notification'
+      const errorMessage = err instanceof Error ? err.message : t('notificationDeleteError')
       addToast(errorMessage, 'error')
     },
     onSettled: () => {

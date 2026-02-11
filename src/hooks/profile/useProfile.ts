@@ -1,3 +1,4 @@
+import { useI18nTranslations } from '@/i18n/hooks';
 /**
  * Profile React Query Hooks
  */
@@ -30,6 +31,7 @@ export const useUserProfileData = (enabled: boolean = true) => {
  * Hook to update user profile
  */
 export const useUpdateUserProfile = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -41,18 +43,18 @@ export const useUpdateUserProfile = () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['user-profile'] })
       queryClient.invalidateQueries({ queryKey: ['mine-info'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Profile updated successfully',
-        'Failed to update profile'
+        t('profileUpdatedSuccess'),
+        t('profileUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update profile'
+      const errorMessage =
+        error instanceof Error ? error.message : t('profileUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
 }
-

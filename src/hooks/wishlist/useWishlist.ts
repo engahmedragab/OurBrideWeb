@@ -17,6 +17,7 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import { useMainIds } from '@/hooks/home'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch all wishlists
@@ -103,9 +104,10 @@ export const useWishlistExists = (
  * Hook to create a wishlist
  */
 export const useCreateWishlist = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       data: CreateWishlistRequest
@@ -118,13 +120,14 @@ export const useCreateWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Wishlist created successfully',
-        'Failed to create wishlist'
+        t('wishlistCreatedSuccess'),
+        t('wishlistCreatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create wishlist'
+      const errorMessage =
+        error instanceof Error ? error.message : t('wishlistCreatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -134,9 +137,10 @@ export const useCreateWishlist = () => {
  * Hook to update a wishlist
  */
 export const useUpdateWishlist = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -151,13 +155,14 @@ export const useUpdateWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Wishlist updated successfully',
-        'Failed to update wishlist'
+        t('wishlistUpdatedSuccess'),
+        t('wishlistUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update wishlist'
+      const errorMessage =
+        error instanceof Error ? error.message : t('wishlistUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -167,9 +172,10 @@ export const useUpdateWishlist = () => {
  * Hook to delete a wishlist
  */
 export const useDeleteWishlist = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -182,10 +188,11 @@ export const useDeleteWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['wishlist', variables.id] })
       queryClient.removeQueries({ queryKey: ['wishlist', variables.id] })
       queryClient.invalidateQueries({ queryKey: ['main-ids'] })
-      addToast('Wishlist deleted successfully', 'success')
+      addToast(t('wishlistDeletedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete wishlist'
+      const errorMessage =
+        error instanceof Error ? error.message : t('wishlistDeletedError')
       addToast(errorMessage, 'error')
     },
   })

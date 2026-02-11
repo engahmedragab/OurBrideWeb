@@ -3,6 +3,7 @@ import { createEventBookEventLine } from '@/services/api/eventBooksApi'
 import type { EventLineRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface UseCreateEventBookEventLineParams {
   clientId?: string
@@ -14,6 +15,7 @@ export interface UseCreateEventBookEventLineParams {
  * Hook to create event book event line
  */
 export const useCreateEventBookEventLine = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -25,18 +27,18 @@ export const useCreateEventBookEventLine = () => {
     onSuccess: (response) => {
       // Invalidate event books query to refetch after event line creation
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Event line created successfully',
-        'Failed to create event line'
+        t('eventLineCreatedSuccess'),
+        t('eventLineCreatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create event line'
+      const errorMessage =
+        error instanceof Error ? error.message : t('eventLineCreatedError')
       addToast(errorMessage, 'error')
     },
   })
 }
-

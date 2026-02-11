@@ -3,6 +3,7 @@ import {
   useToggleProductFavorite,
   useToggleProductWishlist,
 } from './useProductInteractions'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to get handlers for product card interactions
@@ -17,6 +18,7 @@ export const useProductCardHandlers = (
     onWishlistError?: (error: Error) => void
   }
 ) => {
+  const t = useI18nTranslations('alert')
   const toggleFavorite = useToggleProductFavorite()
   const toggleWishlist = useToggleProductWishlist()
 
@@ -28,7 +30,9 @@ export const useProductCardHandlers = (
         const response = await toggleFavorite.mutateAsync({ productId })
         options?.onFavoriteSuccess?.(response)
       } catch (error) {
-        options?.onFavoriteError?.(error instanceof Error ? error : new Error('Failed to toggle favorite'))
+        options?.onFavoriteError?.(
+          error instanceof Error ? error : new Error(t('favoriteToggleError'))
+        )
       }
     },
     [productId, toggleFavorite, options]
@@ -42,7 +46,9 @@ export const useProductCardHandlers = (
         const response = await toggleWishlist.mutateAsync({ productId })
         options?.onWishlistSuccess?.(response)
       } catch (error) {
-        options?.onWishlistError?.(error instanceof Error ? error : new Error('Failed to toggle wishlist'))
+        options?.onWishlistError?.(
+          error instanceof Error ? error : new Error(t('wishlistToggleErrorGeneric'))
+        )
       }
     },
     [productId, toggleWishlist, options]

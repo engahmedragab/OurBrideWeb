@@ -15,6 +15,7 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch all favorites
@@ -100,9 +101,10 @@ export const useFavoritesBySource = (
  * Hook to create a favorite
  */
 export const useCreateFavorite = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       data: CreateFavoriteRequest
@@ -114,13 +116,14 @@ export const useCreateFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Added to favorites successfully',
-        'Failed to add to favorites'
+        t('favoriteAddedSuccess'),
+        t('favoriteAddedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add to favorites'
+      const errorMessage =
+        error instanceof Error ? error.message : t('favoriteAddedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -130,9 +133,10 @@ export const useCreateFavorite = () => {
  * Hook to update a favorite
  */
 export const useUpdateFavorite = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -146,13 +150,14 @@ export const useUpdateFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['favorite', variables.id] })
       const { message, type } = handleApiResponseForToast(
         response,
-        'Favorite updated successfully',
-        'Failed to update favorite'
+        t('favoriteUpdatedSuccess'),
+        t('favoriteUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update favorite'
+      const errorMessage =
+        error instanceof Error ? error.message : t('favoriteUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -162,9 +167,10 @@ export const useUpdateFavorite = () => {
  * Hook to delete a favorite
  */
 export const useDeleteFavorite = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -176,10 +182,11 @@ export const useDeleteFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
       queryClient.invalidateQueries({ queryKey: ['favorite', variables.id] })
       queryClient.removeQueries({ queryKey: ['favorite', variables.id] })
-      addToast('Removed from favorites successfully', 'success')
+      addToast(t('favoriteRemovedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove from favorites'
+      const errorMessage =
+        error instanceof Error ? error.message : t('favoriteRemovedError')
       addToast(errorMessage, 'error')
     },
   })
