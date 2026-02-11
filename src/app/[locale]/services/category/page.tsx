@@ -935,6 +935,8 @@ function ServicesCategoryPageContent() {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
+                         maxVisiblePages={3}
+                  className="max-w-full w-fit "
                       />
                     </div>
                   )}

@@ -512,11 +512,11 @@ const tOverlay = useI18nTranslations('cart.mutationOverlay')
     )
   }, [cartProducts, servicePurchases, reservationPurchases, membershipPurchases, giftCardPurchases])
 
- const pageSubtitle = hasItems
-  ? totalItems === 1
-    ? t('subtitle.one', { count: totalItems })
-    : t('subtitle.other', { count: totalItems })
-  : undefined
+  const pageSubtitle = hasItems
+    ? totalItems === 1
+      ? t('subtitle.one', { count: totalItems })
+      : t('subtitle.other', { count: totalItems })
+    : undefined
   // Get the active cart data (use general cart data)
   const activeCartData = useMemo(() => {
     return cartData
@@ -863,7 +863,11 @@ const tOverlay = useI18nTranslations('cart.mutationOverlay')
           />
         </Button>
       </div>
-      <ServicesProductsFilter value={itemTypeFilter} onChange={setItemTypeFilter} />
+      <ServicesProductsFilter
+        value={itemTypeFilter}
+        onChange={setItemTypeFilter}
+        disableServices={!hasServices && !hasReservations}
+      />
     </div>
   )
 
@@ -1056,6 +1060,19 @@ const tOverlay = useI18nTranslations('cart.mutationOverlay')
                 ))}
               </div>
             )}
+            {!hasFilteredItems && (
+              <EmptyState
+                illustration={orderEmptySvg}
+                title={tStates('empty.title')}
+                  description={tStates('empty.description')}
+                actionLabel={
+                  itemTypeFilter === 'products'
+                    ? tStates('empty.viewProducts')
+                    : tStates('empty.viewServices')
+                }
+                actionHref={itemTypeFilter === 'products' ? '/products' : '/services'}
+              />
+           )}
           </div>
 
           {/* Order Summary Sidebar - Desktop only - Shows filtered totals */}

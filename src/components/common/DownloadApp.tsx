@@ -39,7 +39,7 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
       <Typography
         variant="h6"
         className={cn(
-          'mb-2 !text-12 md:!text-14 font-semibold !text-center   uppercase px-2',
+          'mb-2 !text-14 font-semibold !text-center   uppercase px-2',
           variant === 'secondary' ? 'text-gray-900' : 'text-gray-900',
           isRTL ? 'lg:!text-right' : 'lg:!text-left'
         )}

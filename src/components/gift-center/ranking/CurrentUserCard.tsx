@@ -12,6 +12,8 @@ import {
 } from '@/assets/rank/rankingIcons'
 import verificationBadge from '@/assets/svg/verification-badge.svg'
 import type { RankKey } from './RankingSystemSection'
+import { useIsRTL } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 export interface CurrentUserCardProps {
   name: string
@@ -40,13 +42,19 @@ export function CurrentUserCard({
   className,
 }: CurrentUserCardProps) {
   const RankIcon = rankIconMap[rankKey]
+  const isRTL = useIsRTL()
 
   return (
     <div
       className={`relative bg-white rounded-lg sm:rounded-xl border border-gray-300 p-3 sm:p-4 shadow-sm ${className || ''}`}
     >
       {/* Left section: avatar + name + icons */}
-      <div className="flex items-center gap-2.5 sm:gap-3 md:gap-2 pr-[110px] sm:pr-[100px]">
+      <div
+        className={cn(
+          'flex items-center gap-2.5 sm:gap-3 md:gap-2',
+          isRTL ? 'pl-[110px] sm:pl-[100px]' : 'pr-[110px] sm:pr-[100px]'
+        )}
+      >
         {/* Avatar */}
         <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex-shrink-0">
           <Image
@@ -83,7 +91,12 @@ export function CurrentUserCard({
       </div>
 
       {/* Right floating Rank Badge */}
-      <div className="absolute right-0 sm:right-0 top-1/2 -translate-y-1/2">
+      <div
+        className={cn(
+          'absolute top-1/2 -translate-y-1/2',
+          isRTL ? 'left-0' : 'right-0'
+        )}
+      >
         <RankBadge
           rankKey={rankKey}
           rankingValue={rankingValue}

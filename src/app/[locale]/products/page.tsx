@@ -396,7 +396,7 @@ export default function ProductIntroPage() {
                   
                   return (
                     <SwiperSlide key={brand.id}>
-                      <div className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all cursor-pointer h-full">
+                      <div className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all cursor-pointer h-[230px]">
                         <div className="relative w-full aspect-square mb-3 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                           {brandImage ? (
                             <Image
@@ -426,8 +426,8 @@ export default function ProductIntroPage() {
                           </div>
                         </div>
                         <h3 className="text-14 font-medium text-gray-900 text-center line-clamp-2">
-                          {brandName}
-                        </h3>
+                            {brandName}
+                          </h3>
                         {brand.count !== null && brand.count > 0 && (
                           <p className="text-12 text-gray-500 mt-1 text-center">
                             {brand.count} {t('productBrandsSection.products')}

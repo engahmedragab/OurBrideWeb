@@ -5,6 +5,7 @@ import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch user deliveryaddresses
@@ -45,7 +46,9 @@ export const useAddresses = (query?: {
 /**
  * Hook to create a new deliveryaddress
  */
+
 export const useCreateAddress = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
@@ -57,13 +60,13 @@ export const useCreateAddress = () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
       const { message, type } = handleApiResponseForToast(
         data,
-        'Address created successfully',
-        'Failed to create address'
+        t('addressCreatedSuccess'),
+        t('addressCreatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create address'
+      const errorMessage = error instanceof Error ? error.message : t('addressCreatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -72,7 +75,9 @@ export const useCreateAddress = () => {
 /**
  * Hook to update a deliveryaddress
  */
+
 export const useUpdateAddress = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
@@ -84,13 +89,13 @@ export const useUpdateAddress = () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
       const { message, type } = handleApiResponseForToast(
         data,
-        'Address updated successfully',
-        'Failed to update address'
+        t('addressUpdatedSuccess'),
+        t('addressUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update address'
+      const errorMessage = error instanceof Error ? error.message : t('addressUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -113,9 +118,11 @@ export const useAddress = (id: number, enabled: boolean = true) => {
 /**
  * Hook to delete a deliveryaddress
  */
+
 export const useDeleteAddress = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
-  useToast()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (id: number) => {
@@ -123,6 +130,11 @@ export const useDeleteAddress = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
+      addToast(t('addressDeletedSuccess'), 'success')
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : t('addressDeletedError')
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -130,8 +142,11 @@ export const useDeleteAddress = () => {
 /**
  * Hook to set a deliveryaddress as default
  */
+
 export const useSetDefaultAddress = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (id: number) => {
@@ -139,10 +154,10 @@ export const useSetDefaultAddress = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
-      addToast('Address deleted successfully', 'success')
+      addToast(t('addressSetDefaultSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete address'
+      const errorMessage = error instanceof Error ? error.message : t('addressSetDefaultError')
       addToast(errorMessage, 'error')
     },
   })

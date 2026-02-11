@@ -124,10 +124,10 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/20 rounded-t-2xl"></div>
             {/* Close button overlay */}
-            <div className="absolute top-4 right-4">
+            <div  className="absolute top-4 right-4">
               <button
                 onClick={onClose}
-                className="p-2  backdrop-blur-sm rounded-lg text-gray-600 hover:bg-white/50 transition-all shadow-sm"
+                className="p-2  backdrop-blur-sm rounded-lg text-white bg-yellow-600 hover:bg-white/50 transition-all shadow-sm"
                 title={t('page.actions.close')}
               >
                 <X className="w-5 h-5" />

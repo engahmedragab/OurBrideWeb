@@ -30,7 +30,7 @@ export const WelcomeHeader = ({
           alt="OurBride Logo"
           width={120}
           height={48}
-          className="h-10 w-auto sm:h-12"
+          className="h-14 w-auto"
         />
       </div>
 

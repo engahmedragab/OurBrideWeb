@@ -15,6 +15,7 @@ import type { WeddingEventResponse, EventInfoResponse } from '@/types/responses'
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch all wedding events
@@ -26,7 +27,7 @@ export const useWeddingEvents = (query?: {
 }) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  
+
   return useQuery<WeddingEventResponse[]>({
     queryKey: ['weddingEvents', queryParams],
     queryFn: async () => {
@@ -43,7 +44,7 @@ export const useWeddingEvents = (query?: {
  */
 export const useWeddingEvent = (eventId: number | null, enabled: boolean = true) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<WeddingEventResponse | null>({
     queryKey: ['weddingEvent', eventId],
     queryFn: async () => {
@@ -60,25 +61,27 @@ export const useWeddingEvent = (eventId: number | null, enabled: boolean = true)
  * Hook to create a new wedding event
  */
 export const useCreateWeddingEvent = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: WeddingEventCreateRequest) => {
       return await createWeddingEvent(data)
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Wedding event created successfully',
-        'Failed to create wedding event'
+        t('weddingEventCreatedSuccess'),
+        t('weddingEventCreatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create wedding event'
+      const errorMessage =
+        error instanceof Error ? error.message : t('weddingEventCreatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -88,9 +91,10 @@ export const useCreateWeddingEvent = () => {
  * Hook to update a wedding event
  */
 export const useUpdateWeddingEvent = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async ({ eventId, data }: { eventId: number; data: WeddingEventUpdateRequest }) => {
       return await updateWeddingEvent(eventId, data)
@@ -98,16 +102,17 @@ export const useUpdateWeddingEvent = () => {
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
       queryClient.invalidateQueries({ queryKey: ['weddingEvent', variables.eventId] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Wedding event updated successfully',
-        'Failed to update wedding event'
+        t('weddingEventUpdatedSuccess'),
+        t('weddingEventUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update wedding event'
+      const errorMessage =
+        error instanceof Error ? error.message : t('weddingEventUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -117,19 +122,21 @@ export const useUpdateWeddingEvent = () => {
  * Hook to delete a wedding event
  */
 export const useDeleteWeddingEvent = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (eventId: number) => {
       await deleteWeddingEvent(eventId)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
-      addToast('Wedding event deleted successfully', 'success')
+      addToast(t('weddingEventDeletedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete wedding event'
+      const errorMessage =
+        error instanceof Error ? error.message : t('weddingEventDeletedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -140,7 +147,7 @@ export const useDeleteWeddingEvent = () => {
  */
 export const useEventInfo = (eventId: number | null, enabled: boolean = true) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<EventInfoResponse | null>({
     queryKey: ['eventInfo', eventId],
     queryFn: async () => {
@@ -152,24 +159,3 @@ export const useEventInfo = (eventId: number | null, enabled: boolean = true) =>
     refetchOnWindowFocus: false,
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -113,6 +113,7 @@ export const useCreateFollow = () => {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
         t('followSuccess'),
@@ -146,6 +147,7 @@ export const useUpdateFollow = () => {
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
       queryClient.invalidateQueries({ queryKey: ['follow', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       const { message, type } = handleApiResponseForToast(
         response,
         t('followUpdateSuccess'),
@@ -180,6 +182,7 @@ export const useDeleteFollow = () => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
       queryClient.invalidateQueries({ queryKey: ['follow', variables.id] })
       queryClient.removeQueries({ queryKey: ['follow', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['main-ids'] })
       addToast( t('unfollowSuccess'), 'success')
     },
     onError: (error) => {

@@ -113,6 +113,13 @@ export type { PaymentMethodResponse } from './payment-method-response'
 export type { ProviderPaymentMethodResponse } from './provider-payment-method-response'
 export type { RoleResponse } from './role-response'
 export type { ProviderUserResponse } from './provider-user-response'
+export type {
+  UserMainIdsResponse,
+  FollowIdItem,
+  WishlistIdItem,
+  CartIdInfo,
+  CartProviderIdInfo,
+} from './user-main-ids-response'
 
 // Order service response types
 export type { ServiceOrderDetailsResponse } from './service-order-details-response'

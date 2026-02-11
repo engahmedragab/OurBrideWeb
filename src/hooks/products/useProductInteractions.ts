@@ -11,6 +11,7 @@ import { useI18nTranslations } from '@/i18n'
  * Hook to toggle product favorite
  */
 export const useToggleProductFavorite = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -30,16 +31,17 @@ export const useToggleProductFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['product', variables.productId] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Product favorite toggled successfully',
-        'Failed to toggle product favorite'
+        t('productFavoriteToggleSuccess'),
+        t('productFavoriteToggleError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle product favorite'
+      const errorMessage =
+        error instanceof Error ? error.message : t('productFavoriteToggleError')
       addToast(errorMessage, 'error')
     },
   })
@@ -70,7 +72,7 @@ export const useToggleProductWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       // Invalidate wishlist items to update card indicators
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         t('wishlistToggleSuccess'),

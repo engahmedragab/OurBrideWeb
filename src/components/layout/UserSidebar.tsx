@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { useCart } from '@/hooks/cart'
+import { useMainIds } from '@/hooks/home'
 import { useAuth } from '@/auth'
 import { useMineInfo } from '@/hooks/home'
 import { useI18nTranslations } from '@/i18n'
@@ -27,7 +27,7 @@ import {
   MapPin,
   Ticket,
   Calendar,
-  } from 'lucide-react'
+} from 'lucide-react'
 
 export interface UserSidebarProps {
   className?: string
@@ -77,15 +77,22 @@ export const UserSidebar = ({
     return 'https://via.placeholder.com/100'
   }, [propUserImage, userData])
 
-  // Fetch cart data
-  const { data: cartData } = useCart()
+  // Fetch main IDs (cart + carts-with-providers)
+  const { data: mainIds } = useMainIds(
+    {
+      page: 1,
+      pageSize: 1000,
+    },
+    true
+  )
 
-  // Calculate cart count (number of unique items)
+  // Calculate cart count using main IDs
   const cartCount = useMemo(() => {
-    if (!cartData) return 0
-    // Count unique items (purchases array length)
-    return cartData.purchases?.length || 0
-  }, [cartData])
+    if (!mainIds) return 0
+    const cartsWithProvidersCount = mainIds.cartsWithProviders?.length || 0
+    const hasPrimaryCart = mainIds.cart?.id ? 1 : 0
+    return cartsWithProvidersCount + hasPrimaryCart
+  }, [mainIds])
 
   type MenuItem = {
     label: string
@@ -309,11 +316,11 @@ export const UserSidebar = ({
                       >
                         <Icon className="h-5 w-5 flex-shrink-0 text-gray-400" />
                         <span className="flex-1 min-w-0">{item.label}</span>
-                        <span className="flex items-center gap-1 rounded-full bg-gray-200 rtl:text-14 ltr:text-10 font-medium text-brand-500 ltr:px-1.5 rtl:px-2 h-5 whitespace-nowrap flex-shrink-0">                         
+                        <span className="flex items-center gap-1 rounded-full bg-gray-200 rtl:text-14 ltr:text-10 font-medium text-brand-500 ltr:px-1.5 rtl:px-2 h-5 whitespace-nowrap flex-shrink-0">
                           {t('comingSoon')}
                         </span>
                       </div>
-                    ) : ( 
+                    ) : (
                       <Link
                         href={item.path}
                         onClick={onLinkClick}

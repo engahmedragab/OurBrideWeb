@@ -5,6 +5,7 @@ import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ServiceReview {
   id: string
@@ -21,9 +22,7 @@ export interface ServiceReview {
 /**
  * Map API review response to ServiceReview type
  */
-const mapReviewResponseToServiceReview = (
-  review: ReviewResponse
-): ServiceReview => ({
+const mapReviewResponseToServiceReview = (review: ReviewResponse): ServiceReview => ({
   id: String(review.id || ''),
   userId: review.userId || '',
   userName: review.title || 'Anonymous',
@@ -48,6 +47,7 @@ export const useServiceReviews = (
   },
   enabled = true
 ) => {
+  const t = useI18nTranslations('alert')
   const id = typeof serviceId === 'string' ? parseInt(serviceId, 10) : serviceId
 
   return useQuery({
@@ -80,7 +80,13 @@ export const useServiceReviews = (
         }
       }
 
-      return reviews.map(mapReviewResponseToServiceReview)
+      return reviews.map((r) => {
+        const mapped = mapReviewResponseToServiceReview(r)
+        return {
+          ...mapped,
+          userName: mapped.userName === 'Anonymous' ? t('anonymousUser') : mapped.userName,
+        }
+      })
     },
     enabled: enabled && !!id && !isNaN(id),
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -92,6 +98,7 @@ export const useServiceReviews = (
  * POST /api/v1/services/review/{serviceId}
  */
 export const useSubmitServiceReview = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -136,18 +143,18 @@ export const useSubmitServiceReview = () => {
       queryClient.invalidateQueries({
         queryKey: ['service-detail', String(variables.serviceId)],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Review submitted successfully',
-        'Failed to submit review'
+        t('reviewSubmittedSuccess'),
+        t('reviewSubmittedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review'
+      const errorMessage =
+        error instanceof Error ? error.message : t('reviewSubmittedError')
       addToast(errorMessage, 'error')
     },
   })
 }
-

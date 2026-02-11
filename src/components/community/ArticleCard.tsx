@@ -195,7 +195,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       </p>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
             {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
               <Image
@@ -215,31 +215,32 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
             )}
           </div>
 
-          <div>
+          <div className="min-w-0 flex-1">
             {article.userId && getProfileUrl(article.userId, article.user?.type) ? (
               <Link
                 href={getProfileUrl(article.userId, article.user?.type)!}
                 onClick={(e) => e.stopPropagation()}
-                className="hover:text-brand-500 transition-colors"
+                className="hover:text-brand-500 transition-colors block"
               >
-                <p className="text-14 font-normal text-gray-900">{displayName}</p>
+                <p className="text-14 font-normal text-gray-900 ">{displayName}</p>
               </Link>
             ) : (
-              <p className="text-14 font-normal text-gray-900">{displayName}</p>
+              <p className="text-14 font-normal text-gray-900 ">{displayName}</p>
             )}
-            <p className="text-12 text-gray-500">{date}</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-12 text-gray-500">{date}</p>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation()
+                  router.push(`/community/articles/${article.id}`)
+                }}
+                className="text-12 font-normal text-brand-500 hover:text-brand-600 transition-colors whitespace-nowrap"
+              >
+                {t('articleDetails.articleCard.readMore')}
+              </span>
+            </div>
           </div>
         </div>
-
-        <span
-          onClick={(e) => {
-            e.stopPropagation()
-            router.push(`/community/articles/${article.id}`)
-          }}
-          className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
-        >
-          {t('articleDetails.articleCard.readMore')}
-        </span>
       </div>
 
       {article.readingTime > 0 && (

@@ -420,7 +420,7 @@ function CreateOrderContent() {
       </div>
 
       {/* Loading Overlay */}
-      <LoadingSpinner open={isCreatingOrder} text={`${t('overlay.title')} ${t('overlay.subtitle')}`} />
+      {/* <LoadingSpinner open={isCreatingOrder} text={`${t('overlay.title')} ${t('overlay.subtitle')}`} /> */}
     </UserPageLayout>
   )
 }

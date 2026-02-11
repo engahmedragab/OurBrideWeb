@@ -419,9 +419,9 @@ function PreparationsPageContent() {
 
   return (
     <div className="w-full min-h-screen">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full lg:max-w-5xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="flex items-center gap-3">
             <button
               onClick={handleBack}
@@ -432,14 +432,14 @@ function PreparationsPageContent() {
             </button>
             <h1 className="text-24 font-semibold text-gray-900">Preparations</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             {(hasUnsavedChanges || syncMutation.isPending) && (
               <>
                 <Button
                   onClick={handleSync}
                   variant="brand"
                   size="md"
-                  className="flex items-center gap-2 rounded-xl !text-white"
+                  className="flex items-center gap-2 rounded-xl !text-white w-full sm:w-auto h-9 sm:h-10 px-3 sm:px-4 text-sm"
                   disabled={syncMutation.isPending || !localServiceBook || isLoading}
                   type="button"
                 >
@@ -456,7 +456,7 @@ function PreparationsPageContent() {
               onClick={handleAdd}
               variant="brand"
               size="md"
-              className="text-white"
+              className="text-white w-full sm:w-auto h-9 sm:h-10 px-3 sm:px-4 text-sm"
             >
               <Plus className="w-5 h-5 mr-2" />
               Add new Preparation

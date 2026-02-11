@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiTodoCategory } from '@/utils/planning/mappers/todoMappers'
+import { useIsRTL } from '@/i18n'
 
 const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
@@ -28,6 +29,7 @@ export function TodoListRow({
 }) {
   const key = category.color ?? 'gray'
   const style = STYLE_BY_COLOR[key] ?? STYLE_BY_COLOR.gray
+  const isRtl = useIsRTL()
 
   return (
     <button
@@ -73,7 +75,12 @@ export function TodoListRow({
             </span>
           ) : null}
 
-          <ChevronRight className="h-4 w-4 text-gray-400" />
+          <ChevronRight
+            className={cn(
+              'h-4 w-4 text-gray-400',
+              isRtl ? 'rotate-180' : 'rotate-0'
+            )}
+          />
         </div>
       </div>
     </button>

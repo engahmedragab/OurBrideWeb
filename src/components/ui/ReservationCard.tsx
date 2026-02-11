@@ -152,14 +152,16 @@ export const ReservationCard = ({
       {/* Status Badge and Toggle */}
       <div
         className={cn(
-          ' absolute top-6  flex items-center gap-2 ',
-          isRTL ? 'left-6' : 'right-6'
+          'flex w-full items-center gap-1 mb-2',
+          'sm:absolute sm:top-6 sm:w-auto sm:mb-0 sm:gap-2',
+          isRTL ? 'justify-start sm:left-6' : 'justify-end sm:right-6'
         )}
       >
         <StatusBadge
           status={mapReservationStatusToBadgeType(status)}
           label={getTranslatedStatus(status)}
           size="md"
+          className="gap-1 px-1.5 py-0.5 text-[10px] leading-none sm:px-2 sm:py-1.5 sm:text-[12px]"
         />
 
         <button
@@ -173,19 +175,24 @@ export const ReservationCard = ({
           }
         >
           {isDetailsOpen ? (
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           ) : (
-            <ChevronUp className="h-4 w-4" />
+            <ChevronUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           )}
         </button>
       </div>
 
-      <div className={cn('flex flex-col lg:flex-row gap-6 ', isRTL ? 'pl-28' : 'pr-28')}>
+      <div
+        className={cn(
+          'flex flex-col lg:flex-row gap-6',
+          isRTL ? 'pl-0 sm:pl-28' : 'pr-0 sm:pr-28'
+        )}
+      >
         {/* Left Section - Reservation Info */}
         <div className="flex-1">
           {/* Reservation ID and Date */}
           <div className="mb-4">
-            <h3 className="text-14 md:text-18 font-semibold text-gray-900 mb-1 break-all">
+            <h3 className="text-14 md:text-18 font-semibold text-gray-900 mb-1 break-all leading-snug">
               {t('card.header.title', { reservationId: reservation.reservationId })}
             </h3>
             {createdDate && (
@@ -303,7 +310,7 @@ export const ReservationCard = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onViewDetails(reservation.reservationId)}
-                    className="flex-1"
+                    className="flex-1 !text-12 "
                   >
                     {t('card.actions.viewDetails')}
                   </Button>
@@ -386,9 +393,15 @@ export const ReservationCard = ({
 
             {/* Notes */}
             {reservation.notes && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 w-fit">
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 w-full">
                 <p className="text-12 font-semibold text-blue-900 mb-1">{t('card.details.notes')}:</p>
-                <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-12 ', isRTL ? 'text-right' : 'text-left')}>
+                <p
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  className={cn(
+                    'text-12 break-words whitespace-pre-wrap',
+                    isRTL ? 'text-right' : 'text-left'
+                  )}
+                >
                   {reservation.notes}
                 </p>
               </div>

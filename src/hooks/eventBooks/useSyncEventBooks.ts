@@ -1,10 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { syncEventBooks, syncEventBooksDelta } from '@/services/api/eventBooksApi'
-import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  EventBookRequest,
+  EventLineRequest,
+  EventLineCategoryRequest,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 import type { EventBook } from '@/../client/common/api/gen/ourbride-api'
+import { useI18nTranslations } from '@/i18n'
 
 export interface UseSyncEventBooksParams {
   clientId?: string
@@ -20,10 +26,8 @@ export const useSyncEventBooks = () => {
   const { addToast } = useToast()
 
   return useMutation({
-    mutationFn: (data: {
-      eventBook: EventBookRequest
-      params?: UseSyncEventBooksParams
-    }) => syncEventBooks(data.eventBook, data.params),
+    mutationFn: (data: { eventBook: EventBookRequest; params?: UseSyncEventBooksParams }) =>
+      syncEventBooks(data.eventBook, data.params),
     onSuccess: () => {
       // Invalidate event books query to refetch after sync
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
@@ -37,6 +41,7 @@ export const useSyncEventBooks = () => {
  * Hook to sync event books (delta)
  */
 export const useSyncEventBooksDelta = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -51,8 +56,8 @@ export const useSyncEventBooksDelta = () => {
     onError: (error: unknown) => {
       const { message, type } = handleApiResponseForToast(
         error,
-        'Event book synced successfully',
-        'Failed to sync event book'
+        t('eventBookSyncedSuccess'),
+        t('eventBookSyncedError')
       )
       addToast(message, type)
     },

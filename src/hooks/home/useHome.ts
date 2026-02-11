@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo, getProviderHome, getStoreHomeByProvider } from '@/services/api/home.api'
+import { getUserMainIds } from '@/services/api/mineInfoApi'
+import type { UserMainIdsResponse } from '@/types/responses'
+import { useAuth } from '@/auth'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
 import type { ProviderHomeResponse } from '@/types/responses/provider-home-response'
 
@@ -62,14 +65,43 @@ export const useCommunityHome = (query?: {
  * Hook to fetch mine info (user profile information)
  */
 export const useMineInfo = (enabled = true) => {
+  const { isAuthenticated, isLoading } = useAuth()
+  const isEnabled = enabled && !isLoading && isAuthenticated
   return useQuery({
     queryKey: ['mine-info'],
     queryFn: async () => {
       const data = await getMineInfo()
       return data
     },
-    enabled,
+    enabled: isEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  })
+}
+
+/**
+ * Hook to fetch user main IDs (follows, wishlists, cart, carts-with-providers)
+ */
+export const useMainIds = (
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+    page?: number
+    pageSize?: number
+  },
+  enabled = true
+) => {
+  const { isAuthenticated, isLoading } = useAuth()
+  const isEnabled = enabled && !isLoading && isAuthenticated
+  return useQuery<UserMainIdsResponse>({
+    queryKey: ['main-ids', query],
+    queryFn: async () => {
+      const data = await getUserMainIds(query)
+      return data
+    },
+    enabled: isEnabled,
+    staleTime: 1 * 60 * 1000, // 1 minute
     refetchOnWindowFocus: false,
   })
 }

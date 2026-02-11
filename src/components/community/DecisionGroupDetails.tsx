@@ -205,16 +205,16 @@ export const DecisionGroupDetails = ({
           </button>
           <span>/</span>
           <span>{t("tabs.decisionGroups")}</span>
-          <span>/</span>
-          <span className="text-gray-900">{decisionGroup.title}</span>
+          {/* <span>/</span>
+          <span className="text-gray-900">{decisionGroup.title}</span> */}
         </div>
       </div>
 
       {/* Decision Group Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               {(() => {
                 const avatar = getUserAvatar(decisionGroup.user)
@@ -257,7 +257,7 @@ export const DecisionGroupDetails = ({
               <p className="text-12 text-gray-500">{formatDate(decisionGroup.publishedAt || decisionGroup.creationDate)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end md:self-auto">
             {/* Follow Button */}
             {decisionGroup.userId && (
               <Button

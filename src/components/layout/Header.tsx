@@ -6,7 +6,7 @@ import { usePathname } from '@/i18n/navigation'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput, LanguageSwitcher } from '@/components/ui'
-import { useCart } from '@/hooks/cart'
+import { useMainIds } from '@/hooks/home'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
   NavigationMenu,
@@ -52,8 +52,14 @@ export const Header = ({ className }: HeaderProps) => {
   const t = useI18nTranslations('navbar')
   const isRTL = useIsRTL()
 
-  // Fetch cart data
-  const { data: cartData, isLoading: isLoadingCart } = useCart()
+  // Fetch main IDs (cart, follows, wishlists, carts-with-providers)
+  const { data: mainIds, isLoading: isLoadingMainIds } = useMainIds(
+    {
+      page: 1,
+      pageSize: 1000,
+    },
+    true
+  )
 
   // Fetch notifications
   const {
@@ -70,22 +76,24 @@ export const Header = ({ className }: HeaderProps) => {
    * - Also prevents quick flash: initial state depends on current loading flags.
    */
   const [hasLoadedOnce, setHasLoadedOnce] = useState(() => {
-    return !isLoadingCart && !isLoadingNotifications
+    return !isLoadingMainIds && !isLoadingNotifications
   })
 
   useEffect(() => {
-    if (!hasLoadedOnce && !isLoadingCart && !isLoadingNotifications) {
+    if (!hasLoadedOnce && !isLoadingMainIds && !isLoadingNotifications) {
       setHasLoadedOnce(true)
     }
-  }, [hasLoadedOnce, isLoadingCart, isLoadingNotifications])
+  }, [hasLoadedOnce, isLoadingMainIds, isLoadingNotifications])
 
   const showHeaderSkeleton = !hasLoadedOnce
 
-  // Calculate cart count (number of unique items)
+  // Calculate cart count using main IDs (cart + carts-with-providers)
   const cartCount = useMemo(() => {
-    if (!cartData) return 0
-    return cartData.purchases?.length || 0
-  }, [cartData])
+    if (!mainIds) return 0
+    const cartsWithProvidersCount = mainIds.cartsWithProviders?.length || 0
+    const hasPrimaryCart = mainIds.cart?.id ? 1 : 0
+    return cartsWithProvidersCount + hasPrimaryCart
+  }, [mainIds])
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -100,7 +108,7 @@ export const Header = ({ className }: HeaderProps) => {
     if (pathname === path) {
       return true
     }
-    
+
     // Check if pathname starts with this dropdown item's path
     if (pathname.startsWith(path + '/')) {
       // Find if there's a more specific dropdown path that matches
@@ -108,10 +116,10 @@ export const Header = ({ className }: HeaderProps) => {
         if (otherPath.path === path) return false // Skip self
         if (otherPath.path.length <= path.length) return false // Must be longer/more specific
         // Check if the other path starts with this path and the pathname matches that other path
-        return otherPath.path.startsWith(path + '/') && 
-               (pathname === otherPath.path || pathname.startsWith(otherPath.path + '/'))
+        return otherPath.path.startsWith(path + '/') &&
+          (pathname === otherPath.path || pathname.startsWith(otherPath.path + '/'))
       })
-      
+
       // Only return true if there's no more specific match
       return !moreSpecificMatch
     }
@@ -121,54 +129,54 @@ export const Header = ({ className }: HeaderProps) => {
   // Check if parent menu item should be active (only if dropdown item is active)
   const isParentActive = (itemPath: string, dropdownItems: Array<{ path: string }>) => {
     // Check if any dropdown item is active
-    return dropdownItems.some(dropdownItem => 
+    return dropdownItems.some(dropdownItem =>
       isDropdownItemActive(dropdownItem.path, dropdownItems)
     )
   }
 
   const navigationItems = useMemo(() => {
     const items = [
-    {
+      {
         label: t('links.home'),
-      path: '/',
-      icon: Home,
-    },
-    {
+        path: '/',
+        icon: Home,
+      },
+      {
         label: t('links.products'),
-      path: '/products/intro',
-      icon: Store,
-      hasDropdown: true,
-      dropdownItems: [
+        path: 'products',
+        icon: Store,
+        hasDropdown: true,
+        dropdownItems: [
           { label: t('links.allProducts'), path: '/products' },
           { label: t('links.category'), path: '/products/category' },
-      ],
-    },
-    {
+        ],
+      },
+      {
         label: t('links.events'),
-      path: '/events',
-      icon: Calendar,
-    },
-    // {
-    //     label: t('links.services'),
-    //   path: '/services',
-    //   icon: FileHeart,
-    //   hasDropdown: true,
-    //   dropdownItems: [
-    //       { label: t('links.allServices'), path: '/services' },
-    //       { label: t('links.category'), path: '/services/category' },
-    //   ],
-    // },
-    // {
-    //     label: t('links.providers'),
-    //   path: '/providers',
-    //   icon: Building2,
-    // },
-    {
+        path: '/events',
+        icon: Calendar,
+      },
+      // {
+      //     label: t('links.services'),
+      //   path: '/services',
+      //   icon: FileHeart,
+      //   hasDropdown: true,
+      //   dropdownItems: [
+      //       { label: t('links.allServices'), path: '/services' },
+      //       { label: t('links.category'), path: '/services/category' },
+      //   ],
+      // },
+      // {
+      //     label: t('links.providers'),
+      //   path: '/providers',
+      //   icon: Building2,
+      // },
+      {
         label: t('links.community'),
-      path: '/community',
-      icon: Globe,
-    },
-  ]
+        path: '/community',
+        icon: Globe,
+      },
+    ]
 
     // Reverse the array in RTL mode to maintain the same visual order
     return isRTL ? [...items].reverse() : items
@@ -188,7 +196,7 @@ export const Header = ({ className }: HeaderProps) => {
 
   // ✅ Render full header skeleton (NOT partial) to avoid broken look
   if (showHeaderSkeleton) {
-    return <HeaderSkeleton  className={className} isRTL={isRTL} />
+    return <HeaderSkeleton className={className} isRTL={isRTL} />
   }
 
   return (
@@ -202,185 +210,185 @@ export const Header = ({ className }: HeaderProps) => {
           className
         )}
       >
-        <div className={cn("w-full px-4  lg:px-4 flex h-16 items-center justify-between md:justify-around gap-2 sm:gap-1 " ,
+        <div className={cn("w-full px-4  lg:px-4 flex h-16 items-center justify-between md:justify-around gap-2 sm:gap-1 ",
           isRTL ? 'md:px-3' : 'md:px-4'
         )}>
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0  md:w-[80px] lg:w-[100px] ">
-          <Link
-            href="/"
-            className={cn(
-              'flex items-center gap-2 transition-opacity duration-150',
-              'hover:opacity-80',
-              'focus:outline-none rounded-md'
-            )}
-          >
-            <Image
-              src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
-              alt="OurBride Logo"
-              width={120}
-              height={48}
-              className="h-14 sm:h-16 w-auto"
-            />
-          </Link>
+            <Link
+              href="/"
+              className={cn(
+                'flex items-center gap-2 transition-opacity duration-150',
+                'hover:opacity-80',
+                'focus:outline-none rounded-md'
+              )}
+            >
+              <Image
+                src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
+                alt="OurBride Logo"
+                width={120}
+                height={48}
+                className="h-14 sm:h-16 w-auto"
+              />
+            </Link>
           </div>
 
           {/* Navigation Menu */}
           <ClientOnly>
-          <NavigationMenu className="hidden md:flex">
-  <NavigationMenuList
-    className={cn(
-      'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
-      'lg:h-12 lg:px-1 lg:py-1.5',
-      isRTL ? 'md:h-14 md:px-2 md:py-2' : 'md:h-14 md:px-2 md:py-2'
-    )}
-  >
-    {navigationItems.map(item => {
-      const Icon = item.icon
-      const active = item.hasDropdown
-        ? isParentActive(item.path, item.dropdownItems || [])
-        : isActive(item.path)
-
-      if (item.hasDropdown) {
-        return (
-          <NavigationMenuItem key={item.path}>
-            <NavigationMenuTrigger
-              className={cn(
-                'rounded-md font-medium antialiased whitespace-nowrap',
-                'transition-all duration-200 ease-in-out',
-                'hover:bg-brand-50/50 hover:text-brand-600',
-                'focus:outline-none',
-                active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
-                isRTL && 'flex-row-reverse',
-                'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
-                isRTL
-                  ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
-                  : 'md:gap-2 md:px-2 md:py-2 md:text-14'
-              )}
-            >
-              <Icon
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList
                 className={cn(
-                  'transition-all duration-200 ease-in-out antialiased',
-                  active
-                    ? 'text-brand-600'
-                    : 'text-gray-400 group-hover:text-brand-600',
-                  'lg:h-5 lg:w-5',
-                  isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
-                )}
-              />
-              {item.label}
-            </NavigationMenuTrigger>
-
-            <NavigationMenuContent>
-              <div
-                dir={isRTL ? 'rtl' : 'ltr'}
-                className={cn(
-                  'bg-white rounded-lg shadow-lg border border-gray-50',
-                  'lg:w-56 lg:p-3',
-                  isRTL ? 'md:w-52 md:p-2' : 'md:w-56 md:p-3'
+                  'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
+                  'lg:h-12 lg:px-1 lg:py-1.5',
+                  isRTL ? 'md:h-14 md:px-2 md:py-2' : 'md:h-14 md:px-2 md:py-2'
                 )}
               >
-                {item.dropdownItems?.map(dropdownItem => {
-                  const isDropdownActive = isDropdownItemActive(
-                    dropdownItem.path,
-                    item.dropdownItems || []
-                  )
+                {navigationItems.map(item => {
+                  const Icon = item.icon
+                  const active = item.hasDropdown
+                    ? isParentActive(item.path, item.dropdownItems || [])
+                    : isActive(item.path)
+
+                  if (item.hasDropdown) {
+                    return (
+                      <NavigationMenuItem key={item.path}>
+                        <NavigationMenuTrigger
+                          className={cn(
+                            'rounded-md font-medium antialiased whitespace-nowrap',
+                            'transition-all duration-200 ease-in-out',
+                            'hover:bg-brand-50/50 hover:text-brand-600',
+                            'focus:outline-none',
+                            active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
+                            isRTL && 'flex-row-reverse',
+                            'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
+                            isRTL
+                              ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
+                              : 'md:gap-2 md:px-2 md:py-2 md:text-14'
+                          )}
+                        >
+                          <Icon
+                            className={cn(
+                              'transition-all duration-200 ease-in-out antialiased',
+                              active
+                                ? 'text-brand-600'
+                                : 'text-gray-400 group-hover:text-brand-600',
+                              'lg:h-5 lg:w-5',
+                              isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
+                            )}
+                          />
+                          {item.label}
+                        </NavigationMenuTrigger>
+
+                        <NavigationMenuContent>
+                          <div
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                            className={cn(
+                              'bg-white rounded-lg shadow-lg border border-gray-50',
+                              'lg:w-56 lg:p-3',
+                              isRTL ? 'md:w-52 md:p-2' : 'md:w-56 md:p-3'
+                            )}
+                          >
+                            {item.dropdownItems?.map(dropdownItem => {
+                              const isDropdownActive = isDropdownItemActive(
+                                dropdownItem.path,
+                                item.dropdownItems || []
+                              )
+
+                              return (
+                                <Link
+                                  key={dropdownItem.path}
+                                  href={dropdownItem.path}
+                                  className={cn(
+                                    'group relative flex items-center rounded-md font-normal antialiased',
+                                    'transition-all duration-200 ease-in-out',
+                                    'hover:text-brand-600',
+                                    'focus:outline-none',
+                                    isDropdownActive
+                                      ? 'text-brand-600 font-medium'
+                                      : 'text-gray-600 hover:text-brand-600',
+                                    'lg:gap-3 lg:px-3 lg:py-2 lg:text-14',
+                                    isRTL
+                                      ? 'md:gap-2 md:px-2.5 md:py-2 md:text-14'
+                                      : 'md:gap-3 md:px-3 md:py-2 md:text-14'
+                                  )}
+                                >
+                                  {isDropdownActive && (
+                                    <div
+                                      className={cn(
+                                        'absolute top-1/2 -translate-y-1/2 bg-brand-600',
+                                        isRTL
+                                          ? 'right-0 rounded-l-full'
+                                          : 'left-0 rounded-r-full',
+                                        'lg:w-0.5 lg:h-5',
+                                        isRTL ? 'md:w-0.5 md:h-4' : 'md:w-0.5 md:h-5'
+                                      )}
+                                    />
+                                  )}
+
+                                  <span className="flex-1">{dropdownItem.label}</span>
+
+                                  {isDropdownActive && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                                  )}
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    )
+                  }
 
                   return (
-                    <Link
-                      key={dropdownItem.path}
-                      href={dropdownItem.path}
-                      className={cn(
-                        'group relative flex items-center rounded-md font-normal antialiased',
-                        'transition-all duration-200 ease-in-out',
-                        'hover:text-brand-600',
-                        'focus:outline-none',
-                        isDropdownActive
-                          ? 'text-brand-600 font-medium'
-                          : 'text-gray-600 hover:text-brand-600',
-                        'lg:gap-3 lg:px-3 lg:py-2 lg:text-14',
-                        isRTL
-                          ? 'md:gap-2 md:px-2.5 md:py-2 md:text-14'
-                          : 'md:gap-3 md:px-3 md:py-2 md:text-14'
-                      )}
-                    >
-                      {isDropdownActive && (
-                        <div
+                    <NavigationMenuItem key={item.path}>
+                      <Link
+                        href={item.path}
+                        className={cn(
+                          'group relative flex items-center rounded-full font-medium antialiased whitespace-nowrap',
+                          'transition-all duration-200 ease-in-out',
+                          'hover:bg-brand-50/50 hover:text-brand-600',
+                          'focus:outline-none',
+                          active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
+                          isRTL && 'flex-row-reverse',
+                          'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
+                          isRTL
+                            ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
+                            : 'md:gap-2 md:px-2 md:py-2 md:text-14'
+                        )}
+                      >
+                        <Icon
                           className={cn(
-                            'absolute top-1/2 -translate-y-1/2 bg-brand-600',
-                            isRTL
-                              ? 'right-0 rounded-l-full'
-                              : 'left-0 rounded-r-full',
-                            'lg:w-0.5 lg:h-5',
-                            isRTL ? 'md:w-0.5 md:h-4' : 'md:w-0.5 md:h-5'
+                            'transition-all duration-200 ease-in-out antialiased',
+                            active
+                              ? 'text-brand-600'
+                              : 'text-gray-400 group-hover:text-brand-600',
+                            'lg:h-5 lg:w-5',
+                            isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
                           )}
                         />
-                      )}
+                        {item.label}
 
-                      <span className="flex-1">{dropdownItem.label}</span>
-
-                      {isDropdownActive && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
-                      )}
-                    </Link>
+                        {active && (
+                          <div
+                            className={cn(
+                              'absolute bg-brand-600 rounded-full transition-all duration-200',
+                              isRTL
+                                ? 'right-1/2 translate-x-1/2'
+                                : 'left-1/2 -translate-x-1/2',
+                              'lg:bottom-0 lg:w-6 lg:h-0.5',
+                              isRTL ? 'md:bottom-0 md:w-4 md:h-0.5' : 'md:bottom-0 md:w-5 md:h-0.5'
+                            )}
+                          />
+                        )}
+                      </Link>
+                    </NavigationMenuItem>
                   )
                 })}
-              </div>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        )
-      }
-
-      return (
-        <NavigationMenuItem key={item.path}>
-          <Link
-            href={item.path}
-            className={cn(
-              'group relative flex items-center rounded-full font-medium antialiased whitespace-nowrap',
-              'transition-all duration-200 ease-in-out',
-              'hover:bg-brand-50/50 hover:text-brand-600',
-              'focus:outline-none',
-              active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
-              isRTL && 'flex-row-reverse',
-              'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
-              isRTL
-                ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
-                : 'md:gap-2 md:px-2 md:py-2 md:text-14'
-            )}
-          >
-            <Icon
-              className={cn(
-                'transition-all duration-200 ease-in-out antialiased',
-                active
-                  ? 'text-brand-600'
-                  : 'text-gray-400 group-hover:text-brand-600',
-                'lg:h-5 lg:w-5',
-                isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
-              )}
-            />
-            {item.label}
-
-            {active && (
-              <div
-                className={cn(
-                  'absolute bg-brand-600 rounded-full transition-all duration-200',
-                  isRTL
-                    ? 'right-1/2 translate-x-1/2'
-                    : 'left-1/2 -translate-x-1/2',
-                  'lg:bottom-0 lg:w-6 lg:h-0.5',
-                  isRTL ? 'md:bottom-0 md:w-4 md:h-0.5' : 'md:bottom-0 md:w-5 md:h-0.5'
-                )}
-              />
-            )}
-          </Link>
-        </NavigationMenuItem>
-      )
-    })}
-  </NavigationMenuList>
-</NavigationMenu>
+              </NavigationMenuList>
+            </NavigationMenu>
 
 
-</ClientOnly>
+          </ClientOnly>
 
 
 
@@ -591,324 +599,324 @@ export const Header = ({ className }: HeaderProps) => {
 
         {/* Drawer Navigation - Scrollable */}
         <nav className="flex flex-col flex-1 overflow-y-auto min-h-0">
-  <div className="p-4 space-y-2">
-    {/* Search Button - First Item */}
-    <Button
-      variant="ghost"
-      onClick={() => {
-        setIsMobileMenuOpen(false)
-        setIsSearchOpen(true)
-      }}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        'text-gray-600 hover:bg-gray-50',
-        isRTL
-          ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <Search className="h-5 w-5 flex-shrink-0" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('search.placeholder')}
-      </span>
-    </Button>
-
-    {/* Home - Second Item */}
-    <Link
-      href="/"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-          ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <Home className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('links.home')}
-      </span>
-    </Link>
-
-    {/* Main Navigation Items */}
-    {navigationItems
-      .filter(item => item.path !== '/')
-      .map(item => {
-        const Icon = item.icon
-        const active = item.hasDropdown
-          ? isParentActive(item.path, item.dropdownItems || [])
-          : isActive(item.path)
-        const isExpanded = expandedItems.has(item.path)
-
-        if (item.hasDropdown) {
-          return (
-            <div key={item.path} className="space-y-1">
-              <div className="flex items-center">
-                <Link
-                  href={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    'w-full flex items-center flex-1 rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                    'transition-all duration-200 ease-in-out',
-                    active
-                      ? 'bg-brand-50 text-brand-600'
-                      : 'text-gray-600 hover:bg-gray-50',
-                    isRTL
-                      ? 'flex-row justify-start gap-2'
-                      : 'flex-row justify-start gap-3'
-                  )}
-                >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-                    {item.label}
-                  </span>
-                </Link>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    toggleExpanded(item.path)
-                  }}
-                  className={cn(
-                    'h-10 w-10 rounded-lg',
-                    'transition-all duration-200 ease-in-out',
-                    'hover:bg-gray-100'
-                  )}
-                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                >
-                  <ChevronRight
-                    className={cn(
-                      'h-4 w-4 flex-shrink-0 transition-transform duration-200',
-                      isExpanded
-                        ? isRTL
-                          ? '-rotate-90'
-                          : 'rotate-90'
-                        : isRTL
-                          ? 'rotate-180'
-                          : 'rotate-0'
-                    )}
-                  />
-                </Button>
-              </div>
-
-              {isExpanded && (
-                <div className={cn('space-y-1', isRTL ? 'mr-7' : 'ml-7')}>
-                  {item.dropdownItems?.map(dropdownItem => {
-                    const isDropdownActive = isDropdownItemActive(
-                      dropdownItem.path,
-                      item.dropdownItems || []
-                    )
-
-                    return (
-                      <Link
-                        key={dropdownItem.path}
-                        href={dropdownItem.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
-                          'w-full flex items-center rounded-lg px-4 py-2 text-14 font-normal antialiased',
-                          'transition-all duration-200 ease-in-out',
-                          isDropdownActive
-                            ? 'bg-brand-50 text-brand-600'
-                            : 'text-gray-600 hover:bg-gray-50',
-                          isRTL ? 'justify-start text-right' : 'justify-start text-left'
-                        )}
-                      >
-                        <span className={cn(isRTL ? 'flex-none' : 'flex-1')}>
-                          {dropdownItem.label}
-                        </span>
-                      </Link>
-                    )
-                  })}
-                </div>
+          <div className="p-4 space-y-2">
+            {/* Search Button - First Item */}
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                setIsSearchOpen(true)
+              }}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
               )}
-            </div>
-          )
-        }
+            >
+              <Search className="h-5 w-5 flex-shrink-0" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('search.placeholder')}
+              </span>
+            </Button>
 
-        return (
-          <Link
-            key={item.path}
-            href={item.path}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={cn(
-              'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-              'transition-all duration-200 ease-in-out',
-              active
-                ? 'bg-brand-50 text-brand-600'
-                : 'text-gray-600 hover:bg-gray-50',
-              isRTL
-                ? 'flex-row justify-start gap-2'
-                : 'flex-row justify-start gap-3'
-            )}
-          >
-            <Icon className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-            <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-              {item.label}
-            </span>
-          </Link>
-        )
-      })}
-  </div>
+            {/* Home - Second Item */}
+            <Link
+              href="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <Home className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('links.home')}
+              </span>
+            </Link>
 
-  {/* User Menu Section */}
-  <div className="mt-auto pt-4 border-t border-gray-100 space-y-1 px-4 pb-4">
-    <Link
-      href="/wishlist"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/wishlist')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-            ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <Heart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('menu.wishlist')}
-      </span>
-    </Link>
+            {/* Main Navigation Items */}
+            {navigationItems
+              .filter(item => item.path !== '/')
+              .map(item => {
+                const Icon = item.icon
+                const active = item.hasDropdown
+                  ? isParentActive(item.path, item.dropdownItems || [])
+                  : isActive(item.path)
+                const isExpanded = expandedItems.has(item.path)
 
-    <Link
-      href="/favorites"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/favorites')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-            ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <Star className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('menu.favorites')}
-      </span>
-    </Link>
+                if (item.hasDropdown) {
+                  return (
+                    <div key={item.path} className="space-y-1">
+                      <div className="flex items-center">
+                        <Link
+                          href={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={cn(
+                            'w-full flex items-center flex-1 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                            'transition-all duration-200 ease-in-out',
+                            active
+                              ? 'bg-brand-50 text-brand-600'
+                              : 'text-gray-600 hover:bg-gray-50',
+                            isRTL
+                              ? 'flex-row justify-start gap-2'
+                              : 'flex-row justify-start gap-3'
+                          )}
+                        >
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                          <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                            {item.label}
+                          </span>
+                        </Link>
 
-    <Link
-      href="/follows"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/follows')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-            ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <UserPlus className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('menu.follows')}
-      </span>
-    </Link>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleExpanded(item.path)
+                          }}
+                          className={cn(
+                            'h-10 w-10 rounded-lg',
+                            'transition-all duration-200 ease-in-out',
+                            'hover:bg-gray-100'
+                          )}
+                          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                        >
+                          <ChevronRight
+                            className={cn(
+                              'h-4 w-4 flex-shrink-0 transition-transform duration-200',
+                              isExpanded
+                                ? isRTL
+                                  ? '-rotate-90'
+                                  : 'rotate-90'
+                                : isRTL
+                                  ? 'rotate-180'
+                                  : 'rotate-0'
+                            )}
+                          />
+                        </Button>
+                      </div>
 
-    <Link
-      href="/cart"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/cart')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-            ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <ShoppingCart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('menu.myCart')}
-      </span>
+                      {isExpanded && (
+                        <div className={cn('space-y-1', isRTL ? 'mr-7' : 'ml-7')}>
+                          {item.dropdownItems?.map(dropdownItem => {
+                            const isDropdownActive = isDropdownItemActive(
+                              dropdownItem.path,
+                              item.dropdownItems || []
+                            )
 
-      {cartCount > 0 && (
-        <span
-          className={cn(
-            'flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1',
-           
-            isRTL ? 'mr-2' : 'ml-2'
-          )}
-        >
-          {cartCount > 99 ? '99+' : cartCount}
-        </span>
-      )}
-    </Link>
+                            return (
+                              <Link
+                                key={dropdownItem.path}
+                                href={dropdownItem.path}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={cn(
+                                  'w-full flex items-center rounded-lg px-4 py-2 text-14 font-normal antialiased',
+                                  'transition-all duration-200 ease-in-out',
+                                  isDropdownActive
+                                    ? 'bg-brand-50 text-brand-600'
+                                    : 'text-gray-600 hover:bg-gray-50',
+                                  isRTL ? 'justify-start text-right' : 'justify-start text-left'
+                                )}
+                              >
+                                <span className={cn(isRTL ? 'flex-none' : 'flex-1')}>
+                                  {dropdownItem.label}
+                                </span>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }
 
-    <Link
-      href="/notifications"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/notifications')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-            ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <Bell className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('icons.notifications')}
-      </span>
-    </Link>
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                      'transition-all duration-200 ease-in-out',
+                      active
+                        ? 'bg-brand-50 text-brand-600'
+                        : 'text-gray-600 hover:bg-gray-50',
+                      isRTL
+                        ? 'flex-row justify-start gap-2'
+                        : 'flex-row justify-start gap-3'
+                    )}
+                  >
+                    <Icon className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+                    <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                      {item.label}
+                    </span>
+                  </Link>
+                )
+              })}
+          </div>
 
-    <Link
-      href="/profile"
-      onClick={() => setIsMobileMenuOpen(false)}
-      className={cn(
-        'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-        'transition-all duration-200 ease-in-out',
-        isActive('/profile')
-          ? 'bg-brand-50 text-brand-600'
-          : 'text-gray-600 hover:bg-gray-50',
-        isRTL
-              ? 'flex-row justify-start gap-2'
-          : 'flex-row justify-start gap-3'
-      )}
-    >
-      <User className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-      <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
-        {t('menu.myProfile')}
-      </span>
-    </Link>
+          {/* User Menu Section */}
+          <div className="mt-auto pt-4 border-t border-gray-100 space-y-1 px-4 pb-4">
+            <Link
+              href="/wishlist"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/wishlist')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <Heart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('menu.wishlist')}
+              </span>
+            </Link>
 
-    <ClientOnly>
-      <div className="pt-4 border-t border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="px-0 py-2">
-          <label
-            className={cn(
-              'block text-14 font-normal text-gray-600 mb-2',
-              isRTL ? 'text-right' : 'text-left'
-            )}
-          >
-            {t('icons.language')}
-          </label>
-          <LanguageSwitcher variant="dropdown" />
-        </div>
-      </div>
-    </ClientOnly>
-  </div>
-</nav>
+            <Link
+              href="/favorites"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/favorites')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <Star className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('menu.favorites')}
+              </span>
+            </Link>
+
+            <Link
+              href="/follows"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/follows')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <UserPlus className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('menu.follows')}
+              </span>
+            </Link>
+
+            <Link
+              href="/cart"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/cart')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <ShoppingCart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('menu.myCart')}
+              </span>
+
+              {cartCount > 0 && (
+                <span
+                  className={cn(
+                    'flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1',
+
+                    isRTL ? 'mr-2' : 'ml-2'
+                  )}
+                >
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              href="/notifications"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/notifications')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <Bell className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('icons.notifications')}
+              </span>
+            </Link>
+
+            <Link
+              href="/profile"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'w-full flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
+                isActive('/profile')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL
+                  ? 'flex-row justify-start gap-2'
+                  : 'flex-row justify-start gap-3'
+              )}
+            >
+              <User className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+              <span className={cn(isRTL ? 'flex-none text-right' : 'flex-1 text-left')}>
+                {t('menu.myProfile')}
+              </span>
+            </Link>
+
+            <ClientOnly>
+              <div className="pt-4 border-t border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
+                <div className="px-0 py-2">
+                  <label
+                    className={cn(
+                      'block text-14 font-normal text-gray-600 mb-2',
+                      isRTL ? 'text-right' : 'text-left'
+                    )}
+                  >
+                    {t('icons.language')}
+                  </label>
+                  <LanguageSwitcher variant="dropdown" />
+                </div>
+              </div>
+            </ClientOnly>
+          </div>
+        </nav>
 
       </div>
     </>

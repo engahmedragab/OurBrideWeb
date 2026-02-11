@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 export interface ServicesProductsFilterProps {
   value: 'services' | 'products'
   onChange: (value: 'services' | 'products') => void
+  disableServices?: boolean
   variant?: 'brand' | 'outline'
   className?: string
 }
@@ -25,6 +26,7 @@ export interface ServicesProductsFilterProps {
 export const ServicesProductsFilter = ({
   value,
   onChange,
+  disableServices = false,
   variant = 'brand',
   className,
 }: ServicesProductsFilterProps) => {
@@ -54,16 +56,17 @@ export const ServicesProductsFilter = ({
           align={isRTL ? 'start' : 'end'} 
           className="w-40"
         >
-          <div dir={isRTL ? 'rtl' : 'ltr'}>
-            <DropdownMenuItem
+            <div dir={isRTL ? 'rtl' : 'ltr'}>
+              <DropdownMenuItem
               onClick={() => onChange('services')}
-              className={cn(
-                value === 'services' ? 'bg-brand-50' : '',
-                isRTL && 'text-right'
-              )}
-            >
-              {t('services')}
-            </DropdownMenuItem>
+                className={cn(
+                  value === 'services' ? 'bg-brand-50' : '',
+                  disableServices && 'opacity-50 pointer-events-none',
+                  isRTL && 'text-right'
+                )}
+              >
+                {t('services')}
+              </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onChange('products')}
               className={cn(

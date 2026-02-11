@@ -231,7 +231,7 @@ export const ProductList = ({
   }
 
   return (
-    <div className={cn('grid grid-cols-2 gap-3 md:grid-cols-1 md:gap-4', className)}>
+    <div className={cn('grid grid-cols-1 gap-3 md:grid-cols-1 md:gap-4', className)}>
       {products.map(product => (
         <ProductListItem
           key={product.id}

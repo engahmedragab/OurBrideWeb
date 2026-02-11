@@ -26,6 +26,7 @@ import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDe
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Hook to fetch occasion book
@@ -33,7 +34,7 @@ import { handleApiResponseForToast } from '@/utils/api-response.utils'
 export const useOccasionBook = (query?: OccasionBooksQuery & { enabled?: boolean }) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  
+
   return useQuery<OccasionBookResponse | null>({
     queryKey: ['occasionBook', queryParams],
     queryFn: async () => {
@@ -51,7 +52,7 @@ export const useOccasionBook = (query?: OccasionBooksQuery & { enabled?: boolean
 export const useOccasionLines = (query?: OccasionBooksQuery & { enabled?: boolean }) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  
+
   return useQuery<OccasionLineResponse[]>({
     queryKey: ['occasionLines', queryParams],
     queryFn: async () => {
@@ -67,9 +68,10 @@ export const useOccasionLines = (query?: OccasionBooksQuery & { enabled?: boolea
  * Hook to create an occasion line
  */
 export const useCreateOccasionLine = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async ({ data, query }: { data: OccasionLineRequest; query?: OccasionBooksQuery }) => {
       return await createOccasionLine(data, query)
@@ -77,16 +79,17 @@ export const useCreateOccasionLine = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['occasionLines'] })
       queryClient.invalidateQueries({ queryKey: ['occasionBook'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Occasion line created successfully',
-        'Failed to create occasion line'
+        t('occasionLineCreatedSuccess'),
+        t('occasionLineCreatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create occasion line'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionLineCreatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -96,34 +99,36 @@ export const useCreateOccasionLine = () => {
  * Hook to update an occasion line
  */
 export const useUpdateOccasionLine = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
-    mutationFn: async ({ 
-      lineId, 
-      data, 
-      query 
-    }: { 
+    mutationFn: async ({
+      lineId,
+      data,
+      query,
+    }: {
       lineId: number
       data: OccasionLineUpdateRequest
-      query?: OccasionBooksQuery 
+      query?: OccasionBooksQuery
     }) => {
       return await updateOccasionLine(lineId, data, query)
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['occasionLines'] })
       queryClient.invalidateQueries({ queryKey: ['occasionBook'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Occasion line updated successfully',
-        'Failed to update occasion line'
+        t('occasionLineUpdatedSuccess'),
+        t('occasionLineUpdatedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update occasion line'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionLineUpdatedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -133,9 +138,10 @@ export const useUpdateOccasionLine = () => {
  * Hook to delete an occasion line
  */
 export const useDeleteOccasionLine = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async ({ lineId, query }: { lineId: number; query?: OccasionBooksQuery }) => {
       await deleteOccasionLine(lineId, query)
@@ -143,10 +149,11 @@ export const useDeleteOccasionLine = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['occasionLines', variables.query] })
       queryClient.invalidateQueries({ queryKey: ['occasionBook', variables.query] })
-      addToast('Occasion line deleted successfully', 'success')
+      addToast(t('occasionLineDeletedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete occasion line'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionLineDeletedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -156,9 +163,10 @@ export const useDeleteOccasionLine = () => {
  * Hook to sync occasion book (full book object)
  */
 export const useSyncOccasionBook = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async ({ data, query }: { data: OccasionBookRequest; query?: OccasionBooksQuery }) => {
       await syncOccasionBook(data, query)
@@ -166,16 +174,17 @@ export const useSyncOccasionBook = () => {
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['occasionBook', variables.query] })
       queryClient.invalidateQueries({ queryKey: ['occasionLines', variables.query] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Occasion book synced successfully',
-        'Failed to sync occasion book'
+        t('occasionBookSyncedSuccess'),
+        t('occasionBookSyncedError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to sync occasion book'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionBookSyncedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -185,6 +194,7 @@ export const useSyncOccasionBook = () => {
  * Hook to sync occasion book (delta)
  */
 export const useSyncOccasionBookDelta = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -201,10 +211,11 @@ export const useSyncOccasionBookDelta = () => {
     onSuccess: (_response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['occasionBook', variables.query] })
       queryClient.invalidateQueries({ queryKey: ['occasionLines', variables.query] })
-      addToast('Occasion book synced successfully', 'success')
+      addToast(t('occasionBookSyncedSuccess'), 'success')
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to sync occasion book'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionBookSyncedError')
       addToast(errorMessage, 'error')
     },
   })
@@ -214,43 +225,39 @@ export const useSyncOccasionBookDelta = () => {
  * Hook to initialize occasion books
  */
 export const useInitOccasionBooks = () => {
+  const t = useI18nTranslations('alert')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (params?: { clientId?: string | null; userType?: UserType | null; eventId?: number }) => {
       // Pass all params including eventId to initOccasionBooks
       // Convert null to undefined for clientId and userType
-      const normalizedParams = params ? {
-        clientId: params.clientId ?? undefined,
-        userType: params.userType ?? undefined,
-        eventId: params.eventId,
-      } : undefined
+      const normalizedParams = params
+        ? {
+            clientId: params.clientId ?? undefined,
+            userType: params.userType ?? undefined,
+            eventId: params.eventId,
+          }
+        : undefined
       await initOccasionBooks(normalizedParams)
     },
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['occasionBook'] })
       queryClient.invalidateQueries({ queryKey: ['occasionLines'] })
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
-        'Occasion books initialized successfully',
-        'Failed to initialize occasion books'
+        t('occasionBooksInitSuccess'),
+        t('occasionBooksInitError')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize occasion books'
+      const errorMessage =
+        error instanceof Error ? error.message : t('occasionBooksInitError')
       addToast(errorMessage, 'error')
     },
   })
 }
-
-
-
-
-
-
-
-

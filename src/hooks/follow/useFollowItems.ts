@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useFollows } from './useFollow'
-import type { FollowResponse } from '@/types/responses'
+import { useMainIds } from '@/hooks/home'
+import type { FollowIdItem } from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -12,23 +12,25 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
  * we rely on the sourceId matching the product/service/provider ID.
  */
 export const useFollowItems = (enabled = true) => {
-  const { data: followsData } = useFollows({
-    enabled,
-    page: 1,
-    pageSize: 1000, // Fetch a large number to get all follows
-  })
+  const { data: mainIds, isLoading } = useMainIds(
+    {
+      page: 1,
+      pageSize: 1000,
+    },
+    enabled
+  )
 
   // Extract all follows from response (direct array, not paginated)
   const follows = useMemo(() => {
-    return followsData || []
-  }, [followsData])
+    return mainIds?.follows || []
+  }, [mainIds])
 
   // Extract product IDs from follows
   const productIds = useMemo(() => {
     return new Set<number>(
       follows
-        .filter((follow: FollowResponse) => follow.source === Source.Product)
-        .map((follow: FollowResponse) => follow.sourceId)
+        .filter((follow: FollowIdItem) => String(follow.source) === Source.Product)
+        .map((follow: FollowIdItem) => follow.sourceId)
     )
   }, [follows])
 
@@ -36,8 +38,8 @@ export const useFollowItems = (enabled = true) => {
   const serviceIds = useMemo(() => {
     return new Set<number>(
       follows
-        .filter((follow: FollowResponse) => follow.source === Source.Service)
-        .map((follow: FollowResponse) => follow.sourceId)
+        .filter((follow: FollowIdItem) => String(follow.source) === Source.Service)
+        .map((follow: FollowIdItem) => follow.sourceId)
     )
   }, [follows])
 
@@ -45,8 +47,8 @@ export const useFollowItems = (enabled = true) => {
   const providerIds = useMemo(() => {
     return new Set<number>(
       follows
-        .filter((follow: FollowResponse) => follow.source === Source.Provider)
-        .map((follow: FollowResponse) => follow.sourceId)
+        .filter((follow: FollowIdItem) => String(follow.source) === Source.Provider)
+        .map((follow: FollowIdItem) => follow.sourceId)
     )
   }, [follows])
 
@@ -81,7 +83,7 @@ export const useFollowItems = (enabled = true) => {
     isProductFollowed,
     isServiceFollowed,
     isProviderFollowed,
-    isLoading: !followsData,
+    isLoading,
     follows,
   }
 }

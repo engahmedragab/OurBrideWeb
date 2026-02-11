@@ -1,3 +1,4 @@
+import { useI18nTranslations } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // Delta sync types
@@ -98,6 +99,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
   addModelsMutation,
   getBookId,
 }: PlanningBookControllerOptions<TBook, TLine, TCategory>) => {
+  const t = useI18nTranslations('alert')
   const [localBook, setLocalBook] = useState<TBook | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSyncedRef = useRef<TBook | null>(null)
@@ -571,10 +573,10 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
       }
     ) => {
       if (isLoading) {
-        return { ok: false, reason: 'loading', message: 'Please wait while the book is loading...' }
+        return { ok: false, reason: 'loading', message: t('planningBookLoadingMessage') }
       }
       if (!localBook) {
-        return { ok: false, reason: 'missing-book', message: 'Book not found. Please refresh the page.' }
+        return { ok: false, reason: 'missing-book', message: t('planningBookNotFoundMessage') }
       }
       const next = updater(localBook)
       setLocalBook(next)
@@ -590,14 +592,14 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
 
   const save = useCallback(async (bookOverride?: TBook) => {
     if (requireEventId && !eventId) {
-      return { ok: false, reason: 'missing-event', message: 'Event ID is required' }
+      return { ok: false, reason: 'missing-event', message: t('eventIdRequired') }
     }
     if (isLoading) {
-      return { ok: false, reason: 'loading', message: 'Please wait while the book is loading...' }
+      return { ok: false, reason: 'loading', message: t('planningBookLoadingMessage') }
     }
     const bookToSave = bookOverride ?? localBook
     if (!bookToSave) {
-      return { ok: false, reason: 'missing-book', message: 'Book not found. Please refresh the page.' }
+      return { ok: false, reason: 'missing-book', message: t('planningBookNotFoundMessage') }
     }
     if (bookOverride) {
       setLocalBook(bookOverride)
@@ -607,14 +609,14 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
       return { ok: false, reason: 'validation', message: validationError }
     }
     if (!bookOverride && !hasActualChanges()) {
-      return { ok: false, reason: 'no-changes', message: 'No changes to save' }
+      return { ok: false, reason: 'no-changes', message: t('noChangesToSave') }
     }
     try {
       // Use delta sync if available, otherwise fall back to full sync
       if (syncDeltaFn) {
         const deltaPayload = buildDeltaPayload()
         if (!deltaPayload) {
-          return { ok: false, reason: 'error', message: 'Failed to build delta payload' }
+          return { ok: false, reason: 'error', message: t('deltaPayloadBuildError') }
         }
 
         // Check if there are any changes
@@ -627,7 +629,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           deltaPayload.lineCategories.deletedIds.length > 0
 
         if (!hasChanges) {
-          return { ok: false, reason: 'no-changes', message: 'No changes to save' }
+          return { ok: false, reason: 'no-changes', message: t('noChangesToSave') }
         }
 
         const response = await syncDeltaFn(deltaPayload)
@@ -654,7 +656,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           markSynced(finalBook)
         }
         
-        return { ok: true, reason: 'saved', message: 'Changes saved successfully' }
+        return { ok: true, reason: 'saved', message: t('changesSavedSuccess') }
       } else {
         // Fall back to full sync
         await syncFn(bookToSave)
@@ -668,17 +670,17 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
             if (markSyncedOnSave !== false) {
               markSynced(refreshedBook)
             }
-            return { ok: true, reason: 'saved', message: 'Changes saved successfully' }
+            return { ok: true, reason: 'saved', message: t('changesSavedSuccess') }
           }
         }
 
         if (markSyncedOnSave !== false) {
           markSynced(bookToSave)
         }
-        return { ok: true, reason: 'saved', message: 'Changes saved successfully' }
+        return { ok: true, reason: 'saved', message: t('changesSavedSuccess') }
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save changes'
+      const message = error instanceof Error ? error.message : t('saveChangesError')
       return { ok: false, reason: 'error', message, error }
     }
   }, [

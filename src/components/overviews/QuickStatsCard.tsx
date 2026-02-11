@@ -16,9 +16,10 @@ export interface QuickStatsCardProps {
   title: string
   book?: BookType
   eventId?: number
+  onNavigate?: () => void
 }
 
-export const QuickStatsCard = ({ title, book }: QuickStatsCardProps) => {
+export const QuickStatsCard = ({ title, book ,onNavigate }: QuickStatsCardProps) => {
   const t = useI18nTranslations('eventsPlanning')
   const tCards = useI18nTranslations('eventsPlanning.cards')
 
@@ -38,6 +39,7 @@ export const QuickStatsCard = ({ title, book }: QuickStatsCardProps) => {
 
   const total = useMemo(() => {
     if (!progressBook) return 0
+    if (typeof progressBook.count === 'number') return progressBook.count
     const linesCount = progressBook.lines?.length || 0
     const pendingCount = progressBook.pending || 0
     return linesCount + pendingCount
@@ -59,6 +61,7 @@ export const QuickStatsCard = ({ title, book }: QuickStatsCardProps) => {
     return (
       <div className="bg-white rounded-xl p-4 border border-gray-200">
         <h3 className="text-14 font-semibold text-gray-900 mb-8">{title}</h3>
+      
 
         <div className="flex items-end justify-between text-16 font-bold text-gray-900">
           <p className="text-16 font-bold text-gray-900">
@@ -75,7 +78,17 @@ export const QuickStatsCard = ({ title, book }: QuickStatsCardProps) => {
 
     return (
       <div className="bg-white rounded-xl p-4 border border-gray-200">
-        <h3 className="text-14 font-semibold text-gray-900 mb-3">{title}</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-14 font-semibold text-gray-900">{title}</h3>
+          <button
+            className="text-12 text-brand-500 hover:text-brand-600 font-medium"
+            onClick={onNavigate}
+            type="button"
+          >
+            {t('common.viewAll')}
+          </button>
+        </div>
+        
 
         <div className="flex items-center justify-between">
           <p className="text-16 font-bold text-gray-900">
