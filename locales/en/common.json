@@ -60,6 +60,10 @@
         "tryAgain": "Try Again"
       }
     },
+    "errorModal": {
+      "retry": "Retry",
+      "close": "Close"
+    },
     "viewAll": "View All",
     "suggestedForYou": "Suggested For You",
     "subscribe": "Subscribe",
@@ -1844,6 +1848,7 @@
           "descriptionLabel": "Description",
           "startDateTimeLabel": "Start Date & Time",
           "endDateTimeLabel": "End Date & Time",
+          "durationLabel": "Duration (minutes)",
           "defaultLabel": "Set as default event"
         },
         "placeholders": {
@@ -1851,7 +1856,8 @@
           "description": "Enter event description (optional)",
           "startDate": "Select start date",
           "endDate": "Select end date",
-          "time": "HH:MM"
+          "time": "HH:MM",
+          "duration": "Enter duration in minutes"
         },
         "actions": {
           "cancel": "Cancel",
@@ -2443,7 +2449,8 @@
         "initializingTitle": "Initializing event book...",
         "initializingSubtitle": "Setting up your event book",
         "addingModelsTitle": "Adding default models...",
-        "addingModelsSubtitle": "Please wait while we add default categories"
+        "addingModelsSubtitle": "Please wait while we add default categories",
+        "loadingFallback": "Loading..."
       },
       "error": {
         "failedToLoadTitle": "Failed to Load Events",
@@ -2455,6 +2462,19 @@
       },
       "common": {
         "eventDay": "Event Day"
+      },
+      "dayDetails": {
+        "clickToAddEvent": "Click to add event",
+        "deleteEvent": "Delete event",
+        "deleteEventDay": "Delete Event Day?",
+        "deleteEventDayDescription": "Are you sure you want to delete this Event Day? This will remove all events scheduled for this day.",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "am": "AM",
+        "pm": "PM",
+        "eventDay": "Event Day",
+        "notMarkedAsEventDay": "This day is not marked as Event Day yet.",
+        "markAsEventDay": "Mark as Event Day"
       }
     },
     "preparations": {
@@ -2484,6 +2504,68 @@
       "common": {
         "backToMyEvents": "Back to My Events"
       },
+      "summary": {
+        "title": "Wedding Preparations List",
+        "completedOfTotal": "{completed} of {total} Preparations Completed",
+        "total": "Total",
+        "completed": "Completed",
+        "stillOnTheWay": "Still on the way"
+      },
+      "table": {
+        "service": "SERVICE",
+        "status": "STATUS",
+        "paid": "PAID",
+        "due": "DUE",
+        "noServices": "No services found"
+      },
+      "status": {
+        "completed": "Completed",
+        "stillOnTheWay": "Still on the way"
+      },
+      "modal": {
+        "addTitle": "Add New Preparation",
+        "editTitle": "Edit Preparation",
+        "viewTitle": "View Preparation",
+        "loadingServices": "Loading services...",
+        "fields": {
+          "service": "Service",
+          "serviceType": "Service Type",
+          "completed": "Completed",
+          "title": "Title",
+          "quantity": "Quantity",
+          "cost": "Cost (Unit)",
+          "advancePayment": "Advance Payment",
+          "providerUserName": "Provider User Name",
+          "purchaseDate": "Purchase Date"
+        },
+        "placeholders": {
+          "selectService": "Select a service",
+          "title": "Enter service title",
+          "providerName": "Enter provider name"
+        },
+        "options": {
+          "rent": "Rent",
+          "buy": "Buy"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "saving": "Saving..."
+        },
+        "validation": {
+          "serviceRequired": "Service selection is required",
+          "titleRequired": "Title is required",
+          "serviceTypeRequired": "Service type is required",
+          "quantityInt": "Quantity must be a whole number",
+          "quantityMin": "Quantity must be at least 1",
+          "costMin": "Cost cannot be negative",
+          "advancePaymentMin": "Advance payment cannot be negative"
+        }
+      },
+      "priceSummary": {
+        "totalCost": "Total Cost",
+        "remaining": "Remaining"
+      },
       "confirmDialog": {
         "title": "Are you sure?",
         "description": "This action cannot be undone.",
@@ -2503,7 +2585,8 @@
         "initializingTitle": "Initializing todo book...",
         "initializingSubtitle": "Setting up your todo book",
         "addingModelsTitle": "Adding default models...",
-        "addingModelsSubtitle": "Please wait while we add default categories"
+        "addingModelsSubtitle": "Please wait while we add default categories",
+        "loadingFallback": "Loading todos..."
       },
       "error": {
         "failedToLoadTitle": "Failed to Load Todos",
@@ -2512,12 +2595,46 @@
       },
       "sidebar": {
         "title": "Your Lists",
-        "addNew": "Add New"
+        "addNew": "Add New",
+        "item": "item",
+        "items": "items",
+        "completed": "completed",
+        "deleteList": "Delete list"
       },
       "common": {
         "backToMyEvents": "Back to My Events",
         "uncategorized": "Uncategorized",
         "untitledList": "Untitled List"
+      },
+      "panel": {
+        "addTodo": "Add todo",
+        "noTodosInList": "No todos in this list yet.",
+        "completed": "Completed",
+        "pending": "Pending",
+        "toggleDone": "Toggle done",
+        "deleteTodo": "Delete todo"
+      },
+      "modals": {
+        "create": {
+          "title": "Add Todo",
+          "todoLabel": "Todo",
+          "todoPlaceholder": "Enter todo...",
+          "markAsCompleted": "Mark as completed",
+          "cancel": "Cancel",
+          "create": "Create Todo",
+          "creating": "Creating...",
+          "todoRequired": "Todo is required"
+        },
+        "edit": {
+          "title": "Edit Todo",
+          "todoLabel": "Todo",
+          "todoPlaceholder": "Enter todo...",
+          "markAsCompleted": "Mark as completed",
+          "cancel": "Cancel",
+          "saveChanges": "Save Changes",
+          "saving": "Saving...",
+          "todoRequired": "Todo is required"
+        }
       }
     }
   },
@@ -3088,6 +3205,7 @@
           "descriptionLabel": "Description",
           "startDateTimeLabel": "Start Date & Time",
           "endDateTimeLabel": "End Date & Time",
+          "durationLabel": "Duration (minutes)",
           "defaultLabel": "Set as default event"
         },
         "placeholders": {
@@ -3095,7 +3213,8 @@
           "description": "Enter event description (optional)",
           "startDate": "Select start date",
           "endDate": "Select end date",
-          "time": "HH:MM"
+          "time": "HH:MM",
+          "duration": "Enter duration in minutes"
         },
         "actions": {
           "cancel": "Cancel",
@@ -3570,6 +3689,15 @@
       "cancelled": "Canceled",
       "inProgress": "In Progress"
     }
+  },
+  "rankBadge": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "diamond": "Diamond",
+    "topMember": "Top Member",
+    "ranking": "Ranking"
   },
   "deliveryAddresses": {
     "title": "Delivery Addresses",

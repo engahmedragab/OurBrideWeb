@@ -86,25 +86,28 @@ export const CreateCategoryModal = ({
       closeOnOverlayClick={!isSubmitting && !isLoading}
       backdropClassName="backdrop-blur-sm"
       headerClassName="hidden"
-      contentClassName="p-0"
+      containerClassName="max-h-[90vh] flex flex-col"
+      contentClassName="p-0 flex-1 flex flex-col min-h-0"
       disabled={isSubmitting || isLoading}
     >
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-20 font-semibold text-gray-900">Create New Category</h2>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-            disabled={isSubmitting || isLoading}
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col flex-1 min-h-0">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-20 font-semibold text-gray-900">Create New Category</h2>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+              disabled={isSubmitting || isLoading}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-        {/* Form Fields */}
-        <div className="space-y-4">
+          {/* Form Fields */}
+          <div className="space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="category-name" className="text-14 font-medium text-gray-700 block">
               Name <span className="text-red-500">*</span>
@@ -135,10 +138,11 @@ export const CreateCategoryModal = ({
               disabled={isSubmitting || isLoading}
             />
           </div>
+          </div>
         </div>
 
-        {/* Footer Buttons */}
-        <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
+        {/* Fixed Footer Buttons */}
+        <div className="flex gap-3 justify-end pt-4 px-6 pb-6 border-t border-gray-200 flex-shrink-0">
           <Button
             type="button"
             variant="outline"

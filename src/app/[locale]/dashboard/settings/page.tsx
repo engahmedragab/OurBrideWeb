@@ -132,7 +132,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="w-full" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-normal text-gray-900">{t('title')}</h1>

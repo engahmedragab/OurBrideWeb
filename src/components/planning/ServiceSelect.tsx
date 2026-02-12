@@ -8,6 +8,8 @@ import { getServiceIcon, getServiceIconByClass } from '@/utils/serviceIconMapper
 import type { PlanningPreference } from '@/services/profile/profileApi'
 import type { LucideIcon } from 'lucide-react'
 
+type TranslationFunction = (key: string) => string
+
 // Service option type for dropdown
 export interface ServiceOption {
   serviceKey: string // Using preparation ID as key
@@ -24,6 +26,7 @@ export interface ServiceSelectProps {
   onChange: (serviceKey: string) => void
   required?: boolean
   services?: PlanningPreference[] // Dynamic services from API
+  t?: TranslationFunction
 }
 
 export const ServiceSelect = ({
@@ -31,7 +34,14 @@ export const ServiceSelect = ({
   onChange,
   required = false,
   services = [],
+  t,
 }: ServiceSelectProps) => {
+  const defaultT = (key: string) => {
+    if (key === 'fields.service') return 'Service'
+    if (key === 'placeholders.selectService') return 'Select a service'
+    return key
+  }
+  const translate = t || defaultT
   const [isOpen, setIsOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -167,7 +177,7 @@ export const ServiceSelect = ({
           'font-medium text-gray-700 mb-2'
         )}
       >
-        Service {required && <span className="text-red-500">*</span>}
+        {translate('fields.service')} {required && <span className="text-red-500">*</span>}
       </label>
       <button
         type="button"
@@ -201,7 +211,7 @@ export const ServiceSelect = ({
               <span className="text-gray-900 truncate">{selectedService.label}</span>
             </>
           ) : (
-            <span className="text-gray-400">Select a service</span>
+            <span className="text-gray-400">{translate('placeholders.selectService')}</span>
           )}
         </div>
         <ChevronDown

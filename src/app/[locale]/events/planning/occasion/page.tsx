@@ -494,16 +494,14 @@ function OccasionsPageContent() {
 
       {/* Form Section - Modal overlay style */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8">
-            <OccasionForm
-              isOpen={isFormOpen}
-              onClose={handleCancel}
-              onSubmit={handleFormSubmit}
-              editingOccasion={editingOccasion}
-              isSubmitting={syncMutation.isPending}
-            />
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <OccasionForm
+            isOpen={isFormOpen}
+            onClose={handleCancel}
+            onSubmit={handleFormSubmit}
+            editingOccasion={editingOccasion}
+            isSubmitting={syncMutation.isPending}
+          />
         </div>
       )}
 

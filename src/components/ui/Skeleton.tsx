@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { Link } from '@/i18n/navigation'
 
 /**
  * Base Skeleton component
@@ -242,79 +243,67 @@ export const HeaderSkeleton = ({
       aria-label="Loading header"
       aria-busy="true"
     >
-      <div className="w-full px-4 sm:px-2 lg:px-8 h-16" suppressHydrationWarning>
-        {/* ✅ Mobile layout (like screenshot): burger left + logo right */}
-        <div className={cn('flex h-16 items-center justify-between md:hidden flex-row-reverse')} suppressHydrationWarning>
-          {/* Burger (left) */}
-          <div className="flex items-center justify-center h-10 w-10 rounded-md" suppressHydrationWarning>
-            {/* 3 lines */}
-            <div className="flex flex-col gap-1" suppressHydrationWarning>
-              <Skeleton className="h-1 w-7 rounded-full" />
-              <Skeleton className="h-1 w-6 rounded-full" />
-              <Skeleton className="h-1 w-7 rounded-full" />
-            </div>
-          </div>
+      <div className={cn("w-full px-4 lg:px-4 flex h-16 items-center justify-between md:justify-around gap-2 sm:gap-1",
+        isRTL ? 'md:px-3' : 'md:px-4'
+      )} suppressHydrationWarning>
+        {/* Logo - matches Header structure exactly */}
+        <div className="flex items-center gap-2 shrink-0 md:w-[80px] lg:w-[100px]" suppressHydrationWarning>
+          {/* Use Link component to match actual Header structure - prevents hydration mismatch */}
+          <Link
+            href="/"
+            className="flex items-center gap-2 transition-opacity duration-150 hover:opacity-80 focus:outline-none rounded-md pointer-events-none"
+            suppressHydrationWarning
+            aria-hidden="true"
+            tabIndex={-1}
+          >
+            <Skeleton className="h-14 sm:h-16 w-[120px] rounded-md" />
+          </Link>
+        </div>
 
-          {/* Logo (right) */}
-          <div className="flex items-center gap-1 shrink-0" suppressHydrationWarning>
-            {/* small icon part (optional) */}
-            <Skeleton className="h-10 w-10 rounded-full" />
-            {/* brand text like "OurBride" */}
-            <Skeleton className="h-6 w-28 rounded-md" />
+        {/* Navigation Menu (md+) - wrapped in ClientOnly in actual Header */}
+        <div className="hidden md:flex items-center" suppressHydrationWarning>
+          <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-1.5 py-1.5 shadow-sm h-12 lg:h-12 flex items-center" suppressHydrationWarning>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-1 rounded-full px-2 lg:px-3 py-2"
+                suppressHydrationWarning
+              >
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <Skeleton className="h-4 w-12 lg:w-14 rounded-md" />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ✅ Desktop/Tablet layout (md+) */}
-        <div className="hidden md:flex h-16 items-center justify-between gap-2 sm:gap-2" suppressHydrationWarning>
-          {/* Logo */}
-          <div className="flex items-center gap-2 shrink-0" suppressHydrationWarning>
-            {/* small icon part (optional) */}
+        {/* Search (lg+) */}
+        <div className="hidden flex-1 max-w-md lg:flex items-center" suppressHydrationWarning>
+          <div className="flex items-center gap-1 rounded-full border border-gray-100 bg-white/60 px-3 h-12 shadow-sm w-full" suppressHydrationWarning>
+            <Skeleton className="h-5 w-5 rounded-full" />
+            <Skeleton className="h-4 w-32 rounded-md" />
+            <div className="flex-1" />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1.5" suppressHydrationWarning>
+          {/* Mobile Menu Button (md-) */}
+          <Skeleton className="h-10 w-10 rounded-md md:hidden" />
+
+          {/* Wishlist, Notifications, Cart (md+) */}
+          <div className="hidden md:flex items-center rounded-full border border-brand-500 bg-transparent px-1" suppressHydrationWarning>
             <Skeleton className="h-10 w-10 rounded-full" />
-            {/* brand text like "OurBride" */}
-            <Skeleton className="h-6 w-28 rounded-md" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
           </div>
 
-          {/* Nav (md+) */}
+          {/* Language Switcher (md+) - wrapped in ClientOnly in actual Header */}
           <div className="hidden md:flex items-center" suppressHydrationWarning>
-            <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-1.5 py-1.5 shadow-sm h-12 flex items-center" suppressHydrationWarning>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-1 rounded-full px-3 py-2"
-                >
-                  <Skeleton className="h-5 w-5 rounded-full" />
-                  <Skeleton className="h-4 w-14 rounded-md" />
-                </div>
-              ))}
-            </div>
+            <Skeleton className="h-10 w-10 rounded-full" />
           </div>
 
-          {/* Search (lg+) */}
-          <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
-            <div className="flex items-center gap-1 rounded-full border border-gray-100 bg-white/60 px-1 h-12 shadow-sm">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <Skeleton className="h-4 w-40 rounded-md" />
-              <div className="flex-1" />
-              <Skeleton className="h-7 w-12 rounded-full" />
-            </div>
-          </div>
-
-          {/* Actions (md+) */}
-          <div className="flex items-center gap-1.5 shrink-0" suppressHydrationWarning>
-            <div className="hidden md:flex items-center rounded-full border border-gray-200 bg-transparent px-1 gap-1" suppressHydrationWarning>
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-10 w-10 rounded-full" />
-            </div>
-
-            <div className="hidden md:flex items-center" suppressHydrationWarning>
-              <Skeleton className="h-10 w-10 rounded-full" />
-            </div>
-
-            <div className="hidden md:flex" suppressHydrationWarning>
-              <Skeleton className="h-10 w-10 rounded-full" />
-            </div>
-          </div>
+          {/* User Profile */}
+          <Skeleton className="h-10 w-10 rounded-full" />
         </div>
       </div>
     </header>

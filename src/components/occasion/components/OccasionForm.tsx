@@ -173,18 +173,16 @@ export function OccasionForm({
 
       {/* Modal */}
       <div
-  className={cn(
-    'relative w-full max-w-[980px]',
-    'rounded-2xl bg-white shadow-xl',
-    'overflow-y-hidden',
-    
-    'max-h-[calc(100dvh-24px)] overflow-y-auto'
-  )}
-  onClick={e => e.stopPropagation()}
->
+        className={cn(
+          'relative w-full max-w-[980px]',
+          'rounded-2xl bg-white shadow-xl',
+          'max-h-[calc(100dvh-24px)] flex flex-col'
+        )}
+        onClick={e => e.stopPropagation()}
+      >
         {/* Main flex column.
             IMPORTANT: min-h-0 is required for inner overflow-y-auto to work in flex layouts */}
-        <div className="flex h-full min-h-0 flex-col ">
+        <div className="flex flex-1 min-h-0 flex-col">
           {/* Header / Banner (fixed) */}
           <div className="relative h-28 sm:h-36 md:h-44 w-full flex-shrink-0">
             <Image

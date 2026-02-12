@@ -87,8 +87,12 @@ export const AddEventModal = ({
       onClose={handleClose}
       title={t('modal.title')}
       maxWidth="md"
+      containerClassName="max-h-[90vh] flex flex-col"
+      contentClassName="flex-1 flex flex-col min-h-0"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
           <label htmlFor="event-title" className="text-14 font-medium text-gray-700">
@@ -135,10 +139,11 @@ export const AddEventModal = ({
             errorMessage={errors.duration?.message && tValidation(errors.duration?.message as keyof typeof tValidation)   }
             size="lg"
           />
+          </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4">
+        {/* Fixed Footer Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-4 flex-shrink-0">
           <Button
             type="button"
             variant="outlineBrand"
