@@ -16,7 +16,8 @@ import { useToast } from '@/components/ui/Toaster'
 import { generateTempId } from '@/utils/sync/tempIds'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import { cn } from '@/lib/utils'
-import { useIsRTL } from '@/i18n/hooks'
+import { useIsRTL, useI18nTranslations, useI18nLocale } from '@/i18n/hooks'
+import { ar, enUS } from 'date-fns/locale'
 
 /**
  * Extended EventBook type with categories for local state management
@@ -84,6 +85,9 @@ const HourlyTimelineView = ({
   onDelete,
 }: HourlyTimelineViewProps) => {
   const isRtl = useIsRTL()
+  const t = useI18nTranslations('eventsPlanning.events.dayDetails')
+  const locale = useI18nLocale()
+  const dateLocale = locale === 'ar' ? ar : enUS
   // Generate hours from 7 AM (7) to 12 AM (midnight, which is 0)
   // Hours: 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0
   const hours = [...Array.from({ length: 17 }, (_, i) => i + 7), 0] // 7-23, then 0
@@ -98,8 +102,8 @@ const HourlyTimelineView = ({
 
   const formatHourLabel = (hour: number): string => {
     const nextHour = hour === 23 ? 0 : hour + 1
-    const period1 = hour >= 12 ? 'PM' : 'AM'
-    const period2 = nextHour >= 12 ? 'PM' : 'AM'
+    const period1 = hour >= 12 ? t('pm') : t('am')
+    const period2 = nextHour >= 12 ? t('pm') : t('am')
     const displayHour1 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
     const displayHour2 = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour
     return `${displayHour1} ${period1} - ${displayHour2} ${period2}`
@@ -107,7 +111,7 @@ const HourlyTimelineView = ({
 
   const formatTimeRange = (startTime: Date, duration: number): string => {
     const endTime = new Date(startTime.getTime() + duration * 60 * 1000)
-    return `${format(startTime, 'h:mm a')} - ${format(endTime, 'h:mm a')}`
+    return `${format(startTime, 'h:mm a', { locale: dateLocale })} - ${format(endTime, 'h:mm a', { locale: dateLocale })}`
   }
 
   return (
@@ -141,7 +145,7 @@ const HourlyTimelineView = ({
             >
               {isEmpty ? (
                 <div className={cn('p-4 min-h-[60px] flex items-center', isRtl && 'justify-end text-right')}>
-                  <p className="text-14 text-gray-400">Click to add event</p>
+                  <p className="text-14 text-gray-400">{t('clickToAddEvent')}</p>
                 </div>
               ) : (
                 <div className={cn('p-4', isRtl && 'text-right')}>
@@ -152,7 +156,7 @@ const HourlyTimelineView = ({
                         onDelete(event)
                       }}
                       className="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-500 hover:text-red-600"
-                      aria-label="Delete event"
+                      aria-label={t('deleteEvent')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -197,6 +201,9 @@ export const DayDetailsView = ({
   applyLocalUpdate,
 }: DayDetailsViewProps) => {
   const { addToast } = useToast()
+  const t = useI18nTranslations('eventsPlanning.events.dayDetails')
+  const locale = useI18nLocale()
+  const dateLocale = locale === 'ar' ? ar : enUS
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingEvent, setEditingEvent] = useState<ItineraryEvent | null>(null)
@@ -271,7 +278,7 @@ export const DayDetailsView = ({
   }, [visibleLines])
 
   const eventDate = dayId ? parseDateSafe(dayId) : new Date()
-  const eventTitle = isEventDay ? (customTitle || 'Event Day') : undefined
+  const eventTitle = isEventDay ? (customTitle || t('eventDay')) : undefined
 
   const handleTitleEdit = (newTitle: string) => {
     if (!localEventBook || !selectedCategory) return
@@ -339,9 +346,9 @@ export const DayDetailsView = ({
         const newCategory: EventLineCategory = {
           id: generateTempId(), // Temporary ID for new category
           date: categoryDate,
-          name: 'Event Day',
-          nameEn: 'Event Day',
-          nameAr: 'يوم الحدث',
+          name: t('eventDay'),
+          nameEn: t('eventDay'),
+          nameAr: t('eventDay'),
           slug: 'event-day',
           isDeleted: false,
           creationDate: now,
@@ -467,7 +474,7 @@ export const DayDetailsView = ({
       {!isEventDay && (
         <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
           <p className="text-16 text-gray-700 mb-4">
-            This day is not marked as Event Day yet.
+            {t('notMarkedAsEventDay')}
           </p>
           <Button
             onClick={handleToggleEventDay}
@@ -476,7 +483,7 @@ export const DayDetailsView = ({
             className='text-white'
             disabled={!localEventBook}
           >
-            Mark as Event Day
+            {t('markAsEventDay')}
           </Button>
         </div>
       )}
@@ -511,10 +518,10 @@ export const DayDetailsView = ({
 
       <ConfirmDialog
         open={isDeleteConfirmOpen}
-        title="Delete Event Day?"
-        description="Are you sure you want to delete this Event Day? This will remove all events scheduled for this day."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('deleteEventDay')}
+        description={t('deleteEventDayDescription')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />

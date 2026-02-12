@@ -174,6 +174,12 @@ function TodoPageContent() {
     return category ? convertCategoryToUi(category as TodoLineCategoryResponse) : null
   }, [selectedCategoryId, getCategoryById])
 
+  // Get locale-aware category name
+  const selectedCategoryName = useMemo(() => {
+    if (!selectedCategory) return tTodo('common.untitledList')
+    return isRtl ? (selectedCategory.nameAr || selectedCategory.name) : (selectedCategory.nameEn || selectedCategory.name)
+  }, [selectedCategory, isRtl, tTodo])
+
   // Get visible todos using controller helper
   const visibleTodos = useMemo(() => {
     if (!selectedCategoryId) return []
@@ -448,7 +454,7 @@ function TodoPageContent() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <TodoLinesPanel
-          categoryName={selectedCategory?.name ?? tTodo('common.untitledList')}
+          categoryName={selectedCategoryName}
           stats={stats}
           todos={visibleTodos}
           onToggleDone={handleToggleDone}
@@ -477,17 +483,20 @@ function TodoPageContent() {
   )
 }
 
+function SuspenseFallback() {
+  const tTodo = useI18nTranslations('eventsPlanning.todo')
+  return (
+    <div className="w-full min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <LoadingSpinner size="lg" fullScreen={true} open={true} text={tTodo('loading.loadingFallback')} />
+      </div>
+    </div>
+  )
+}
+
 export default function TodoPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="w-full min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <LoadingSpinner size="lg" fullScreen={true} open={true} text="Loading todos..." />
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<SuspenseFallback />}>
       <TodoPageContent />
     </Suspense>
   )

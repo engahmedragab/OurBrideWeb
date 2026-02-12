@@ -16,6 +16,8 @@ export type UiTodo = {
 export type UiTodoCategory = {
   id: number
   name: string
+  nameEn?: string
+  nameAr?: string
   color?: string
   lineCount?: number
   completedCount?: number
@@ -223,6 +225,8 @@ export const convertCategoryToUi = (category: TodoLineCategoryResponse): UiTodoC
   return {
     id: category.id,
     name: category.name || category.nameEn || category.nameAr || '',
+    nameEn: category.nameEn || category.name || '',
+    nameAr: category.nameAr || category.name || '',
     color: (catAny.colorName as string | undefined) || undefined,
   }
 }

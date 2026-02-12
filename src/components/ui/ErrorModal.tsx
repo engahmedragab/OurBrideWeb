@@ -28,14 +28,17 @@ export const ErrorModal = ({
   open,
   title = 'Failed to Load',
   message = 'Something went wrong. Please try again later.',
-  retryLabel = 'Retry',
-  closeLabel = 'Close',
+  retryLabel,
+  closeLabel,
   onRetry,
   onClose,
   className,
   containerClassName,
   showRetry = true,
 }: ErrorModalProps) => {
+  const t = useI18nTranslations('common')
+  const defaultRetryLabel = retryLabel ?? t('errorModal.retry')
+  const defaultCloseLabel = closeLabel ?? t('errorModal.close')
  
   if (!open) return null
 
@@ -118,7 +121,7 @@ export const ErrorModal = ({
                 className="flex-1 text-white"
                 onClick={handleRetry}
               >
-                {retryLabel}
+                {defaultRetryLabel}
               </Button>
             )}
             <Button
@@ -127,7 +130,7 @@ export const ErrorModal = ({
               className={showRetry ? 'flex-1' : 'w-full'}
               onClick={onClose}
             >
-              {closeLabel}
+              {defaultCloseLabel}
             </Button>
           </div>
         </div>

@@ -86,6 +86,7 @@ export const ReportProblemForm = ({
         type="submit"
         variant="brand"
         size="lg"
+        disabled
         className="w-full rounded-full py-[18px] text-20 font-medium text-white"
       >
         {t('submit')}

@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiTodoCategory } from '@/utils/planning/mappers/todoMappers'
-import { useIsRTL } from '@/i18n'
+import { useIsRTL, useI18nTranslations } from '@/i18n'
 
 const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
@@ -30,6 +30,7 @@ export function TodoListRow({
   const key = category.color ?? 'gray'
   const style = STYLE_BY_COLOR[key] ?? STYLE_BY_COLOR.gray
   const isRtl = useIsRTL()
+  const t = useI18nTranslations('eventsPlanning.todo.sidebar')
 
   return (
     <button
@@ -44,15 +45,17 @@ export function TodoListRow({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium text-gray-900">{category.name}</div>
+          <div className="truncate text-sm font-medium text-gray-900">
+            {isRtl ? (category.nameAr || category.name) : (category.nameEn || category.name)}
+          </div>
           {(category.lineCount !== undefined || category.completedCount !== undefined) && (
             <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
               {category.lineCount !== undefined && (
-                <span>{category.lineCount} {category.lineCount === 1 ? 'item' : 'items'}</span>
+                <span>{category.lineCount} {category.lineCount === 1 ? t('item') : t('items')}</span>
               )}
               {category.completedCount !== undefined && category.completedCount > 0 && (
                 <span className="text-green-600">
-                  {category.completedCount} completed
+                  {category.completedCount} {t('completed')}
                 </span>
               )}
             </div>
@@ -69,7 +72,7 @@ export function TodoListRow({
               }}
               className="rounded-md p-2 hover:bg-white/60"
               role="button"
-              aria-label="Delete list"
+              aria-label={t('deleteList')}
             >
               <Trash2 className="h-4 w-4 text-primary" />
             </span>

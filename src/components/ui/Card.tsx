@@ -338,7 +338,7 @@ const ProductServiceCard = ({
               className="!text-brand-500 border-0 px-2 py-1.5 text-16 font-normal rounded-full"
               style={{ backgroundColor: '#FCDBD7' }}
             >
-              Top Offers
+              {t('topOffers')}
             </Badge>
           </div>
         )}

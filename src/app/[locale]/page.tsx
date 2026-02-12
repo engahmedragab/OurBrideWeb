@@ -850,6 +850,129 @@ export default function Home() {
           </section>
         )}
 
+        {/* Section 6.5: Events Flow */}
+        <section className="container-custom py-8 md:py-12">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-8 md:mb-12">
+            {/* Left: SVG Illustration */}
+            <div className={cn(
+              "flex-shrink-0 w-full lg:w-auto flex justify-center",
+              isRTL ? "lg:order-2" : "lg:order-1"
+            )}>
+              <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                <Image
+                  src={typeof eventsHomeSvg === 'string' ? eventsHomeSvg : eventsHomeSvg.src}
+                  alt="Events planning illustration"
+                  fill
+                  sizes="(max-width: 768px) 256px, (max-width: 1024px) 320px, 384px"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Right: Text Content */}
+            <div className={cn(
+              "flex-1 flex flex-col gap-4 md:gap-6 text-center lg:text-left",
+              isRTL && "lg:text-right lg:order-1"
+            )}>
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+                isRTL && "leading-relaxed"
+              )}>
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.events.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.events.wedding')}
+                  </span>
+                </span>
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.events.events')}{' '}
+                  <span className="font-normal text-gray-900">
+                    {t('sections.events.withEase')}
+                  </span>
+                </span>
+              </h2>
+              <p className="text-16 md:text-18 lg:text-20 text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                {t('sections.events.description')}
+              </p>
+            </div>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-2 md:gap-8 mb-8 md:mb-12">
+            {/* Feature 1: Event Management */}
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
+                <Calendar className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.eventManagement.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.eventManagement.description')}
+              </p>
+            </div>
+
+            {/* Feature 2: Budget Planning */}
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
+                <DollarSign className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.budgetPlanning.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.budgetPlanning.description')}
+              </p>
+            </div>
+
+            {/* Feature 3: Guest Lists */}
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
+                <UserPlus className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.guestLists.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.guestLists.description')}
+              </p>
+            </div>
+
+            {/* Feature 4: Timeline */}
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
+                <Clock className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.timeline.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.timeline.description')}
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="flex justify-center">
+            <Button
+              asChild
+              variant="brand"
+              size="lg"
+              className={cn(
+                "rounded-full px-8 md:px-10 py-3 md:py-4 text-16 md:text-18 font-semibold",
+                isRTL && "flex-row-reverse"
+              )}
+            >
+              <Link href="/dashboard/my-events" dir={isRTL ? 'rtl' : 'ltr'}>
+                {t('sections.events.cta')}
+              </Link>
+            </Button>
+          </div>
+        </section>
+
         {/* Section 7: Why Trust Section */}
         <section className="relative py-8 md:py-12 overflow-hidden bg-white">
           <div className="absolute inset-0 bottom-1/4 pointer-events-none">
@@ -1366,126 +1489,6 @@ export default function Home() {
             </div>
           </section>
         )}
-
-        {/* Section 12: Events Flow */}
-        <section className="container-custom py-8 md:py-12">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-8 md:mb-12">
-            {/* Left: SVG Illustration */}
-            <div className={cn(
-              "flex-shrink-0 w-full lg:w-auto flex justify-center",
-              isRTL ? "lg:order-2" : "lg:order-1"
-            )}>
-              <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
-                <Image
-                  src={typeof eventsHomeSvg === 'string' ? eventsHomeSvg : eventsHomeSvg.src}
-                  alt="Events planning illustration"
-                  fill
-                  sizes="(max-width: 768px) 256px, (max-width: 1024px) 320px, 384px"
-                  className="object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Right: Text Content */}
-            <div className={cn(
-              "flex-1 flex flex-col gap-4 md:gap-6 text-center lg:text-left",
-              isRTL && "lg:text-right lg:order-1"
-            )}>
-              <h2 className={cn(
-                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
-                isRTL && "leading-relaxed"
-              )}>
-                <span className="font-normal text-gray-900 block">
-                  {t('sections.events.title')}{' '}
-                  <span className="font-semibold text-gray-900">
-                    {t('sections.events.wedding')}
-                  </span>
-                </span>
-                <span className={cn(
-                  "font-semibold text-gray-900 block",
-                  isRTL ? "mt-3 md:mt-4" : "mt-0"
-                )}>
-                  {t('sections.events.events')}{' '}
-                  <span className="font-normal text-gray-900">
-                    {t('sections.events.withEase')}
-                  </span>
-                </span>
-              </h2>
-              <p className="text-16 md:text-18 lg:text-20 text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                {t('sections.events.description')}
-              </p>
-            </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-2 md:gap-8 mb-8 md:mb-12">
-            {/* Feature 1: Event Management */}
-            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-6 rounded-full bg-brand-100">
-                <Calendar className="h-8 w-8 text-brand-500" />
-              </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                {t('sections.events.features.eventManagement.title')}
-              </h3>
-              <p className="text-14 text-gray-600 leading-relaxed">
-                {t('sections.events.features.eventManagement.description')}
-              </p>
-            </div>
-
-            {/* Feature 2: Budget Planning */}
-            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-6 rounded-full bg-brand-100">
-                <DollarSign className="h-8 w-8 text-brand-500" />
-              </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                {t('sections.events.features.budgetPlanning.title')}
-              </h3>
-              <p className="text-14 text-gray-600 leading-relaxed">
-                {t('sections.events.features.budgetPlanning.description')}
-              </p>
-            </div>
-
-            {/* Feature 3: Guest Lists */}
-            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-6 rounded-full bg-brand-100">
-                <UserPlus className="h-8 w-8 text-brand-500" />
-              </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                {t('sections.events.features.guestLists.title')}
-              </h3>
-              <p className="text-14 text-gray-600 leading-relaxed">
-                {t('sections.events.features.guestLists.description')}
-              </p>
-            </div>
-
-            {/* Feature 4: Timeline */}
-            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-6 rounded-full bg-brand-100">
-                <Clock className="h-8 w-8 text-brand-500" />
-              </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                {t('sections.events.features.timeline.title')}
-              </h3>
-              <p className="text-14 text-gray-600 leading-relaxed">
-                {t('sections.events.features.timeline.description')}
-              </p>
-            </div>
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex justify-center">
-            <Button
-              asChild
-              variant="brand"
-              size="lg"
-              className="rounded-full px-8 md:px-10 py-3 md:py-4 text-16 md:text-18 font-semibold"
-            >
-              <Link href="/dashboard/my-events">
-                {t('sections.events.cta')}
-              </Link>
-            </Button>
-          </div>
-        </section>
 
         {/* Section: App Download */}
         <section className="relative overflow-hidden bg-white py-8 md:py-12">

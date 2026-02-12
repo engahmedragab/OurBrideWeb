@@ -6,14 +6,16 @@ import { planningTypography } from './typography'
 export interface PriceSummaryProps {
   totalCost: number
   remaining: number
+  t: (key: string) => string
 }
 
-export const PriceSummary = ({ totalCost, remaining }: PriceSummaryProps) => {
+export const PriceSummary = ({ totalCost, remaining, t }: PriceSummaryProps) => {
+  
   return (
     <div className="bg-gray-50 rounded-xl p-4 space-y-3">
       <div className="flex justify-between items-center">
         <span className={cn(planningTypography.secondary, 'text-gray-600')}>
-          Total Cost
+          {t('totalCost')}
         </span>
         <span
           className={cn(
@@ -26,7 +28,7 @@ export const PriceSummary = ({ totalCost, remaining }: PriceSummaryProps) => {
       </div>
       <div className="flex justify-between items-center">
         <span className={cn(planningTypography.secondary, 'text-gray-600')}>
-          Remaining
+          {t('remaining')}
         </span>
         <span
           className={cn(

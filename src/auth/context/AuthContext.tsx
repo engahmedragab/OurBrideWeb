@@ -158,11 +158,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 return
               } catch {
                 // Refresh failed, clear auth
+                const { removeToken } = await import('../utils/token')
+                removeToken()
                 dispatch({ type: 'LOGOUT' })
                 return
               }
             } else {
               // No refresh token, clear auth
+              const { removeToken } = await import('../utils/token')
+              removeToken()
               dispatch({ type: 'LOGOUT' })
               return
             }
@@ -209,9 +213,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const refreshedUser: AuthUser | undefined = authData.user ?? (state.user ? state.user : undefined)
           dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
         } catch {
+          const { removeToken } = await import('../utils/token')
+          removeToken()
           dispatch({ type: 'LOGOUT' })
         }
       } else {
+        const { removeToken } = await import('../utils/token')
+        removeToken()
         dispatch({ type: 'LOGOUT' })
       }
     }
@@ -445,6 +453,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const refreshedUser = authData.user ?? (state.user ? state.user : undefined)
       dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
     } catch (error: unknown) {
+      const { removeToken } = await import('../utils/token')
+      removeToken()
       dispatch({ type: 'LOGOUT' })
       throw error
     }

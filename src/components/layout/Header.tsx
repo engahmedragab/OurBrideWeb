@@ -73,17 +73,23 @@ export const Header = ({ className }: HeaderProps) => {
   /**
    * ✅ Show full header skeleton until the "first real data load" finishes.
    * - Prevents broken/mixed skeleton layout (like your screenshot).
-   * - Also prevents quick flash: initial state depends on current loading flags.
+   * - Always starts with false to ensure consistent SSR/client hydration.
+   * - Only updates after mount to avoid hydration mismatches.
    */
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(() => {
-    return !isLoadingMainIds && !isLoadingNotifications
-  })
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
+  // Mark as mounted on client only
   useEffect(() => {
-    if (!hasLoadedOnce && !isLoadingMainIds && !isLoadingNotifications) {
+    setIsMounted(true)
+  }, [])
+
+  // Update hasLoadedOnce only after mount to ensure consistent hydration
+  useEffect(() => {
+    if (isMounted && !isLoadingMainIds && !isLoadingNotifications) {
       setHasLoadedOnce(true)
     }
-  }, [hasLoadedOnce, isLoadingMainIds, isLoadingNotifications])
+  }, [isMounted, isLoadingMainIds, isLoadingNotifications])
 
   const showHeaderSkeleton = !hasLoadedOnce
 

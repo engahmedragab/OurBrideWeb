@@ -1,7 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { useIsRTL } from '@/i18n'
+import { useIsRTL, useI18nTranslations } from '@/i18n'
 
 export type RankKey =
   | 'bronze'
@@ -14,38 +14,31 @@ export type RankKey =
 const rankConfig: Record<
   RankKey,
   {
-    label: string
     gradientFrom: string
     gradientTo: string
   }
 > = {
   bronze: {
-    label: 'Bronze',
     gradientFrom: '#8C4500',
     gradientTo: '#D1A66E',
   },
   silver: {
-    label: 'Silver',
     gradientFrom: '#6B7280',
     gradientTo: '#E5E7EB',
   },
   gold: {
-    label: 'Gold',
     gradientFrom: '#F07E00',
     gradientTo: '#F7F4CF',
   },
   platinum: {
-    label: 'Platinum',
     gradientFrom: '#8AA8B5',
     gradientTo: '#DCE5E8',
   },
   diamond: {
-    label: 'Diamond',
     gradientFrom: '#C026D3',
     gradientTo: '#F9A8D4',
   },
   topMember: {
-    label: 'Top Member',
     gradientFrom: '#DC2626',
     gradientTo: '#FCA5A5',
   },
@@ -105,8 +98,9 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
     },
     ref
   ) => {
+    const t = useI18nTranslations('rankBadge')
     const config = rankConfig[rankKey]
-    const displayTitle = title || config.label
+    const displayTitle = title || t(rankKey)
     const hasClickHandler = !!onClick
     const hasContent = Boolean(showText && (displayTitle || rankingValue !== undefined))
     const isRTL = useIsRTL()
@@ -151,7 +145,7 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
             )}
             {rankingValue !== undefined && (
               <p className="text-8 lg:text-10 font-medium leading-tight text-white opacity-90">
-                Ranking : {rankingValue.toLocaleString()}
+                {t('ranking')}: {rankingValue.toLocaleString()}
               </p>
             )}
           </div>

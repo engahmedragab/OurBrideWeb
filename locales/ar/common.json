@@ -60,6 +60,10 @@
         "tryAgain": "حاول مرة أخرى"
       }
     },
+    "errorModal": {
+      "retry": "إعادة المحاولة",
+      "close": "إغلاق"
+    },
     "viewAll": "عرض الكل",
     "suggestedForYou": "مقترح لك",
     "subscribe": "اشتركي",
@@ -1737,6 +1741,7 @@
           "descriptionLabel": "الوصف",
           "startDateTimeLabel": "تاريخ ووقت البداية",
           "endDateTimeLabel": "تاريخ ووقت النهاية",
+          "durationLabel": "المدة (بالدقائق)",
           "defaultLabel": "تعيينه كحدث افتراضي"
         },
         "placeholders": {
@@ -1744,7 +1749,8 @@
           "description": "اكتب/اكتبي وصف الحدث (اختياري)",
           "startDate": "اختيار تاريخ البداية",
           "endDate": "اختيار تاريخ النهاية",
-          "time": "ساعة:دقيقة"
+          "time": "ساعة:دقيقة",
+          "duration": "أدخل المدة بالدقائق"
         },
         "actions": {
           "cancel": "إلغاء",
@@ -2337,7 +2343,8 @@
         "initializingTitle": "جاري تهيئة دفتر المناسبات...",
         "initializingSubtitle": "جاري إعداد دفتر المناسبات",
         "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
-        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية"
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية",
+        "loadingFallback": "جاري التحميل..."
       },
       "error": {
         "failedToLoadTitle": "تعذر تحميل المناسبات",
@@ -2349,6 +2356,19 @@
       },
       "common": {
         "eventDay": "يوم المناسبة"
+      },
+      "dayDetails": {
+        "clickToAddEvent": "انقر لإضافة حدث",
+        "deleteEvent": "حذف الحدث",
+        "deleteEventDay": "حذف يوم الحدث؟",
+        "deleteEventDayDescription": "هل أنت متأكد من حذف يوم الحدث هذا؟ سيتم حذف جميع الأحداث المجدولة لهذا اليوم.",
+        "delete": "حذف",
+        "cancel": "إلغاء",
+        "am": "ص",
+        "pm": "م",
+        "eventDay": "يوم الحدث",
+        "notMarkedAsEventDay": "لم يتم تعيين هذا اليوم كيوم حدث بعد.",
+        "markAsEventDay": "تعيين كيوم حدث"
       }
     },
     "preparations": {
@@ -2378,6 +2398,68 @@
       "common": {
         "backToMyEvents": "الرجوع إلى مناسباتي"
       },
+      "summary": {
+        "title": "قائمة تحضيرات الزفاف",
+        "completedOfTotal": "تم إكمال {completed} من {total} تحضير",
+        "total": "الإجمالي",
+        "completed": "مكتمل",
+        "stillOnTheWay": "قيد التنفيذ"
+      },
+      "table": {
+        "service": "الخدمة",
+        "status": "الحالة",
+        "paid": "المدفوع",
+        "due": "المستحق",
+        "noServices": "لا توجد خدمات"
+      },
+      "status": {
+        "completed": "مكتمل",
+        "stillOnTheWay": "قيد التنفيذ"
+      },
+      "modal": {
+        "addTitle": "إضافة تحضير جديد",
+        "editTitle": "تعديل التحضير",
+        "viewTitle": "عرض التحضير",
+        "loadingServices": "جاري تحميل الخدمات...",
+        "fields": {
+          "service": "الخدمة",
+          "serviceType": "نوع الخدمة",
+          "completed": "مكتمل",
+          "title": "العنوان",
+          "quantity": "الكمية",
+          "cost": "التكلفة (الوحدة)",
+          "advancePayment": "الدفعة المقدمة",
+          "providerUserName": "اسم مقدم الخدمة",
+          "purchaseDate": "تاريخ الشراء"
+        },
+        "placeholders": {
+          "selectService": "اختر خدمة",
+          "title": "أدخل عنوان الخدمة",
+          "providerName": "أدخل اسم مقدم الخدمة"
+        },
+        "options": {
+          "rent": "إيجار",
+          "buy": "شراء"
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "save": "حفظ",
+          "saving": "جاري الحفظ..."
+        },
+        "validation": {
+          "serviceRequired": "اختيار الخدمة مطلوب",
+          "titleRequired": "العنوان مطلوب",
+          "serviceTypeRequired": "نوع الخدمة مطلوب",
+          "quantityInt": "يجب أن تكون الكمية رقماً صحيحاً",
+          "quantityMin": "يجب أن تكون الكمية على الأقل 1",
+          "costMin": "لا يمكن أن تكون التكلفة سالبة",
+          "advancePaymentMin": "لا يمكن أن تكون الدفعة المقدمة سالبة"
+        }
+      },
+      "priceSummary": {
+        "totalCost": "التكلفة الإجمالية",
+        "remaining": "المتبقي"
+      },
       "confirmDialog": {
         "title": "هل أنت متأكد؟",
         "description": "لا يمكن التراجع عن هذا الإجراء.",
@@ -2397,7 +2479,8 @@
         "initializingTitle": "جاري تهيئة دفتر المهام...",
         "initializingSubtitle": "جاري إعداد دفتر المهام",
         "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
-        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية"
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف التصنيفات الافتراضية",
+        "loadingFallback": "جاري تحميل المهام..."
       },
       "error": {
         "failedToLoadTitle": "تعذر تحميل المهام",
@@ -2406,12 +2489,46 @@
       },
       "sidebar": {
         "title": "قوائمك",
-        "addNew": "إضافة جديد"
+        "addNew": "إضافة جديد",
+        "item": "عنصر",
+        "items": "عناصر",
+        "completed": "مكتمل",
+        "deleteList": "حذف القائمة"
       },
       "common": {
         "backToMyEvents": "الرجوع إلى مناسباتي",
         "uncategorized": "غير مصنف",
         "untitledList": "قائمة بدون عنوان"
+      },
+      "panel": {
+        "addTodo": "إضافة مهمة",
+        "noTodosInList": "لا توجد مهام في هذه القائمة بعد.",
+        "completed": "مكتمل",
+        "pending": "قيد الانتظار",
+        "toggleDone": "تبديل الحالة",
+        "deleteTodo": "حذف المهمة"
+      },
+      "modals": {
+        "create": {
+          "title": "إضافة مهمة",
+          "todoLabel": "المهمة",
+          "todoPlaceholder": "أدخل المهمة...",
+          "markAsCompleted": "تعيين كمكتملة",
+          "cancel": "إلغاء",
+          "create": "إنشاء مهمة",
+          "creating": "جاري الإنشاء...",
+          "todoRequired": "المهمة مطلوبة"
+        },
+        "edit": {
+          "title": "تعديل المهمة",
+          "todoLabel": "المهمة",
+          "todoPlaceholder": "أدخل المهمة...",
+          "markAsCompleted": "تعيين كمكتملة",
+          "cancel": "إلغاء",
+          "saveChanges": "حفظ التغييرات",
+          "saving": "جاري الحفظ...",
+          "todoRequired": "المهمة مطلوبة"
+        }
       }
     }
   },
@@ -3464,6 +3581,15 @@
       "cancelled": "ملغي",
       "inProgress": "قيد التنفيذ"
     }
+  },
+  "rankBadge": {
+    "bronze": "برونزي",
+    "silver": "فضي",
+    "gold": "ذهبي",
+    "platinum": "بلاتيني",
+    "diamond": "ماسي",
+    "topMember": "عضو مميز",
+    "ranking": "الترتيب"
   },
   "deliveryAddresses": {
     "title": "عناوين التوصيل",

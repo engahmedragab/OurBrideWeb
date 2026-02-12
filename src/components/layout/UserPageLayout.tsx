@@ -35,7 +35,7 @@ export const UserPageLayout = ({
         </Button>
       </div>
 
-      <div className="flex-1 flex relative">
+      <div className="flex-1 flex relative lg:gap-6">
         {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
           <div
@@ -76,7 +76,11 @@ export const UserPageLayout = ({
         </div>
 
         {/* Desktop Sidebar */}
+
         <aside className="hidden lg:block lg:static lg:w-64 lg:flex-shrink-0 py-6 lg:ltr:pl-6 lg:rtl:pr-6">
+
+        
+
           <UserSidebar />
         </aside>
 
