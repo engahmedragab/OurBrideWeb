@@ -9,6 +9,8 @@ import { DayDetailsView } from '@/components/planning/DayDetailsView'
 import { formatDateSafe, getToday } from '@/lib/date-utils'
 import { ChevronLeft, Save } from 'lucide-react'
 import { format } from 'date-fns'
+import { ar, enUS } from 'date-fns/locale'
+import { useI18nLocale } from '@/i18n/hooks'
 import { cn } from '@/lib/utils'
 import { Button, LoadingOverlay, ErrorModal, LoadingSpinner } from '@/components/ui'
 import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hooks/eventBooks'
@@ -52,6 +54,8 @@ function EventsPageContent() {
   const isRtl = useIsRTL()
   const t = useI18nTranslations('eventsPlanning.sideMenu.tabs')
   const tEvents = useI18nTranslations('eventsPlanning.events')
+  const locale = useI18nLocale()
+  const dateLocale = locale === 'ar' ? ar : enUS
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
   const [isMounted, setIsMounted] = useState(false)
 
@@ -351,7 +355,7 @@ function EventsPageContent() {
                     </div>
                     {dayData.lineDate && (
                       <div className="text-12 text-gray-600">
-                        {format(dayData.lineDate, 'MMM dd, yyyy')}
+                        {format(dayData.lineDate, 'MMM dd, yyyy', { locale: dateLocale })}
                       </div>
                     )}
                   </button>
@@ -396,13 +400,18 @@ function EventsPageContent() {
  * Events Page
  * Wrapped in Suspense for useSearchParams compatibility
  */
+function SuspenseFallback() {
+  const tEvents = useI18nTranslations('eventsPlanning.events')
+  return (
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="text-gray-600">{tEvents('loading.loadingFallback')}</div>
+    </div>
+  )
+}
+
 export default function EventsPage() {
   return (
-    <Suspense fallback={
-      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    }>
+    <Suspense fallback={<SuspenseFallback />}>
       <EventsPageContent />
     </Suspense>
   )

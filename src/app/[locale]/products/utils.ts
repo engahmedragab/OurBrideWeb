@@ -60,9 +60,16 @@ export const applyClientSideFilters = <T extends {
 
   // Apply category filter
   if (filters.category && filters.category.length > 0) {
-    result = result.filter(p => 
-      p.category && filters.category?.includes(p.category.id)
-    )
+    result = result.filter(p => {
+      if (!p.category) return false
+      // Compare category.id (string) with filter category IDs (strings)
+      // Also handle case where category.id might be a number converted to string
+      const productCategoryId = String(p.category.id)
+      return filters.category?.some(filterCatId => {
+        const filterId = String(filterCatId)
+        return productCategoryId === filterId
+      }) ?? false
+    })
   }
 
   // Apply price range filter

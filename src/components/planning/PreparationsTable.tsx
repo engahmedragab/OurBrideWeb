@@ -4,6 +4,7 @@ import type { PreparationService } from '@/types/planning'
 import { ServiceCell } from './ServiceCell'
 import { StatusBadge } from './StatusBadge'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useI18nLocale, useIsRTL } from '@/i18n'
 
 export interface PreparationsTableProps {
   services: PreparationService[]
@@ -13,24 +14,24 @@ export interface PreparationsTableProps {
   onRowClick?: (service: PreparationService) => void
 }
 
-// Format currency
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
+// Format currency - locale-aware
+const formatCurrency = (amount: number, locale: string): string => {
+  return new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EGP',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount)
 }
 
-// Format date
-const formatDate = (dateString: string | null | undefined): string => {
+// Format date - locale-aware
+const formatDate = (dateString: string | null | undefined, locale: string): string => {
   if (!dateString || dateString === '0001-01-01' || isNaN(Date.parse(dateString))) {
     return '—'
   }
   try {
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -47,10 +48,14 @@ export const PreparationsTable = ({
   onDelete,
   onRowClick,
 }: PreparationsTableProps) => {
+  const t = useI18nTranslations('eventsPlanning.preparations.table')
+  const locale = useI18nLocale()
+  const isRTL = useIsRTL()
+
   if (services.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-        <p className="text-14 text-gray-500">No services found</p>
+        <p className="text-14 text-gray-500">{t('noServices')}</p>
       </div>
     )
   }
@@ -63,17 +68,29 @@ export const PreparationsTable = ({
           {/* Table Header - Exact styling from Figma */}
           <thead className="bg-white">
             <tr>
-              <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100 border-r border-gray-100">
-                Service
+              <th className={cn(
+                "px-4 py-3 text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100",
+                isRTL ? "text-right border-l border-gray-100" : "text-left border-r border-gray-100"
+              )}>
+                {t('service')}
               </th>
-              <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100 border-r border-gray-100">
-                Status
+              <th className={cn(
+                "px-4 py-3 text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100",
+                isRTL ? "text-right border-l border-gray-100" : "text-left border-r border-gray-100"
+              )}>
+                {t('status')}
               </th>
-              <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100 border-r border-gray-100">
-                Paid
+              <th className={cn(
+                "px-4 py-3 text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100",
+                isRTL ? "text-right border-l border-gray-100" : "text-left border-r border-gray-100"
+              )}>
+                {t('paid')}
               </th>
-              <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                Due
+              <th className={cn(
+                "px-4 py-3 text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-100",
+                isRTL ? "text-right" : "text-left"
+              )}>
+                {t('due')}
               </th>
             </tr>
           </thead>
@@ -99,7 +116,10 @@ export const PreparationsTable = ({
                   )}
                 >
                   {/* Service Column */}
-                  <td className="px-4 py-4 align-middle border-r border-gray-100">
+                  <td className={cn(
+                    "px-4 py-4 align-middle",
+                    isRTL ? "border-l border-gray-100" : "border-r border-gray-100"
+                  )}>
                     <ServiceCell
                       serviceKey={serviceKey}
                       title={service.title}
@@ -110,21 +130,27 @@ export const PreparationsTable = ({
                   </td>
 
                   {/* Status Column */}
-                  <td className="px-4 py-4 align-middle border-r border-gray-100">
+                  <td className={cn(
+                    "px-4 py-4 align-middle",
+                    isRTL ? "border-l border-gray-100" : "border-r border-gray-100"
+                  )}>
                     <StatusBadge status={status} />
                   </td>
 
                   {/* Paid Column - Exact typography from Figma */}
-                  <td className="px-4 py-4 align-middle border-r border-gray-100">
+                  <td className={cn(
+                    "px-4 py-4 align-middle",
+                    isRTL ? "border-l border-gray-100" : "border-r border-gray-100"
+                  )}>
                     <span className="text-14 font-medium text-gray-900">
-                      {formatCurrency(service.advancePayment)}
+                      {formatCurrency(service.advancePayment, locale)}
                     </span>
                   </td>
 
                   {/* Due Column - Exact typography from Figma */}
                   <td className="px-4 py-4 align-middle">
                     <span className="text-14 text-gray-600">
-                      {formatDate(service.purchaseDate)}
+                      {formatDate(service.purchaseDate, locale)}
                     </span>
                   </td>
                 </tr>

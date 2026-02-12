@@ -244,13 +244,12 @@ export default function HelpCenterPage() {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto py-8">
-        {/* Page Title */}
-        <div className="mb-6 lg:mb-8">
-          <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
-            {t('title')}
-          </h1>
-        </div>
+      {/* Page Title */}
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
+          {t('title')}
+        </h1>
+      </div>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
           {/* Left Column - FAQ Accordion */}
@@ -279,7 +278,6 @@ export default function HelpCenterPage() {
             <LiveChatSection onStartChat={handleStartChat} />
           </div>
         </div>
-      </div>
 
       {/* Success Modal */}
       <StatusModal

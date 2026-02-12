@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import type { UiTodo } from '@/utils/planning/mappers/todoMappers'
 import { Button } from '@/components/ui/Button'
 import { Plus } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 import { TodoLineRow } from '@/components/planning/todo/TodoLineRow'
 import { CreateTodoModal } from '@/components/planning/todo/CreateTodoModal'
@@ -29,6 +30,7 @@ export function TodoLinesPanel({
   onCreateTodo: (data: { title: string; isDone?: boolean }) => Promise<void> | void
   onEditTodo: (todoId: number, data: { title: string; isDone?: boolean }) => Promise<void> | void
 }) {
+  const t = useI18nTranslations('eventsPlanning.todo.panel')
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null)
@@ -54,7 +56,7 @@ export function TodoLinesPanel({
             hover:text-white hover:bg-brand-500"
         >
           <Plus className="mr-1 h-4 w-4" />
-          Add todo
+          {t('addTodo')}
         </Button>
       </div>
 
@@ -75,7 +77,7 @@ export function TodoLinesPanel({
 
         {todos.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-gray-500">
-            No todos in this list yet.
+            {t('noTodosInList')}
           </div>
         ) : null}
       </div>

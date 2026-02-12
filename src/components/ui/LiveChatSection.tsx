@@ -66,6 +66,7 @@ export const LiveChatSection = ({
         variant="brand"
         size="lg"
         onClick={onStartChat}
+        disabled
         className="w-full rounded-full py-[18px] text-20 font-medium text-white"
       >
         {t('startChat')}

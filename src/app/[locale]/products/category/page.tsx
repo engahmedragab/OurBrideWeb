@@ -217,45 +217,68 @@ function ProductsContent() {
       enabled: !searchQuery && !hasFilters,
     })
 
-  // Fallback to regular products if filtered products endpoint doesn't work
-  const { data: allProducts = [] } = useProducts({
-    pageSize: DEFAULT_PAGE_SIZE,
-    enabled:
-      apiProducts.length === 0 &&
-      !productsLoading &&
-      !searchQuery &&
-      !hasFilters,
+  // Fallback to regular products - fetch all products when needed for client-side filtering
+  const shouldFetchAllProducts = useMemo(() => {
+    // Fetch all products if:
+    // 1. No search query and no filters (normal case) - when apiProducts is empty
+    if (!searchQuery && !hasFilters) {
+      return apiProducts.length === 0 && !productsLoading
+    }
+    // 2. We have filters but advanced search returned empty - need all products to apply client-side filters
+    if (hasFilters && advancedSearchParams && advancedSearchResults.length === 0 && !advancedSearchLoading) {
+      return true
+    }
+    // 3. We have filters but advanced search is not enabled (shouldn't happen, but safety check)
+    if (hasFilters && !advancedSearchParams) {
+      return true
+    }
+    return false
+  }, [searchQuery, hasFilters, apiProducts.length, productsLoading, advancedSearchParams, advancedSearchResults.length, advancedSearchLoading])
+
+  const { data: allProducts = [], isLoading: allProductsLoading } = useProducts({
+    pageSize: 1000, // Fetch more products to allow client-side filtering
+    enabled: shouldFetchAllProducts,
   })
 
   // Determine which products to use
   const products = useMemo(() => {
+    // If advanced search returned results, use them
     if (advancedSearchParams && advancedSearchResults.length > 0) {
       return advancedSearchResults
     }
+    // If simple search returned results and no filters, use them
     if (searchQuery && searchQuery.trim().length > 0 && !hasFilters && searchResults.length > 0) {
       return searchResults
     }
+    // If filtered API products exist, use them
     if (apiProducts.length > 0) {
       return apiProducts
     }
+    // Fallback to all products (will be filtered client-side if needed)
     return allProducts
   }, [advancedSearchResults, searchResults, apiProducts, allProducts, searchQuery, hasFilters, advancedSearchParams])
 
   // Determine loading state
-  const isLoading = advancedSearchLoading || searchLoading || productsLoading
+  const isLoading = advancedSearchLoading || searchLoading || productsLoading || (shouldFetchAllProducts && allProductsLoading)
 
-  // Apply client-side filtering only for filters not supported by API
-  // (Advanced search handles most filters, so minimal client-side filtering needed)
+  // Apply client-side filtering
+  // If advanced search returned results, use them as-is (already filtered)
+  // If advanced search returned empty but we have filters, apply client-side filtering to all products
+  // Otherwise, apply client-side filters to the products we have
   const filteredAndSortedProducts = useMemo(
     () => {
-      // If we used advanced search, it already handled most filters
-      if (advancedSearchParams) {
+      // If advanced search returned results, use them (already filtered by API)
+      if (advancedSearchParams && advancedSearchResults.length > 0) {
         return products
       }
-      // Otherwise, apply client-side filters
+      // If advanced search was used but returned empty, and we have allProducts, apply client-side filtering
+      if (advancedSearchParams && advancedSearchResults.length === 0 && allProducts.length > 0) {
+        return applyClientSideFilters(allProducts, filters, sortBy)
+      }
+      // Otherwise, apply client-side filters to current products
       return applyClientSideFilters(products, filters, sortBy)
     },
-    [products, filters, sortBy, advancedSearchParams]
+    [products, filters, sortBy, advancedSearchParams, advancedSearchResults.length, allProducts]
   )
 
   // Get selected category name and collect all unique tags
