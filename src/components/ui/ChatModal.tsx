@@ -10,6 +10,7 @@ import { ChatInputArea, type QuickReplyChip } from './ChatInputArea'
 import { SeenIndicator } from './SeenIndicator'
 import { Button } from './Button'
 import brandLogoSvg from '@/assets/svg/Brand-logo.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ChatMessage {
   id: string
@@ -44,12 +45,17 @@ export const ChatModal = ({
   messageHistory,
   onSend,
   onSelectQuickReply,
-  supportName = 'Our Bride Help Center',
+  supportName,
   supportAvatar,
-  supportSubtitle = 'We usually respond within a few minutes.',
+  supportSubtitle,
   quickReplyChips = [],
   className,
 }: ChatModalProps) => {
+  const t = useI18nTranslations('chatModal')
+
+  const resolvedSupportName = supportName || t('supportNameDefault')
+  const resolvedSupportSubtitle = supportSubtitle || t('supportSubtitleDefault')
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
 
@@ -69,7 +75,10 @@ export const ChatModal = ({
   const handleSend = (message?: string, audioBlob?: Blob) => {
     const messageToSend = message || inputValue.trim()
     if (messageToSend.length > 0 || audioBlob) {
-      onSend(messageToSend || (audioBlob ? '[Voice Message]' : ''), audioBlob)
+      onSend(
+        messageToSend || (audioBlob ? t('voiceMessageFallback') : ''),
+        audioBlob
+      )
       setInputValue('')
     }
   }
@@ -109,10 +118,10 @@ export const ChatModal = ({
           </div>
           <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
             <h3 className="text-14 sm:text-16 md:text-20 font-medium leading-5 sm:leading-6 text-gray-900 truncate">
-              {supportName}
+              {resolvedSupportName}
             </h3>
             <p className="text-12 sm:text-13 md:text-14 font-normal leading-4 text-gray-500 truncate">
-              {supportSubtitle}
+              {resolvedSupportSubtitle}
             </p>
           </div>
         </div>
@@ -202,7 +211,7 @@ export const ChatModal = ({
             onChange={setInputValue}
             onSend={handleSend}
             quickReplies={quickReplyChips}
-            placeholder="Enter Your Message.."
+            placeholder={t('inputPlaceholder')}
           />
         </div>
       </div>

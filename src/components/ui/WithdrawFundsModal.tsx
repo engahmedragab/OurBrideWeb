@@ -33,13 +33,13 @@ export const WithdrawFundsModal = ({
     {
       id: '1',
       number: '34** **** **** **7',
-      holder: 'Ahmed Ramadan',
+      holder: t('withdraw.cardHolderMock'),
       expiry: '02/30',
     },
     {
       id: '2',
       number: '34** **** **** **7',
-      holder: 'Ahmed Ramadan',
+      holder: t('withdraw.cardHolderMock'),
       expiry: '02/30',
     },
   ]
@@ -73,10 +73,10 @@ export const WithdrawFundsModal = ({
           <div>
             <p className="text-12 text-gray-500 mb-1">{t('withdraw.balance')}</p>
             <p className="text-20 font-semibold text-gray-900">
-              {balance.toFixed(2)} EGP
+              {balance.toFixed(2)} {t('withdraw.currency')}
             </p>
             <p className="text-12 text-gray-400 mt-1">
-              {t('withdraw.lastUpdate')}: Sep 15, 2025 11:30 am
+              {t('withdraw.lastUpdate')}: {t('withdraw.lastUpdateValue')}
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export const WithdrawFundsModal = ({
             <Input
               type="number"
               placeholder={t('withdraw.amount')}
-              suffix="EGP"
+              suffix={t('withdraw.currency')}
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
             />
@@ -160,4 +160,3 @@ export const WithdrawFundsModal = ({
     </>
   )
 }
-

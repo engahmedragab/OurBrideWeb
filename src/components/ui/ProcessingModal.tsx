@@ -3,6 +3,7 @@
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Modal } from './Modal'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ProcessingModalProps {
   isOpen: boolean
@@ -19,17 +20,19 @@ export interface ProcessingModalProps {
  */
 export const ProcessingModal = ({
   isOpen,
-  title = 'Processing',
-  message = 'Please wait while we process your request...',
+  title,
+  message,
   onClose,
   className,
   closeOnOverlayClick = false, // Don't allow closing during processing
 }: ProcessingModalProps) => {
+  const t = useI18nTranslations('processingModal')
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose || (() => {})}
-      title={title}
+      title={title || t('title')}
       maxWidth="sm"
       closeOnOverlayClick={closeOnOverlayClick}
       showCloseButton={closeOnOverlayClick}
@@ -43,9 +46,10 @@ export const ProcessingModal = ({
         </div>
 
         {/* Message */}
-        <p className="text-16 text-gray-600 text-center">{message}</p>
+        <p className="text-16 text-gray-600 text-center">
+          {message || t('message')}
+        </p>
       </div>
     </Modal>
   )
 }
-

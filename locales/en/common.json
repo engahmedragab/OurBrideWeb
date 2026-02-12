@@ -553,6 +553,7 @@
       "favorites": "Favorites"
     },
     "menu": {
+       "menu":"Menu",
       "wishlist": "Wishlist",
       "favorites": "Favorites",
       "follows": "Follows",
@@ -4105,6 +4106,9 @@
       "amount": "Amount",
       "availableCards": "Available Cards",
       "withdrawButton": "Withdraw EGP {amount}",
+      "currency": "EGP",
+      "lastUpdateValue": "Sep 15, 2025 11:30 am",
+      "cardHolderMock": "Ahmed Ramadan",
       "success": {
         "title": "Withdrawal successful",
         "description": "Your funds have been transferred to your bank account.",
@@ -4901,5 +4905,185 @@
         }
       }
     }
+  },
+   "bookingDetailsModal": {
+    "title": "Booking Details",
+    "personalInformation": "Personal Information",
+    "fullNamePlaceholder": "Full Name",
+    "mobileNumberPlaceholder": "Mobile Number",
+    "availableBranches": "Available Branches",
+    "selectYourPackage": "Select Your Package",
+    "priceLabel": "Price |",
+    "packageDetails": "Package Details",
+    "availableTimes": "Available Times",
+    "selectDatePlaceholder": "Select a date",
+    "bookingSummary": "Booking Summary",
+    "providerLabel": "Provider:",
+    "enterPromoCodePlaceholder": "Enter Promo Code",
+    "redeem": "Redeem",
+    "diamonds": "Diamonds: {points} Points",
+    "giftsCash": "Gifts Cash: {amount} {currency}",
+    "subtotal": "Subtotal",
+    "taxesAndFees": "Taxes & Fees",
+    "deliveryFee": "Delivery Fee",
+    "total": "Total",
+    "acceptTermsLabel": "I Accept Terms & Conditions",
+    "termsNote": "If you are not around when the delivery person arrives, they will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered.",
+    "confirmBooking": "Confirm Booking",
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "mobileNumberRequired": "Mobile number is required",
+      "selectDate": "Please select a date",
+      "selectTime": "Please select a time",
+      "acceptTerms": "You must accept the terms and conditions"
+    }
+  },
+    "cancelOrderSuccessModal": {
+    "title": "Order Canceled Successfully",
+    "description": "Your order has been canceled. You can continue browsing and place a new order anytime",
+    "close": "Close",
+    "browseMore": "Browse More"
+  },
+   "chatModal": {
+    "supportNameDefault": "Our Bride Help Center",
+    "supportSubtitleDefault": "We usually respond within a few minutes.",
+    "inputPlaceholder": "Enter Your Message..",
+    "voiceMessageFallback": "[Voice Message]"
+  },
+    "editItemModal": {
+    "title": "Edit Item",
+    "basicInformation": "Basic Information",
+    "completed": "Completed",
+    "pendingAction": "Pending Action",
+    "providerInformation": "Provider Information",
+    "reminder": "Reminder",
+    "discard": "Discard",
+    "saveChanges": "Save Changes"
+  },
+  
+  "orderCheckoutModal": {
+    "title": "Order Checkout",
+    "closeConfirm": "Are you sure you want to close? Your changes will be lost.",
+    "fullNamePlaceholder": "Full Name",
+    "mobileNumberPlaceholder": "Mobile Number",
+    "deliveryDetails": "Delivery Details",
+    "locationPlaceholder": "Location",
+    "streetPlaceholder": "Street / Apartment",
+    "notesPlaceholder": "Notes to the delivery person...",
+    "paymentMethod": "Payment Method",
+    "paymentMethods": {
+      "debitCredit": "Debit / Credit",
+      "mobileWallet": "Mobile Wallet",
+      "cashOnDelivery": "Cash On Delivery"
+    },
+    "walletDetails": "Wallet Details",
+    "cardDetails": "Card Details",
+    "cardNumberPlaceholder": "Card Number",
+    "cardholderNamePlaceholder": "Cardholder Name",
+    "expiryPlaceholder": "MM/YY",
+    "cvvPlaceholder": "CVV",
+    "orderSummary": "Order Summary",
+    "getItBy": "Get it by {date}",
+    "percentOff": "{percent}% OFF",
+    "errors": {
+      "itemsRequired": "Please select at least one item",
+      "fullNameMin": "Full name must be at least 2 characters",
+      "mobileRequired": "Mobile number is required",
+      "mobileInvalid": "Please enter a valid mobile number (10-11 digits)",
+      "locationMin": "Location must be at least 3 characters",
+      "streetMin": "Street/Apartment must be at least 3 characters",
+      "walletMobileRequired": "Wallet mobile number is required",
+      "walletMobileInvalid": "Wallet isn't valid, please enter valid number",
+      "cardNumberRequired": "Card number is required",
+      "cardNumberInvalid": "Please enter a valid card number",
+      "expiryRequired": "Expiry date is required",
+      "expiryInvalid": "Please enter a valid expiry date (MM/YY)",
+      "cvvRequired": "CVV is required",
+      "cvvInvalid": "Please enter a valid CVV",
+      "cardholderRequired": "Cardholder name is required",
+      "acceptTerms": "You must accept the terms and conditions"
+    },
+    "promo": {
+      "enterPromoCode": "Enter Promo Code",
+      "enterPromoCodeInput": "Enter promo code",
+      "redeem": "Redeem"
+    },
+    "rewards": {
+      "diamonds": "Diamonds : {points} Points",
+      "giftsCash": "Gifts Cash : {amount} {currency}",
+      "redeem": "Redeem"
+    },
+    "price": {
+      "subtotal": "Subtotal",
+      "taxesAndFees": "Taxes & Fees",
+      "deliveryFee": "Delivery Fee",
+      "total": "Total"
+    },
+    "terms": {
+      "iAccept": "I Accept",
+      "termsAndConditions": "Terms & Conditions",
+      "note": "If you are not around when the delivery person arrives, they will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered."
+    },
+    "checkout": "Checkout",
+    "processing": "Processing..."
+  },
+  
+  "portfolioModal": {
+    "aria": {
+      "close": "Close",
+      "closeImageViewer": "Close image viewer",
+      "previousImage": "Previous image",
+      "nextImage": "Next image"
+    },
+    "tabs": {
+      "about": "About",
+      "services": "Services",
+      "portfolio": "Portfolio",
+      "reviews": "Reviews"
+    },
+    "sections": {
+      "description": "Description",
+      "statistics": "Statistics",
+      "location": "Location",
+      "contact": "Contact",
+      "languages": "Languages",
+      "services": "Services",
+      "portfolio": "Portfolio",
+      "reviews": "Reviews"
+    },
+    "statistics": {
+      "appointmentsCompleted": "Appointments completed",
+      "clientsServed": "Clients served"
+    },
+    "address": {
+      "floor": "Floor",
+      "apt": "Apt",
+      "postalCode": "Postal Code: {code}"
+    },
+    "service": {
+      "imageAltFallback": "Service image",
+      "book": "Book"
+    },
+    "empty": {
+      "noServicesTitle": "No services available",
+      "noServicesDescription": "This professional doesn't have any services listed yet.",
+      "noPortfolio": "This professional doesn't have a portfolio yet.",
+      "noReviewsTitle": "No reviews yet",
+      "noReviewsDescription": "This professional doesn't have any reviews yet."
+    },
+    "reviews": {
+      "anonymous": "Anonymous",
+      "userInitialFallback": "U"
+    },
+    "portfolioImageAlt": "Portfolio image {index}",
+    "duration": {
+      "hoursMinutes": "{hours}h {minutes}m",
+      "minutes": "{minutes} min"
+    },
+    "bookNow": "Book now"
+  },
+   "processingModal": {
+    "title": "Processing",
+    "message": "Please wait while we process your request..."
   }
 }

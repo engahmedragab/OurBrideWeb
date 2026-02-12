@@ -554,6 +554,7 @@
       "markAllAsRead": "تحديد الكل كمقروء"
     },
     "menu": {
+      "menu":"قائمة",
       "wishlist": "قائمة الأمنيات",
       "favorites": "المفضلة",
       "follows": "المتابعات",
@@ -4005,6 +4006,9 @@
       "amount": "المبلغ",
       "availableCards": "البطاقات المتاحة",
       "withdrawButton": "سحب {amount} جنيه",
+        "currency": "ج.م",
+      "lastUpdateValue": "15 سبتمبر 2025 11:30 ص",
+      "cardHolderMock": "أحمد رمضان",
       "success": {
         "title": "تم السحب بنجاح",
         "description": "تم تحويل أموالك إلى حسابك البنكي.",
@@ -4801,5 +4805,187 @@
         }
       }
     }
+  },
+    "bookingDetailsModal": {
+    "title": "تفاصيل الحجز",
+    "personalInformation": "البيانات الشخصية",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "mobileNumberPlaceholder": "رقم الموبايل",
+    "availableBranches": "الفروع المتاحة",
+    "selectYourPackage": "اختاري الباقة",
+    "priceLabel": "السعر |",
+    "packageDetails": "تفاصيل الباقة",
+    "availableTimes": "المواعيد المتاحة",
+    "selectDatePlaceholder": "اختاري التاريخ",
+    "bookingSummary": "ملخص الحجز",
+    "providerLabel": "المزوّد:",
+    "enterPromoCodePlaceholder": "أدخل كود الخصم",
+    "redeem": "تطبيق",
+    "diamonds": "الماس: {points} نقطة",
+    "giftsCash": "رصيد الهدايا: {amount} {currency}",
+    "subtotal": "الإجمالي الفرعي",
+    "taxesAndFees": "الضرائب والرسوم",
+    "deliveryFee": "رسوم التوصيل",
+    "total": "الإجمالي",
+    "acceptTermsLabel": "أوافق على الشروط والأحكام",
+    "termsNote": "في حال عدم تواجدك عند وصول مندوب التوصيل، سيتم ترك طلبك عند الباب. وبإتمام الطلب، أنتِ توافقين على تحمّل المسؤولية الكاملة عنه بعد التسليم.",
+    "confirmBooking": "تأكيد الحجز",
+    "errors": {
+      "fullNameRequired": "الاسم الكامل مطلوب",
+      "mobileNumberRequired": "رقم الموبايل مطلوب",
+      "selectDate": "يرجى اختيار تاريخ",
+      "selectTime": "يرجى اختيار وقت",
+      "acceptTerms": "يجب الموافقة على الشروط والأحكام"
+    }
+  },
+  "cancelOrderSuccessModal": {
+    "title": "تم إلغاء الطلب بنجاح",
+    "description": "تم إلغاء طلبك. يمكنكِ الاستمرار في التصفح وإجراء طلب جديد في أي وقت",
+    "close": "إغلاق",
+    "browseMore": "تصفحي المزيد"
+  },
+    "chatModal": {
+    "supportNameDefault": "مركز مساعدة OurBride",
+    "supportSubtitleDefault": "عادةً ما نرد خلال بضع دقائق.",
+    "inputPlaceholder": "اكتب رسالتك..",
+    "voiceMessageFallback": "[رسالة صوتية]"
+  },
+  
+  "editItemModal": {
+    "title": "تعديل العنصر",
+    "basicInformation": "معلومات أساسية",
+    "completed": "مكتمل",
+    "pendingAction": "بانتظار الإجراء",
+    "providerInformation": "معلومات المزوّد",
+    "reminder": "تذكير",
+    "discard": "تجاهل",
+    "saveChanges": "حفظ التغييرات"
+  },
+  
+  "orderCheckoutModal": {
+    "title": "إتمام الطلب",
+    "closeConfirm": "هل أنتِ متأكدة من الإغلاق؟ سيتم فقدان التغييرات.",
+    "fullNamePlaceholder": "الاسم الكامل",
+    "mobileNumberPlaceholder": "رقم الموبايل",
+    "deliveryDetails": "تفاصيل التوصيل",
+    "locationPlaceholder": "الموقع",
+    "streetPlaceholder": "الشارع / الشقة",
+    "notesPlaceholder": "ملاحظات لمندوب التوصيل...",
+    "paymentMethod": "طريقة الدفع",
+    "paymentMethods": {
+      "debitCredit": "بطاقة بنكية",
+      "mobileWallet": "محفظة إلكترونية",
+      "cashOnDelivery": "الدفع عند الاستلام"
+    },
+    "walletDetails": "بيانات المحفظة",
+    "cardDetails": "بيانات البطاقة",
+    "cardNumberPlaceholder": "رقم البطاقة",
+    "cardholderNamePlaceholder": "اسم حامل البطاقة",
+    "expiryPlaceholder": "MM/YY",
+    "cvvPlaceholder": "CVV",
+    "orderSummary": "ملخص الطلب",
+    "getItBy": "يصلك قبل {date}",
+    "percentOff": "{percent}% خصم",
+    "errors": {
+      "itemsRequired": "يرجى اختيار عنصر واحد على الأقل",
+      "fullNameMin": "يجب ألا يقل الاسم الكامل عن حرفين",
+      "mobileRequired": "رقم الموبايل مطلوب",
+      "mobileInvalid": "يرجى إدخال رقم موبايل صحيح (10-11 رقمًا)",
+      "locationMin": "يجب ألا يقل الموقع عن 3 أحرف",
+      "streetMin": "يجب ألا يقل العنوان عن 3 أحرف",
+      "walletMobileRequired": "رقم المحفظة مطلوب",
+      "walletMobileInvalid": "رقم المحفظة غير صحيح، يرجى إدخال رقم صحيح",
+      "cardNumberRequired": "رقم البطاقة مطلوب",
+      "cardNumberInvalid": "يرجى إدخال رقم بطاقة صحيح",
+      "expiryRequired": "تاريخ الانتهاء مطلوب",
+      "expiryInvalid": "يرجى إدخال تاريخ صحيح (MM/YY)",
+      "cvvRequired": "رمز CVV مطلوب",
+      "cvvInvalid": "يرجى إدخال CVV صحيح",
+      "cardholderRequired": "اسم حامل البطاقة مطلوب",
+      "acceptTerms": "يجب الموافقة على الشروط والأحكام"
+    },
+    "promo": {
+      "enterPromoCode": "أدخل كود الخصم",
+      "enterPromoCodeInput": "أدخل كود الخصم",
+      "redeem": "تطبيق"
+    },
+    "rewards": {
+      "diamonds": "الماس : {points} نقطة",
+      "giftsCash": "رصيد الهدايا : {amount} {currency}",
+      "redeem": "استخدام"
+    },
+    "price": {
+      "subtotal": "الإجمالي الفرعي",
+      "taxesAndFees": "الضرائب والرسوم",
+      "deliveryFee": "رسوم التوصيل",
+      "total": "الإجمالي"
+    },
+    "terms": {
+      "iAccept": "أوافق على",
+      "termsAndConditions": "الشروط والأحكام",
+      "note": "في حال عدم تواجدك عند وصول مندوب التوصيل، سيتم ترك طلبك عند الباب. وبإتمام الطلب، أنتِ توافقين على تحمّل المسؤولية الكاملة عنه بعد التسليم."
+    },
+    "checkout": "إتمام الشراء",
+    "processing": "جاري المعالجة..."
+  },
+  
+  "portfolioModal": {
+    "aria": {
+      "close": "إغلاق",
+      "closeImageViewer": "إغلاق عرض الصورة",
+      "previousImage": "الصورة السابقة",
+      "nextImage": "الصورة التالية"
+    },
+    "tabs": {
+      "about": "نبذة",
+      "services": "الخدمات",
+      "portfolio": "الأعمال",
+      "reviews": "التقييمات"
+    },
+    "sections": {
+      "description": "الوصف",
+      "statistics": "الإحصائيات",
+      "location": "الموقع",
+      "contact": "التواصل",
+      "languages": "اللغات",
+      "services": "الخدمات",
+      "portfolio": "الأعمال",
+      "reviews": "التقييمات"
+    },
+    "statistics": {
+      "appointmentsCompleted": "المواعيد المكتملة",
+      "clientsServed": "عدد العملاء"
+    },
+    "address": {
+      "floor": "الدور",
+      "apt": "شقة",
+      "postalCode": "الرمز البريدي: {code}"
+    },
+    "service": {
+      "imageAltFallback": "صورة الخدمة",
+      "book": "احجزي"
+    },
+    "empty": {
+      "noServicesTitle": "لا توجد خدمات",
+      "noServicesDescription": "هذا المحترف لم يضف أي خدمات بعد.",
+      "noPortfolio": "هذا المحترف ليس لديه معرض أعمال بعد.",
+      "noReviewsTitle": "لا توجد تقييمات بعد",
+      "noReviewsDescription": "هذا المحترف ليس لديه أي تقييمات بعد."
+    },
+    "reviews": {
+      "anonymous": "مجهول",
+      "userInitialFallback": "م"
+    },
+    "portfolioImageAlt": "صورة من الأعمال {index}",
+    "duration": {
+      "hoursMinutes": "{hours}س {minutes}د",
+      "minutes": "{minutes} دقيقة"
+    },
+    "bookNow": "احجزي الآن"
+  },
+  
+  "processingModal": {
+    "title": "جاري المعالجة",
+    "message": "يرجى الانتظار بينما نقوم بمعالجة طلبك..."
   }
 }

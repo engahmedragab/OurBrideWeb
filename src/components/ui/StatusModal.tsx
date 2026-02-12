@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import successCheckSvg from '@/assets/svg/successCheck.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface StatusModalProps {
   open: boolean
@@ -25,12 +26,14 @@ export const StatusModal = ({
   open,
   title,
   description,
-  confirmLabel = 'Confirm',
+  confirmLabel,
   onConfirm,
   onClose,
   className,
   containerClassName,
 }: StatusModalProps) => {
+  const t = useI18nTranslations('common')
+
   if (!open) return null
 
   const handleConfirm = () => {
@@ -110,7 +113,7 @@ export const StatusModal = ({
             className="w-full text-white"
             onClick={handleConfirm}
           >
-            {confirmLabel}
+            {confirmLabel || t('confirm')}
           </Button>
         </div>
       </div>

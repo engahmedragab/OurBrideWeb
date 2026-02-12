@@ -21,6 +21,7 @@ import { Modal } from './Modal'
 import { DatePicker } from './DatePicker'
 import { cn } from '@/lib/utils'
 import type { Service } from '@/types/service'
+import { useI18nTranslations } from '@/i18n'
 
 export interface Branch {
   id: string
@@ -133,6 +134,8 @@ export const BookingDetailsModal = ({
   onConfirmBooking,
   className,
 }: BookingDetailsModalProps) => {
+  const t = useI18nTranslations('bookingDetailsModal')
+
   const [formData, setFormData] = useState<BookingFormData>({
     fullName: '',
     mobileNumber: '',
@@ -184,19 +187,19 @@ export const BookingDetailsModal = ({
     const newErrors: Record<string, string> = {}
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required'
+      newErrors.fullName = t('errors.fullNameRequired')
     }
     if (!formData.mobileNumber.trim()) {
-      newErrors.mobileNumber = 'Mobile number is required'
+      newErrors.mobileNumber = t('errors.mobileNumberRequired')
     }
     if (!formData.selectedDate) {
-      newErrors.selectedDate = 'Please select a date'
+      newErrors.selectedDate = t('errors.selectDate')
     }
     if (!formData.selectedTime) {
-      newErrors.selectedTime = 'Please select a time'
+      newErrors.selectedTime = t('errors.selectTime')
     }
     if (!formData.acceptTerms) {
-      newErrors.acceptTerms = 'You must accept the terms and conditions'
+      newErrors.acceptTerms = t('errors.acceptTerms')
     }
 
     setErrors(newErrors)
@@ -220,7 +223,7 @@ export const BookingDetailsModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Booking Details"
+      title={t('title')}
       maxWidth="2xl"
       zIndex={5}
       className={className}
@@ -235,12 +238,12 @@ export const BookingDetailsModal = ({
             {/* Personal Information */}
             <div className="mb-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Personal Information
+                {t('personalInformation')}
               </h3>
               <div className="space-y-4">
                 <Input
                   prefixIcon={User}
-                  placeholder="Full Name"
+                  placeholder={t('fullNamePlaceholder')}
                   value={formData.fullName}
                   onChange={e => handleInputChange('fullName', e.target.value)}
                   errorMessage={errors.fullName}
@@ -248,7 +251,7 @@ export const BookingDetailsModal = ({
                 />
                 <Input
                   prefixIcon={Phone}
-                  placeholder="Mobile Number"
+                  placeholder={t('mobileNumberPlaceholder')}
                   value={formData.mobileNumber}
                   onChange={e =>
                     handleInputChange('mobileNumber', e.target.value)
@@ -262,7 +265,7 @@ export const BookingDetailsModal = ({
             {/* Available Branches */}
             <div className="mb-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Available Branches
+                {t('availableBranches')}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {branches.map(branch => (
@@ -288,7 +291,7 @@ export const BookingDetailsModal = ({
             {/* Select Your Package */}
             <div className="mb-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Select Your Package
+                {t('selectYourPackage')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {packages.map(pkg => (
@@ -307,7 +310,7 @@ export const BookingDetailsModal = ({
                       {pkg.title}
                     </div>
                     <div className="text-14 text-gray-600">
-                      Price | {pkg.price.toLocaleString()}{' '}
+                      {t('priceLabel')} {pkg.price.toLocaleString()}{' '}
                       {service.price.currency.toUpperCase()}
                     </div>
                   </button>
@@ -318,7 +321,7 @@ export const BookingDetailsModal = ({
             {/* Package Details */}
             <div className="mb-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Package Details
+                {t('packageDetails')}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {packageUpgrades.map(upgrade => (
@@ -337,7 +340,7 @@ export const BookingDetailsModal = ({
                       {upgrade.title}
                     </div>
                     <div className="text-14 text-gray-600">
-                      Price | {upgrade.price.toLocaleString()}{' '}
+                      {t('priceLabel')} {upgrade.price.toLocaleString()}{' '}
                       {service.price.currency.toUpperCase()}
                     </div>
                   </button>
@@ -348,7 +351,7 @@ export const BookingDetailsModal = ({
             {/* Available Times */}
             <div className="mb-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Available Times
+                {t('availableTimes')}
               </h3>
               <div className="mb-4">
                 <DatePicker
@@ -356,7 +359,7 @@ export const BookingDetailsModal = ({
                   onChange={date =>
                     handleInputChange('selectedDate', date ? (typeof date === 'string' ? date : date.toISOString().split('T')[0]) : '')
                   }
-                  placeholder="Select a date"
+                  placeholder={t('selectDatePlaceholder')}
                   prefixIcon={Calendar}
                   errorMessage={errors.selectedDate}
                   variant={errors.selectedDate ? 'error' : 'default'}
@@ -394,7 +397,7 @@ export const BookingDetailsModal = ({
           {/* Right Column - Booking Summary */}
           <div className="w-full lg:w-[40%] lg:flex-shrink-0 p-4 md:p-6 bg-gray-50">
             <h3 className="text-20 font-semibold text-gray-900 mb-6">
-              Booking Summary
+              {t('bookingSummary')}
             </h3>
 
             {/* Service Card */}
@@ -423,7 +426,7 @@ export const BookingDetailsModal = ({
                     />
                   </div>
                   <p className="text-14 text-gray-600">
-                    Provider:{' '}
+                    {t('providerLabel')}{' '}
                     <Link 
                       href={`/provider/${service.provider.id}`}
                       className="hover:text-brand-500 transition-colors"
@@ -441,7 +444,7 @@ export const BookingDetailsModal = ({
               <div className="flex items-center gap-2 mb-2">
                 <Input
                   prefixIcon={Tag}
-                  placeholder="Enter Promo Code"
+                  placeholder={t('enterPromoCodePlaceholder')}
                   value={formData.promoCode}
                   onChange={e => handleInputChange('promoCode', e.target.value)}
                   className="flex-1"
@@ -450,7 +453,7 @@ export const BookingDetailsModal = ({
                   variant="default"
                   className="h-10 px-4 rounded-lg bg-brand-500 hover:bg-brand-600 text-white"
                 >
-                  Redeem
+                  {t('redeem')}
                 </Button>
               </div>
             </div>
@@ -461,7 +464,7 @@ export const BookingDetailsModal = ({
                 <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300">
                   <Diamond className="h-5 w-5 text-brand-500" />
                   <span className="text-14 text-gray-900">
-                    Diamonds: 250 Points
+                    {t('diamonds', { points: 250 })}
                   </span>
                 </div>
                 <Button
@@ -471,7 +474,7 @@ export const BookingDetailsModal = ({
                     handleInputChange('useDiamonds', !formData.useDiamonds)
                   }
                 >
-                  Redeem
+                  {t('redeem')}
                 </Button>
               </div>
             </div>
@@ -482,7 +485,7 @@ export const BookingDetailsModal = ({
                 <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-300">
                   <Gift className="h-5 w-5 text-brand-500" />
                   <span className="text-14 text-gray-900">
-                    Gifts Cash: 500 {service.price.currency.toUpperCase()}
+                    {t('giftsCash', { amount: 500, currency: service.price.currency.toUpperCase() })}
                   </span>
                 </div>
                 <Button
@@ -492,7 +495,7 @@ export const BookingDetailsModal = ({
                     handleInputChange('useGiftsCash', !formData.useGiftsCash)
                   }
                 >
-                  Redeem
+                  {t('redeem')}
                 </Button>
               </div>
             </div>
@@ -501,21 +504,21 @@ export const BookingDetailsModal = ({
             <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-14 text-gray-600">Subtotal</span>
+                  <span className="text-14 text-gray-600">{t('subtotal')}</span>
                   <span className="text-14 font-semibold text-gray-900">
                     {subtotal.toLocaleString()}{' '}
                     {service.price.currency.toUpperCase()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-14 text-gray-600">Taxes & Fees</span>
+                  <span className="text-14 text-gray-600">{t('taxesAndFees')}</span>
                   <span className="text-14 font-semibold text-gray-900">
                     {taxes.toLocaleString()}{' '}
                     {service.price.currency.toUpperCase()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-14 text-gray-600">Delivery Fee</span>
+                  <span className="text-14 text-gray-600">{t('deliveryFee')}</span>
                   <span className="text-14 font-semibold text-gray-900">
                     {deliveryFee.toLocaleString()}{' '}
                     {service.price.currency.toUpperCase()}
@@ -523,7 +526,7 @@ export const BookingDetailsModal = ({
                 </div>
                 <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
                   <span className="text-16 font-semibold text-gray-900">
-                    Total
+                    {t('total')}
                   </span>
                   <span className="text-16 font-semibold text-gray-900">
                     {total.toLocaleString()}{' '}
@@ -544,7 +547,7 @@ export const BookingDetailsModal = ({
                   variant={errors.acceptTerms ? 'error' : 'default'}
                 />
                 <label className="text-14 text-gray-900 cursor-pointer">
-                  I Accept Terms & Conditions
+                  {t('acceptTermsLabel')}
                 </label>
               </div>
               {errors.acceptTerms && (
@@ -553,10 +556,7 @@ export const BookingDetailsModal = ({
                 </p>
               )}
               <p className="text-12 text-gray-600 leading-relaxed">
-                If you are not around when the delivery person arrives, they
-                will leave your order at the door. by placing your order, you
-                agree to take full responsibility for it once it&apos;s
-                delivered.
+                {t('termsNote')}
               </p>
             </div>
 
@@ -571,7 +571,7 @@ export const BookingDetailsModal = ({
                 'transition-colors'
               )}
             >
-              Confirm Booking
+              {t('confirmBooking')}
             </Button>
           </div>
         </div>

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight, Clock, Phone, MapPin, ImageIcon, Mail, Store } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useIsRTL } from '@/i18n/hooks'
+import { useIsRTL, useI18nTranslations } from '@/i18n/hooks'
 import type { MediaResponse } from '@/types/responses'
 import type { BranchPortfolioResponse } from '@/types/responses/branch-portfolio-response'
 import { Button } from './Button'
@@ -36,6 +36,7 @@ export function PortfolioModal({
   subtitle,
 }: PortfolioModalProps) {
   const isRTL = useIsRTL()
+  const t = useI18nTranslations('portfolioModal')
   const [activeTab, setActiveTab] = useState<TabType>('about')
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
@@ -75,9 +76,9 @@ export function PortfolioModal({
     const minutes = parseInt(parts[1], 10)
 
     if (hours > 0) {
-      return `${hours}h ${minutes}m`
+      return t('duration.hoursMinutes', { hours, minutes })
     }
-    return `${minutes} min`
+    return t('duration.minutes', { minutes })
   }
 
   return (
@@ -145,7 +146,7 @@ export function PortfolioModal({
               size="icon"
               onClick={onClose}
               className="flex-shrink-0"
-              aria-label="Close"
+              aria-label={t('aria.close')}
             >
               <X className="h-5 w-5" />
             </Button>
@@ -154,10 +155,10 @@ export function PortfolioModal({
           {/* Tabs */}
           <div className="flex items-center w-full border-b border-gray-200 overflow-x-auto scrollbar-hide">
             {[
-              { id: 'about' as const, label: 'About' },
-              { id: 'services' as const, label: 'Services' },
-              { id: 'portfolio' as const, label: 'Portfolio' },
-              { id: 'reviews' as const, label: `Reviews${reviews && reviews.totalReviews > 0 ? ` ${reviews.totalReviews}` : ''}` },
+              { id: 'about' as const, label: t('tabs.about') },
+              { id: 'services' as const, label: t('tabs.services') },
+              { id: 'portfolio' as const, label: t('tabs.portfolio') },
+              { id: 'reviews' as const, label: `${t('tabs.reviews')}${reviews && reviews.totalReviews > 0 ? ` ${reviews.totalReviews}` : ''}` },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -186,7 +187,7 @@ export function PortfolioModal({
                   <>
                     {about.description && (
                       <div>
-                        <Typography variant="h5" className="mb-2">Description</Typography>
+                        <Typography variant="h5" className="mb-2">{t('sections.description')}</Typography>
                         <Typography variant="bodySmall" className="leading-relaxed">
                           {about.description}
                         </Typography>
@@ -195,16 +196,16 @@ export function PortfolioModal({
 
                     {statistics && (
                       <div>
-                        <Typography variant="h5" className="mb-3">Statistics</Typography>
+                        <Typography variant="h5" className="mb-3">{t('sections.statistics')}</Typography>
                         <div className="space-y-3">
                           <CardWrapper padding="sm" className="flex items-center justify-between">
-                            <Typography variant="bodySmall">Appointments completed</Typography>
+                            <Typography variant="bodySmall">{t('statistics.appointmentsCompleted')}</Typography>
                             <Typography variant="body" className="font-semibold text-brand-600">
                               {statistics.appointmentsCompleted.toLocaleString()}
                             </Typography>
                           </CardWrapper>
                           <CardWrapper padding="sm" className="flex items-center justify-between">
-                            <Typography variant="bodySmall">Clients served</Typography>
+                            <Typography variant="bodySmall">{t('statistics.clientsServed')}</Typography>
                             <Typography variant="body" className="font-semibold text-brand-600">
                               {statistics.clientsServed.toLocaleString()}
                             </Typography>
@@ -215,7 +216,7 @@ export function PortfolioModal({
 
                     {about.address && (
                       <div>
-                        <Typography variant="h5" className="mb-3">Location</Typography>
+                        <Typography variant="h5" className="mb-3">{t('sections.location')}</Typography>
                         <CardWrapper padding="md">
                           <div className="flex items-start gap-3">
                             <MapPin className="h-5 w-5 text-brand-500 flex-shrink-0 mt-0.5" />
@@ -232,8 +233,8 @@ export function PortfolioModal({
                                 <Typography variant="bodySmall" textColor="secondary" className="mt-1">
                                   {about.address.street}
                                   {about.address.building && `, ${about.address.building}`}
-                                  {about.address.floor && `, Floor ${about.address.floor}`}
-                                  {about.address.apartment && `, Apt ${about.address.apartment}`}
+                                  {about.address.floor && `, ${t('address.floor')} ${about.address.floor}`}
+                                  {about.address.apartment && `, ${t('address.apt')} ${about.address.apartment}`}
                                 </Typography>
                               )}
                               {(about.address.cityName || about.address.regionName || about.address.countryName) && (
@@ -243,7 +244,7 @@ export function PortfolioModal({
                               )}
                               {about.address.postalCode && (
                                 <Typography variant="bodySmall" textColor="secondary" className="mt-1">
-                                  Postal Code: {about.address.postalCode}
+                                  {t('address.postalCode', { code: about.address.postalCode })}
                                 </Typography>
                               )}
                             </div>
@@ -254,7 +255,7 @@ export function PortfolioModal({
 
                     {(about.phoneNumber || about.phoneNumber2 || ('email' in about && typeof about.email === 'string')) && (
                       <div>
-                        <Typography variant="h5" className="mb-3">Contact</Typography>
+                        <Typography variant="h5" className="mb-3">{t('sections.contact')}</Typography>
                         <CardWrapper padding="md">
                           <div className="space-y-3">
                             {about.phoneNumber && (
@@ -288,7 +289,7 @@ export function PortfolioModal({
 
                     {statistics && 'languages' in statistics && Array.isArray(statistics.languages) && statistics.languages.length > 0 && (
                       <div>
-                        <Typography variant="h5" className="mb-3">Languages</Typography>
+                        <Typography variant="h5" className="mb-3">{t('sections.languages')}</Typography>
                         <div className="flex flex-wrap gap-2">
                           {statistics.languages.map((lang: string, index: number) => (
                             <Badge
@@ -311,7 +312,7 @@ export function PortfolioModal({
             {/* Services Tab */}
             {activeTab === 'services' && (
               <div className="p-6">
-                <Typography variant="h4" className="mb-4">Services</Typography>
+                <Typography variant="h4" className="mb-4">{t('sections.services')}</Typography>
                 {services.length > 0 ? (
                   <div className="space-y-3">
                     {services.map(service => (
@@ -326,7 +327,7 @@ export function PortfolioModal({
                               {service.imageUrl && service.imageUrl.trim() !== '' ? (
                                 <Image
                                   src={service.imageUrl}
-                                  alt={service.name || 'Service image'}
+                                  alt={service.name || t('service.imageAltFallback')}
                                   fill
                                   className="object-cover"
                                   sizes="64px"
@@ -361,7 +362,7 @@ export function PortfolioModal({
                             size="sm"
                             className="!text-white"
                           >
-                            Book
+                            {t('service.book')}
                           </Button>
                           <PriceDisplay
                             discounted={service.price}
@@ -375,8 +376,8 @@ export function PortfolioModal({
                   </div>
                 ) : (
                   <EmptyState
-                    title="No services available"
-                    description="This professional doesn't have any services listed yet."
+                    title={t('empty.noServicesTitle')}
+                    description={t('empty.noServicesDescription')}
                   />
                 )}
               </div>
@@ -385,7 +386,7 @@ export function PortfolioModal({
             {/* Portfolio Tab */}
             {activeTab === 'portfolio' && (
               <div className="p-6">
-                <Typography variant="h4" className="mb-4">Portfolio</Typography>
+                <Typography variant="h4" className="mb-4">{t('sections.portfolio')}</Typography>
                 {portfolioImages.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {portfolioImages.map((media, index) => {
@@ -398,7 +399,7 @@ export function PortfolioModal({
                         >
                           <Image
                             src={imageUrl}
-                            alt={media.alt || `Portfolio image ${index + 1}`}
+                            alt={media.alt || t('portfolioImageAlt', { index: index + 1 })}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-300"
                             sizes="(max-width: 640px) 50vw, 33vw"
@@ -412,7 +413,7 @@ export function PortfolioModal({
                   <div className="flex flex-col items-center justify-center py-12">
                     <ImageIcon className="h-12 w-12 text-gray-400 mb-3" />
                     <Typography variant="body" textColor="secondary" className="text-center">
-                      This professional doesn&apos;t have a portfolio yet.
+                      {t('empty.noPortfolio')}
                     </Typography>
                   </div>
                 )}
@@ -423,7 +424,7 @@ export function PortfolioModal({
             {activeTab === 'reviews' && (
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <Typography variant="h4">Reviews</Typography>
+                  <Typography variant="h4">{t('sections.reviews')}</Typography>
                   {reviews && reviews.averageRating !== null && reviews.averageRating > 0 && (
                     <RatingDisplay
                       rating={reviews.averageRating}
@@ -447,12 +448,12 @@ export function PortfolioModal({
                             <div className="flex items-center gap-3 mb-1">
                               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                                 <Typography variant="bodySmall" className="text-white font-semibold">
-                                  {review.userName?.charAt(0).toUpperCase() || 'U'}
+                                  {review.userName?.charAt(0).toUpperCase() || t('reviews.userInitialFallback')}
                                 </Typography>
                               </div>
                               <div>
                                 <Typography variant="bodySmall" className="font-semibold">
-                                  {review.userName || 'Anonymous'}
+                                  {review.userName || t('reviews.anonymous')}
                                 </Typography>
                                 {review.date && (
                                   <Typography variant="bodyTiny" textColor="secondary">
@@ -484,8 +485,8 @@ export function PortfolioModal({
                   </div>
                 ) : (
                   <EmptyState
-                    title="No reviews yet"
-                    description="This professional doesn't have any reviews yet."
+                    title={t('empty.noReviewsTitle')}
+                    description={t('empty.noReviewsDescription')}
                   />
                 )}
               </div>
@@ -500,7 +501,7 @@ export function PortfolioModal({
               className="w-full !text-white font-semibold"
               onClick={onClose}
             >
-              Book now
+              {t('bookNow')}
             </Button>
           </div>
         </div>
@@ -515,7 +516,7 @@ export function PortfolioModal({
             size="icon"
             onClick={handleCloseImageViewer}
             className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white border-0 z-10"
-            aria-label="Close image viewer"
+            aria-label={t('aria.closeImageViewer')}
           >
             <X className="h-6 w-6" />
           </Button>
@@ -527,7 +528,7 @@ export function PortfolioModal({
               size="icon"
               onClick={handlePrevImage}
               className="absolute left-4 bg-white/10 hover:bg-white/20 text-white border-0 z-10"
-              aria-label="Previous image"
+              aria-label={t('aria.previousImage')}
             >
               <ChevronLeft className={cn("h-6 w-6", isRTL && "rotate-180")} />
             </Button>
@@ -539,7 +540,7 @@ export function PortfolioModal({
               size="icon"
               onClick={handleNextImage}
               className="absolute right-4 bg-white/10 hover:bg-white/20 text-white border-0 z-10"
-              aria-label="Next image"
+              aria-label={t('aria.nextImage')}
             >
               <ChevronRight className={cn("h-6 w-6", isRTL && "rotate-180")} />
             </Button>
@@ -560,7 +561,7 @@ export function PortfolioModal({
               <div className="relative w-full h-full max-w-6xl max-h-[90vh] mx-4">
                 <Image
                   src={imageSrc}
-                  alt={currentImage?.alt || `Portfolio image ${selectedImageIndex + 1}`}
+                  alt={currentImage?.alt || t('portfolioImageAlt', { index: selectedImageIndex + 1 })}
                   fill
                   className="object-contain"
                   sizes="90vw"

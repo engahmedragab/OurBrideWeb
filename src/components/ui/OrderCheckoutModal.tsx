@@ -25,6 +25,7 @@ import { Modal } from './Modal'
 import { PaymentConfirmationModal } from './PaymentConfirmationModal'
 import { OrderConfirmationModal } from './OrderConfirmationModal'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface OrderItem {
   id: string
@@ -81,6 +82,8 @@ export const OrderCheckoutModal = ({
   deliveryFee = 90,
   className,
 }: OrderCheckoutModalProps) => {
+  const t = useI18nTranslations('orderCheckoutModal')
+
   const [items, setItems] = useState<OrderItem[]>(initialItems)
   const [selectedItems, setSelectedItems] = useState<Set<string>>(
     new Set(initialItems.map(item => item.id))
@@ -161,7 +164,7 @@ export const OrderCheckoutModal = ({
       if (e.key === 'Escape') {
         if (hasFormData) {
           const confirmed = window.confirm(
-            'Are you sure you want to close? Your changes will be lost.'
+            t('closeConfirm')
           )
           if (!confirmed) return
         }
@@ -170,7 +173,7 @@ export const OrderCheckoutModal = ({
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, hasFormData, onClose])
+  }, [isOpen, hasFormData, onClose, t])
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -187,7 +190,7 @@ export const OrderCheckoutModal = ({
   const handleClose = () => {
     if (hasFormData) {
       const confirmed = window.confirm(
-        'Are you sure you want to close? Your changes will be lost.'
+        t('closeConfirm')
       )
       if (!confirmed) return
     }
@@ -222,43 +225,43 @@ export const OrderCheckoutModal = ({
     switch (field) {
       case 'fullName':
         if (!value || (typeof value === 'string' && value.trim().length < 2)) {
-          return 'Full name must be at least 2 characters'
+          return t('errors.fullNameMin')
         }
         break
       case 'mobileNumber': {
         if (!value) {
-          return 'Mobile number is required'
+          return t('errors.mobileRequired')
         }
         const phoneRegex = /^[0-9]{10,11}$/
         if (
           typeof value === 'string' &&
           !phoneRegex.test(value.replace(/\s/g, ''))
         ) {
-          return 'Please enter a valid mobile number (10-11 digits)'
+          return t('errors.mobileInvalid')
         }
         break
       }
       case 'location':
         if (!value || (typeof value === 'string' && value.trim().length < 3)) {
-          return 'Location must be at least 3 characters'
+          return t('errors.locationMin')
         }
         break
       case 'street':
         if (!value || (typeof value === 'string' && value.trim().length < 3)) {
-          return 'Street/Apartment must be at least 3 characters'
+          return t('errors.streetMin')
         }
         break
       case 'walletMobileNumber': {
         if (formData.paymentMethod === 'mobile-wallet') {
           if (!value) {
-            return 'Wallet mobile number is required'
+            return t('errors.walletMobileRequired')
           }
           const phoneRegex = /^[0-9]{10,11}$/
           if (
             typeof value === 'string' &&
             !phoneRegex.test(value.replace(/\s/g, ''))
           ) {
-            return "Wallet isn't valid, please enter valid number"
+            return t('errors.walletMobileInvalid')
           }
         }
         break
@@ -266,14 +269,14 @@ export const OrderCheckoutModal = ({
       case 'cardNumber': {
         if (formData.paymentMethod === 'debit-credit') {
           if (!value) {
-            return 'Card number is required'
+            return t('errors.cardNumberRequired')
           }
           const cardRegex = /^[0-9]{13,19}$/
           if (
             typeof value === 'string' &&
             !cardRegex.test(value.replace(/\s/g, ''))
           ) {
-            return 'Please enter a valid card number'
+            return t('errors.cardNumberInvalid')
           }
         }
         break
@@ -281,11 +284,11 @@ export const OrderCheckoutModal = ({
       case 'cardExpiry': {
         if (formData.paymentMethod === 'debit-credit') {
           if (!value) {
-            return 'Expiry date is required'
+            return t('errors.expiryRequired')
           }
           const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/
           if (typeof value === 'string' && !expiryRegex.test(value)) {
-            return 'Please enter a valid expiry date (MM/YY)'
+            return t('errors.expiryInvalid')
           }
         }
         break
@@ -293,11 +296,11 @@ export const OrderCheckoutModal = ({
       case 'cardCVV': {
         if (formData.paymentMethod === 'debit-credit') {
           if (!value) {
-            return 'CVV is required'
+            return t('errors.cvvRequired')
           }
           const cvvRegex = /^[0-9]{3,4}$/
           if (typeof value === 'string' && !cvvRegex.test(value)) {
-            return 'Please enter a valid CVV'
+            return t('errors.cvvInvalid')
           }
         }
         break
@@ -308,14 +311,14 @@ export const OrderCheckoutModal = ({
             !value ||
             (typeof value === 'string' && value.trim().length < 2)
           ) {
-            return 'Cardholder name is required'
+            return t('errors.cardholderRequired')
           }
         }
         break
       }
       case 'acceptTerms':
         if (!value) {
-          return 'You must accept the terms and conditions'
+          return t('errors.acceptTerms')
         }
         break
     }
@@ -381,7 +384,7 @@ export const OrderCheckoutModal = ({
 
     // Check if at least one item is selected
     if (selectedItems.size === 0) {
-      newErrors.items = 'Please select at least one item'
+      newErrors.items = t('errors.itemsRequired')
     }
 
     setErrors(newErrors)
@@ -488,7 +491,7 @@ export const OrderCheckoutModal = ({
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
-        title="Order Checkout"
+        title={t('title')}
         maxWidth="2xl"
         zIndex={5}
         closeOnOverlayClick={!hasFormData}
@@ -506,7 +509,7 @@ export const OrderCheckoutModal = ({
                 <div className="space-y-4">
                   <Input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder={t('fullNamePlaceholder')}
                     prefixIcon={User}
                     value={formData.fullName}
                     onChange={e => updateFormData('fullName', e.target.value)}
@@ -523,7 +526,7 @@ export const OrderCheckoutModal = ({
                   <div className={cn(errors.mobileNumber && 'mb-2')}>
                     <Input
                       type="tel"
-                      placeholder="Mobile Number"
+                      placeholder={t('mobileNumberPlaceholder')}
                       prefixIcon={Phone}
                       value={formData.mobileNumber}
                       onChange={e =>
@@ -547,12 +550,12 @@ export const OrderCheckoutModal = ({
                 {/* Delivery Details Section */}
                 <div className="space-y-4 pt-4">
                   <h3 className="text-18 font-semibold text-gray-900">
-                    Delivery Details
+                    {t('deliveryDetails')}
                   </h3>
 
                   <Input
                     type="text"
-                    placeholder="Location"
+                    placeholder={t('locationPlaceholder')}
                     prefixIcon={MapPin}
                     value={formData.location}
                     onChange={e => updateFormData('location', e.target.value)}
@@ -568,7 +571,7 @@ export const OrderCheckoutModal = ({
 
                   <Input
                     type="text"
-                    placeholder="Street / Apartment"
+                    placeholder={t('streetPlaceholder')}
                     prefixIcon={Building2}
                     value={formData.street}
                     onChange={e => updateFormData('street', e.target.value)}
@@ -583,7 +586,7 @@ export const OrderCheckoutModal = ({
 
                   <div className="relative">
                     <textarea
-                      placeholder="Notes to the delivery person..."
+                      placeholder={t('notesPlaceholder')}
                       value={formData.notes}
                       onChange={e => updateFormData('notes', e.target.value)}
                       rows={3}
@@ -603,24 +606,24 @@ export const OrderCheckoutModal = ({
                 {/* Payment Method Selection */}
                 <div className="space-y-4 pt-4">
                   <h3 className="text-18 font-semibold text-gray-900">
-                    Payment Method
+                    {t('paymentMethod')}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {(
                       [
                         {
                           value: 'debit-credit',
-                          label: 'Debit / Credit',
+                          label: t('paymentMethods.debitCredit'),
                           icon: CreditCard,
                         },
                         {
                           value: 'mobile-wallet',
-                          label: 'Mobile Wallet',
+                          label: t('paymentMethods.mobileWallet'),
                           icon: Wallet,
                         },
                         {
                           value: 'cash-on-delivery',
-                          label: 'Cash On Delivery',
+                          label: t('paymentMethods.cashOnDelivery'),
                           icon: DollarSign,
                         },
                       ] as const
@@ -689,11 +692,11 @@ export const OrderCheckoutModal = ({
                   {formData.paymentMethod === 'mobile-wallet' && (
                     <div className="space-y-4 pt-4 pb-6">
                       <h3 className="text-18 font-semibold text-gray-900">
-                        Wallet Details
+                        {t('walletDetails')}
                       </h3>
                       <Input
                         type="tel"
-                        placeholder="Mobile Number"
+                        placeholder={t('mobileNumberPlaceholder')}
                         value={formData.walletMobileNumber}
                         onChange={e =>
                           updateFormData('walletMobileNumber', e.target.value)
@@ -722,11 +725,11 @@ export const OrderCheckoutModal = ({
                   {formData.paymentMethod === 'debit-credit' && (
                     <div className="space-y-4 pt-4 pb-6">
                       <h3 className="text-18 font-semibold text-gray-900">
-                        Card Details
+                        {t('cardDetails')}
                       </h3>
                       <Input
                         type="text"
-                        placeholder="Card Number"
+                        placeholder={t('cardNumberPlaceholder')}
                         prefixIcon={CreditCard}
                         value={formData.cardNumber}
                         onChange={e => {
@@ -755,7 +758,7 @@ export const OrderCheckoutModal = ({
                       />
                       <Input
                         type="text"
-                        placeholder="Cardholder Name"
+                        placeholder={t('cardholderNamePlaceholder')}
                         prefixIcon={User}
                         value={formData.cardholderName}
                         onChange={e =>
@@ -779,7 +782,7 @@ export const OrderCheckoutModal = ({
                       <div className="grid grid-cols-2 gap-4">
                         <Input
                           type="text"
-                          placeholder="MM/YY"
+                          placeholder={t('expiryPlaceholder')}
                           value={formData.cardExpiry}
                           onChange={e => {
                             // Format expiry date as MM/YY
@@ -808,7 +811,7 @@ export const OrderCheckoutModal = ({
                         />
                         <Input
                           type="text"
-                          placeholder="CVV"
+                          placeholder={t('cvvPlaceholder')}
                           value={formData.cardCVV}
                           onChange={e => {
                             const value = e.target.value
@@ -841,7 +844,7 @@ export const OrderCheckoutModal = ({
               <div className="space-y-6">
                 {/* Order Summary Header */}
                 <h3 className="text-24 font-normal text-gray-900">
-                  Order Summary
+                  {t('orderSummary')}
                 </h3>
 
                 {/* Product Items List */}
@@ -903,7 +906,7 @@ export const OrderCheckoutModal = ({
                                   </span>
                                   {discountPercentage > 0 && (
                                     <span className="text-12 font-semibold text-gray-500 ml-auto">
-                                      {discountPercentage}% OFF
+                                      {t('percentOff', { percent: discountPercentage })}
                                     </span>
                                   )}
                                 </>
@@ -911,7 +914,7 @@ export const OrderCheckoutModal = ({
                             </div>
                             {item.deliveryDate && (
                               <p className="text-12 text-gray-500 mb-3">
-                                Get it by {item.deliveryDate}
+                                {t('getItBy', { date: item.deliveryDate })}
                               </p>
                             )}
 
@@ -953,14 +956,14 @@ export const OrderCheckoutModal = ({
                       {showPromoInput ? (
                         <Input
                           type="text"
-                          placeholder="Enter promo code"
+                          placeholder={t('promo.enterPromoCodeInput')}
                           value={promoCode}
                           onChange={e => setPromoCode(e.target.value)}
                           className="flex-1 max-w-[200px]"
                           size="sm"
                         />
                       ) : (
-                        <span className="text-14">Enter Promo Code</span>
+                        <span className="text-14">{t('promo.enterPromoCode')}</span>
                       )}
                     </div>
                     <button
@@ -968,7 +971,7 @@ export const OrderCheckoutModal = ({
                       onClick={() => setShowPromoInput(!showPromoInput)}
                       className="text-14 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]"
                     >
-                      Redeem
+                      {t('promo.redeem')}
                     </button>
                   </div>
 
@@ -976,13 +979,15 @@ export const OrderCheckoutModal = ({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Diamond className="h-5 w-5 text-[#FF8B7A]" />
-                      <span className="text-14">Diamonds : 250 Points</span>
+                      <span className="text-14">
+                        {t('rewards.diamonds', { points: 250 })}
+                      </span>
                     </div>
                     <button
                       type="button"
                       className="text-14 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]"
                     >
-                      Redeem
+                      {t('rewards.redeem')}
                     </button>
                   </div>
 
@@ -991,14 +996,14 @@ export const OrderCheckoutModal = ({
                     <div className="flex items-center gap-2 text-gray-600">
                       <Gift className="h-5 w-5 text-[#FF8B7A]" />
                       <span className="text-14">
-                        Gifts Cash : 500 {currency}
+                        {t('rewards.giftsCash', { amount: 500, currency })}
                       </span>
                     </div>
                     <button
                       type="button"
                       className="text-14 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]"
                     >
-                      Redeem
+                      {t('rewards.redeem')}
                     </button>
                   </div>
                 </div>
@@ -1006,19 +1011,19 @@ export const OrderCheckoutModal = ({
                 {/* Price Breakdown */}
                 <div className="space-y-3 pt-4">
                   <div className="flex justify-between text-14 text-gray-600">
-                    <span>Subtotal</span>
+                    <span>{t('price.subtotal')}</span>
                     <span className="font-semibold text-gray-900">
                       {subtotal.toLocaleString()} {currency}
                     </span>
                   </div>
                   <div className="flex justify-between text-14 text-gray-600">
-                    <span>Taxes & Fees</span>
+                    <span>{t('price.taxesAndFees')}</span>
                     <span className="text-gray-900">
                       {taxes.toLocaleString()} {currency}
                     </span>
                   </div>
                   <div className="flex justify-between text-14 text-gray-600">
-                    <span>Delivery Fee</span>
+                    <span>{t('price.deliveryFee')}</span>
                     <span className="text-gray-900">
                       {deliveryFee.toLocaleString()} {currency}
                     </span>
@@ -1026,7 +1031,7 @@ export const OrderCheckoutModal = ({
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between">
                       <span className="text-18 font-semibold text-gray-900">
-                        Total
+                        {t('price.total')}
                       </span>
                       <span className="text-20 font-semibold text-gray-900">
                         {total.toLocaleString()} {currency}
@@ -1047,7 +1052,7 @@ export const OrderCheckoutModal = ({
                       size="md"
                     />
                     <label className="text-14 text-gray-700 cursor-pointer flex-1">
-                      I Accept{' '}
+                      {t('terms.iAccept')}{' '}
                       <button
                         type="button"
                         className="text-[#FF8B7A] hover:underline"
@@ -1056,15 +1061,12 @@ export const OrderCheckoutModal = ({
                           // Open terms modal or page
                         }}
                       >
-                        Terms & Conditions
+                        {t('terms.termsAndConditions')}
                       </button>
                     </label>
                   </div>
                   <p className="text-12 text-gray-500 pl-8">
-                    If you are not around when the delivery person arrives, they
-                    will leave your order at the door. By placing your order,
-                    you agree to take full responsibility for it once it&apos;s
-                    delivered.
+                    {t('terms.note')}
                   </p>
                   {errors.acceptTerms && (
                     <p className="text-12 text-red-500 pl-8">
@@ -1087,7 +1089,7 @@ export const OrderCheckoutModal = ({
                       'transition-colors'
                     )}
                   >
-                    {isSubmitting ? 'Processing...' : 'Checkout'}
+                    {isSubmitting ? t('processing') : t('checkout')}
                   </Button>
                 </div>
               </div>

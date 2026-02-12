@@ -9,6 +9,7 @@ import { Toggle } from './Switch'
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { Checkbox } from './Checkbox'
 import { cn } from '@/lib'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 // Generic modal to support any item shape
 interface EditModalProps<T> {
@@ -24,6 +25,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
   itemData,
   onSave,
 }: EditModalProps<T>) {
+  const t = useI18nTranslations('editItemModal')
   const [formData, setFormData] = useState<T>(itemData)
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Edit Item" 
+      title={t('title')} 
       maxWidth="2xl"
       contentClassName="p-0 max-h-[90vh] overflow-y-auto"
       headerClassName="px-2.5 py-2 sm:px-3 sm:py-2.5 md:px-4 md:py-3"
@@ -66,7 +68,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
           {/* Basic Fields */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-5">
             <h3 className="text-12 uppercase tracking-wider text-gray-400">
-              Basic Information
+              {t('basicInformation')}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -139,7 +141,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
                     : 'text-gray-500'
                 )}
               >
-                {formData.iscompleted ? 'Completed' : 'Pending Action'}
+                {formData.iscompleted ? t('completed') : t('pendingAction')}
               </span>
             </div>
           </div>
@@ -149,7 +151,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-12 uppercase tracking-wider text-gray-400">
                 <Tag className="w-4 h-4 text-brand-500" />
-                Provider Information
+                {t('providerInformation')}
               </h3>
               <Toggle
                 checked={Boolean(formData.hasProvider)}
@@ -191,7 +193,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-12 uppercase tracking-wider text-orange-700">
                 <Bell className="w-4 h-4" />
-                Reminder
+                {t('reminder')}
               </h3>
               <Toggle
                 checked={Boolean(formData.hasReminder)}
@@ -228,7 +230,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
         {/* Footer Actions */}
         <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 md:px-6 py-4 flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} className="px-6">
-            Discard
+            {t('discard')}
           </Button>
           <Button
             variant="brand"
@@ -236,7 +238,7 @@ export default function EditItemModal<T extends Record<string, unknown>>({
             className="px-8 text-white shadow-md shadow-brand-100"
           >
             <Save className="w-4 h-4 me-2" />
-            Save Changes
+            {t('saveChanges')}
           </Button>
         </div>
       </div>

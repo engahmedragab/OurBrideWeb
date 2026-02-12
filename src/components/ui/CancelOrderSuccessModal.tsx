@@ -4,6 +4,7 @@ import { Modal } from './Modal'
 import { Button } from './Button'
 import { Check } from 'lucide-react'
 import Link from 'next/link'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CancelOrderSuccessModalProps {
   isOpen: boolean
@@ -16,6 +17,8 @@ export const CancelOrderSuccessModal = ({
   onClose,
   onBrowseMore,
 }: CancelOrderSuccessModalProps) => {
+  const t = useI18nTranslations('cancelOrderSuccessModal')
+
   return (
     <Modal
       isOpen={isOpen}
@@ -40,13 +43,12 @@ export const CancelOrderSuccessModal = ({
 
         {/* Title */}
         <h2 className="mb-3 text-center text-24 font-semibold text-gray-900">
-          Order Canceled Successfully
+          {t('title')}
         </h2>
 
         {/* Description */}
         <p className="mb-6 text-center text-16 text-gray-600">
-          Your order has been canceled. You can continue browsing and place a
-          new order anytime
+          {t('description')}
         </p>
 
         {/* Action Buttons */}
@@ -57,21 +59,22 @@ export const CancelOrderSuccessModal = ({
             className="w-full text-white"
             onClick={onClose}
           >
-            Close
+            {t('close')}
           </Button>
+
           {onBrowseMore ? (
             <button
               onClick={onBrowseMore}
               className="text-center text-16 font-medium text-brand-500 hover:text-brand-600 transition-colors"
             >
-              Browse More
+              {t('browseMore')}
             </button>
           ) : (
             <Link
               href="/"
               className="text-center text-16 font-medium text-brand-500 hover:text-brand-600 transition-colors"
             >
-              Browse More
+              {t('browseMore')}
             </Link>
           )}
         </div>

@@ -5,6 +5,7 @@ import { Header, Footer, UserSidebar } from './index'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface UserPageLayoutProps {
   children: ReactNode
@@ -15,6 +16,7 @@ export const UserPageLayout = ({
   children,
   className,
 }: UserPageLayoutProps) => {
+  const t = useI18nTranslations('navbar.menu')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
@@ -23,7 +25,7 @@ export const UserPageLayout = ({
       
       {/* Mobile Sidebar Toggle Button - Sticky below header */}
       <div className="lg:hidden  w-full top-16 z-30 bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center">
-         <span className="flex ltr:justify-start ">Menu</span>
+         <span className="flex ltr:justify-start ">{t('menu')}</span>
         <Button
           variant="ghost"
           onClick={() => setIsSidebarOpen(true)}
@@ -58,7 +60,7 @@ export const UserPageLayout = ({
         >
           {/* Drawer Header */}
           <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200 bg-white ">
-            <span className="text-18 font-semibold text-gray-900">Menu</span>
+            <span className="text-18 font-semibold text-gray-900">{t('menu')}</span>
             <Button
               variant="ghost"
               size="icon"
