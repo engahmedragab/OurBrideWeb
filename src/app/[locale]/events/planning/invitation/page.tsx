@@ -575,7 +575,7 @@ function InvitationPageContent() {
 
   if (!localDraft) {
     return (
-      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6">
+      <div className="w-full py-6">
         <GuestsHeader onRefresh={handleRefresh} />
         <div className="py-12 text-center">
           <p className="text-16 text-gray-500 mb-4">{t('empty.noGuestBook')}</p>
@@ -588,7 +588,7 @@ function InvitationPageContent() {
   }
 
   return (
-    <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6">
+    <div className="w-full py-6">
       <GuestsHeader onRefresh={handleRefresh} />
       <div className="flex items-center justify-between mb-4">
         

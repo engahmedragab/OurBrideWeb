@@ -335,7 +335,7 @@ export const UserSidebar = ({
                       >
                         {/* Red vertical indicator for active item - positioned on left edge */}
                         {active && (
-                          <div className="absolute rtl:right-0 left-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
+                          <div className="absolute ltr:left-0 rtl:right-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
                         )}
                         <Icon
                           className={cn(

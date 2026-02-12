@@ -95,19 +95,28 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="w-full">
-      <div className={cn('flex flex-col lg:flex-row gap-6 px-4 md:px-10')}>
-        <div className="order-2 lg:order-1 flex-1 min-w-0">
+      <div className={cn('mx-auto flex w-full flex-col gap-4 px-3 sm:px-4 lg:gap-6 lg:px-6')}>
+        <div className="lg:hidden">
+          <PlanningSideMenu
+            tabs={tabs}
+            activeValue={activeTab}
+            showIndicators={true}
+          />
+        </div>
+
+        <div className="hidden lg:block">
+          <PlanningSideMenu
+            tabs={tabs}
+            activeValue={activeTab}
+            showIndicators={true}
+            desktopLayout="horizontal"
+            className="px-3 py-2"
+          />
+        </div>
+
+        <div className="min-w-0">
           {children}
         </div>
-        <aside className="order-1 lg:order-2 lg:w-64 flex-shrink-0">
-          <div className="lg:sticky lg:top-6">
-            <PlanningSideMenu
-              tabs={tabs}
-              activeValue={activeTab}
-              showIndicators={true}
-            />
-          </div>
-        </aside>
       </div>
     </div>
   )
@@ -119,7 +128,7 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
       <Suspense
         fallback={
           <div className="w-full">
-            <div className="mb-6 sm:mb-8 px-4 md:px-10">
+            <div className="mb-6 sm:mb-8">
               <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full">
                 <div className="h-10 w-full animate-pulse bg-gray-200 rounded" />
               </div>

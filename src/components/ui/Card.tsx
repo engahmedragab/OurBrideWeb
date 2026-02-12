@@ -485,6 +485,7 @@ const ProductServiceCard = ({
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
   const isRtl = useIsRTL();
+  const t = useI18nTranslations('common')
   console.log({data})
   return (
     <div className="flex flex-col h-full ">
@@ -525,7 +526,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
           <p className="text-16 font-semibold text-gray-900">
             { isRtl ? data.authorNameAr :  data.authorNameEn}
           </p>
-          <p className="text-14 text-gray-500">{data.timeAgo || 'Recently'}</p>
+          <p className="text-14 text-gray-500">{data.timeAgo || t('recently')}</p>
         </div>
       </div>
     </div>

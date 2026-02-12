@@ -76,7 +76,7 @@ export const UserPageLayout = ({
         </div>
 
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block lg:static lg:w-64 lg:flex-shrink-0 py-6 lg:pl-6">
+        <aside className="hidden lg:block lg:static lg:w-64 lg:flex-shrink-0 py-6 lg:ltr:pl-6 lg:rtl:pr-6">
           <UserSidebar />
         </aside>
 

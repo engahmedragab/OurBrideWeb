@@ -1781,11 +1781,11 @@
       "tabs": {
         "overview": "نظرة عامة",
         "budget": "الميزانية",
-        "items": "العناصر",
-        "events": "المناسبات",
+        "items": "الجهاز",
+        "events": "الاحداث",
         "invitation": "الضيوف",
         "occasions": "المناسبات",
-        "preparations": "التحضيرات",
+        "preparations": "التجهيزات",
         "ToDo": "المهام",
         "notes": "الملاحظات"
       },

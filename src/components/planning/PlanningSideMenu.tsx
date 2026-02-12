@@ -20,6 +20,7 @@ export interface PlanningSideMenuProps {
     onTabClick?: (tab: PlanningSideMenuTab, event: MouseEvent<HTMLAnchorElement>) => void
     isInitializingTab?: string | null
     showIndicators?: boolean
+    desktopLayout?: 'vertical' | 'horizontal'
     className?: string
 }
 
@@ -29,20 +30,27 @@ export const PlanningSideMenu = ({
     onTabClick,
     isInitializingTab = null,
     showIndicators = true,
+    desktopLayout = 'vertical',
     className,
 }: PlanningSideMenuProps) => {
   const tSideMenu = useI18nTranslations('eventsPlanning.sideMenu')
   const tTabs = useI18nTranslations('eventsPlanning.sideMenu.tabs')
   const tStatus = useI18nTranslations('eventsPlanning.sideMenu.status')
   const isRtl = useIsRTL()
+  const isHorizontalDesktop = desktopLayout === 'horizontal'
 
   return (
     <div className={cn('bg-white rounded-2xl p-3 lg:p-2 lg:border lg:border-gray-200 lg:shadow-sm', className)}>
-      <div className="hidden lg:block px-3 py-2 text-12 font-semibold text-gray-500 uppercase tracking-wide">
+      <div className={cn('hidden px-3 py-2 text-12 font-semibold text-gray-500 uppercase tracking-wide', isHorizontalDesktop ? 'lg:hidden' : 'lg:block')}>
         {tSideMenu('title')}
       </div>
 
-      <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-col lg:items-stretch lg:gap-1">
+      <div className={cn(
+        'grid grid-cols-3 gap-3',
+        isHorizontalDesktop
+          ? 'lg:grid lg:grid-cols-5 lg:gap-2'
+          : 'lg:flex lg:flex-col lg:items-stretch lg:gap-1'
+      )}>
         {tabs.map(tab => {
           const isActive = activeValue === tab.value
           const isLoading = isInitializingTab === tab.value
@@ -56,13 +64,17 @@ export const PlanningSideMenu = ({
               className={cn(
                 'flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-semibold transition-colors',
                 'whitespace-nowrap',
-                'lg:shrink-0 lg:flex-row lg:items-center lg:justify-between lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
+                'lg:shrink-0 lg:flex-row lg:items-center lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
+                isHorizontalDesktop ? 'lg:justify-center' : 'lg:justify-between',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
                 isRtl ? 'text-right' : 'text-left',
                 isActive ? ' text-brand-500' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               )}
             >
-              <div className="flex items-center gap-2.5 min-w-0 justify-center lg:flex-1 lg:justify-start">
+              <div className={cn(
+                'flex items-center gap-2.5 min-w-0 justify-center',
+                isHorizontalDesktop ? 'lg:justify-center' : 'lg:flex-1 lg:justify-start'
+              )}>
                 {tab.icon && (
                   <tab.icon
                     className={cn(
@@ -78,7 +90,7 @@ export const PlanningSideMenu = ({
               </div>
 
               {showIndicators && (
-                <span className="flex items-center gap-1.5 h-4 lg:h-auto lg:ml-2">
+                <span className={cn('flex items-center gap-1.5 h-4 lg:h-auto')}>
                   {isLoading && (
                     <span
                       className={cn(
