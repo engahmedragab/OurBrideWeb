@@ -1,0 +1,41 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "DD727PA38R.com.ourbride.app",
+                "paths": [
+                    "/provider/*",
+                    "/p/*",
+                    "/order/*",
+                    "/service/*",
+                    "/blog/*",
+                    "/product/*",
+                    "/app/*",
+                    "/auth/*",
+                    "/store/*",
+                    "/offers/*",
+                    "/categories/*",
+                    "/items/*",
+                    "/items/store/*",
+                    "/scan/*",
+                    "/redirect*",
+                    "/profile/*",
+                    "/coupon/*",
+                    "/dl/*",
+                    "/app/coupon/*",
+                    "/app/dl/*",
+                    "/app/scan/*",
+                    "/app/redirect*",
+                    "/app/profile/*",
+                    "/app/coupon/*",
+                    "/app/dl/*",
+                    "/app/scan/*",
+                    "/app/redirect*",
+                    "/app/profile",
+                    "/app/coupon"
+                ]
+            }
+        ]
+    }
+}
