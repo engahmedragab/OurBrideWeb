@@ -37,6 +37,21 @@ jobs:
         env:
           NODE_ENV: production
 
+      # 5b️⃣ Remove old static build artifacts on server (CRA-style files)
+      - name: 🧹 Clean Old Static Build on Server
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb/build
+            rm -f index.html 404.html asset-manifest.json robots.txt manifest.json
+            rm -f logo.png logo0.png logoicon.ico
+            rm -rf static
+            echo "Old static build artifacts removed."
+
       # 6️⃣ Upload build artifacts to server
       - name: 🚀 Upload Build to DigitalOcean
         uses: appleboy/scp-action@v0.1.3
