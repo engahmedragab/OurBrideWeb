@@ -10,7 +10,8 @@ export interface UserMainIdsResponse {
   pageSize: number
   follows: FollowIdItem[]
   wishlists: WishlistIdItem[]
-  cart?: CartIdInfo
+  /** List of all cart items (one per purchase). Empty array when no items. */
+  cart?: CartIdInfo[]
   cartsWithProviders: CartProviderIdInfo[]
   warnings: string[]
 }
