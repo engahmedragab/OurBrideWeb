@@ -37,9 +37,9 @@ jobs:
         env:
           NODE_ENV: production
 
-      # 5a️⃣ Package .next for upload (SCP often skips dot-prefixed dirs)
+      # 5a️⃣ Package .next for upload (use non-dot filename so SCP includes it)
       - name: 📦 Package .next directory
-        run: tar -czf .next.tar.gz .next
+        run: tar -czf next-build.tar.gz .next
 
       # 5b️⃣ Remove old static build artifacts on server (CRA-style files)
       - name: 🧹 Clean Old Static Build on Server
@@ -64,11 +64,11 @@ jobs:
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: "public/**,node_modules/**,package.json,next.config.js,.next.tar.gz"
+          source: "public/**,node_modules/**,package.json,next.config.js,next-build.tar.gz"
           target: /var/www/OurBrideWeb/build
           rm: false
 
-      # 6a️⃣ Extract .next on server (uploaded as tarball so it's not skipped)
+      # 6a️⃣ Extract .next on server (tarball named next-build.tar.gz so SCP includes it)
       - name: 📂 Extract .next on Server
         uses: appleboy/ssh-action@v0.1.3
         with:
@@ -78,11 +78,25 @@ jobs:
           port: 22
           script: |
             cd /var/www/OurBrideWeb/build
-            tar -xzf .next.tar.gz
-            rm -f .next.tar.gz
-            echo ".next extracted."
+            test -f next-build.tar.gz || { echo "ERROR: next-build.tar.gz missing"; exit 1; }
+            tar -xzf next-build.tar.gz
+            rm -f next-build.tar.gz
+            test -d .next || { echo "ERROR: .next not found after extract"; exit 1; }
+            echo ".next extracted at /var/www/OurBrideWeb/build/.next"
 
-      # 6b️⃣ Deploy .well-known (apple-app-site-association, assetlinks.json)
+      # 6b️⃣ Ensure public and .well-known dirs exist, then deploy .well-known
+      - name: 📁 Ensure public folder at /var/www/OurBrideWeb/build/public
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            mkdir -p /var/www/OurBrideWeb/build/public/.well-known
+            echo "public and public/.well-known ready"
+
+      # 6c️⃣ Deploy .well-known (apple-app-site-association, assetlinks.json)
       - name: 📱 Deploy .well-known Files
         uses: appleboy/scp-action@v0.1.3
         with:
