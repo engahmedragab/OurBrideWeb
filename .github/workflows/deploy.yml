@@ -37,9 +37,11 @@ jobs:
         env:
           NODE_ENV: production
 
-      # 5a️⃣ Package .next for upload (use non-dot filename so SCP includes it)
-      - name: 📦 Package .next directory
-        run: tar -czf next-build.tar.gz .next
+      # 5a️⃣ Package .next and public for upload (preserve paths so they land in build/.next and build/public)
+      - name: 📦 Package .next and public directories
+        run: |
+          tar -czf next-build.tar.gz .next
+          tar -czf public-build.tar.gz public
 
       # 5b️⃣ Remove old static build artifacts on server (CRA-style files)
       - name: 🧹 Clean Old Static Build on Server
@@ -64,12 +66,12 @@ jobs:
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: "public/**,node_modules/**,package.json,next.config.js,next-build.tar.gz"
+          source: "node_modules/**,package.json,next.config.js,next-build.tar.gz,public-build.tar.gz"
           target: /var/www/OurBrideWeb/build
           rm: false
 
-      # 6a️⃣ Extract .next on server (tarball named next-build.tar.gz so SCP includes it)
-      - name: 📂 Extract .next on Server
+      # 6a️⃣ Extract .next and public on server (tarballs preserve paths: build/.next, build/public)
+      - name: 📂 Extract .next and public on Server
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.DO_HOST }}
@@ -82,21 +84,14 @@ jobs:
             tar -xzf next-build.tar.gz
             rm -f next-build.tar.gz
             test -d .next || { echo "ERROR: .next not found after extract"; exit 1; }
-            echo ".next extracted at /var/www/OurBrideWeb/build/.next"
+            echo ".next at /var/www/OurBrideWeb/build/.next"
+            test -f public-build.tar.gz || { echo "ERROR: public-build.tar.gz missing"; exit 1; }
+            tar -xzf public-build.tar.gz
+            rm -f public-build.tar.gz
+            test -d public || { echo "ERROR: public not found after extract"; exit 1; }
+            echo "public at /var/www/OurBrideWeb/build/public"
 
-      # 6b️⃣ Ensure public and .well-known dirs exist, then deploy .well-known
-      - name: 📁 Ensure public folder at /var/www/OurBrideWeb/build/public
-        uses: appleboy/ssh-action@v0.1.3
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          password: ${{ secrets.DO_PASSWORD }}
-          port: 22
-          script: |
-            mkdir -p /var/www/OurBrideWeb/build/public/.well-known
-            echo "public and public/.well-known ready"
-
-      # 6c️⃣ Deploy .well-known (apple-app-site-association, assetlinks.json)
+      # 6b️⃣ Deploy .well-known (apple-app-site-association, assetlinks.json) into build/public/.well-known
       - name: 📱 Deploy .well-known Files
         uses: appleboy/scp-action@v0.1.3
         with:
