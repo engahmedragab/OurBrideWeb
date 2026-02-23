@@ -320,10 +320,12 @@ export const useCartItems = () => {
    */
   const isProductInCart = useMemo(() => {
     return (productId: number, providerId?: number): boolean => {
-      if (!mainIds?.cart?.productId) return false
-      if (mainIds.cart.productId !== productId) return false
-      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return false
-      return true
+      if (!mainIds?.cart?.length) return false
+      return mainIds.cart.some(
+        item =>
+          item.productId === productId &&
+          (providerId === undefined || item.providerId === providerId)
+      )
     }
   }, [mainIds])
 
@@ -332,11 +334,14 @@ export const useCartItems = () => {
    */
   const isServiceInCart = useMemo(() => {
     return (serviceId: number, providerId?: number): boolean => {
-      if (!mainIds) return false
-      if (mainIds.cart?.serviceId === serviceId) {
-        if (providerId !== undefined && mainIds.cart?.providerId !== providerId) {
-          return false
-        }
+      if (!mainIds?.cart?.length) return false
+      if (
+        mainIds.cart.some(
+          item =>
+            item.serviceId === serviceId &&
+            (providerId === undefined || item.providerId === providerId)
+        )
+      ) {
         return true
       }
       if (providerId !== undefined) {
@@ -353,10 +358,12 @@ export const useCartItems = () => {
    */
   const getProductQuantity = useMemo(() => {
     return (productId: number, providerId?: number): number => {
-      if (!mainIds?.cart?.productId) return 0
-      if (mainIds.cart.productId !== productId) return 0
-      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return 0
-      return 1
+      if (!mainIds?.cart?.length) return 0
+      return mainIds.cart.filter(
+        item =>
+          item.productId === productId &&
+          (providerId === undefined || item.providerId === providerId)
+      ).length
     }
   }, [mainIds])
 
@@ -365,34 +372,42 @@ export const useCartItems = () => {
    */
   const getServiceQuantity = useMemo(() => {
     return (serviceId: number, providerId?: number): number => {
-      if (!mainIds?.cart?.serviceId) return 0
-      if (mainIds.cart.serviceId !== serviceId) return 0
-      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return 0
-      return 1
+      if (!mainIds?.cart?.length) return 0
+      return mainIds.cart.filter(
+        item =>
+          item.serviceId === serviceId &&
+          (providerId === undefined || item.providerId === providerId)
+      ).length
     }
   }, [mainIds])
 
   /**
-   * Get purchase ID for a product (useful for removing/updating)
+   * Get purchase ID for a product (useful for removing/updating). Returns first match.
    */
   const getProductPurchaseId = useMemo(() => {
     return (productId: number, providerId?: number): number | null => {
-      if (!mainIds?.cart?.productId) return null
-      if (mainIds.cart.productId !== productId) return null
-      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return null
-      return mainIds.cart.id ?? null
+      if (!mainIds?.cart?.length) return null
+      const item = mainIds.cart.find(
+        item =>
+          item.productId === productId &&
+          (providerId === undefined || item.providerId === providerId)
+      )
+      return item?.id ?? null
     }
   }, [mainIds])
 
   /**
-   * Get purchase ID for a service (useful for removing/updating)
+   * Get purchase ID for a service (useful for removing/updating). Returns first match.
    */
   const getServicePurchaseId = useMemo(() => {
     return (serviceId: number, providerId?: number): number | null => {
-      if (!mainIds?.cart?.serviceId) return null
-      if (mainIds.cart.serviceId !== serviceId) return null
-      if (providerId !== undefined && mainIds.cart.providerId !== providerId) return null
-      return mainIds.cart.id ?? null
+      if (!mainIds?.cart?.length) return null
+      const item = mainIds.cart.find(
+        item =>
+          item.serviceId === serviceId &&
+          (providerId === undefined || item.providerId === providerId)
+      )
+      return item?.id ?? null
     }
   }, [mainIds])
 

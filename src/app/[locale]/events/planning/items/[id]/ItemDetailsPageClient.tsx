@@ -105,7 +105,7 @@ export function ItemDetailsPageClient({
       .replace('EGP', '£')
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 bg-gray-50 min-h-screen">
+    <div className="w-full py-6 md:py-10 space-y-8 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-2">

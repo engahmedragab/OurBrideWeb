@@ -14,5 +14,8 @@ export const getUserMainIds = async (query?: {
     secure: true,
     query,
   })
-  return (response?.data ?? response) as UserMainIdsResponse
+  // API returns { data: { userId, cart, follows, ... }, success, statusCode, message }
+  const body = response?.data ?? response
+  const payload = body && typeof body === 'object' && 'data' in body ? (body as { data: UserMainIdsResponse }).data : body
+  return (payload ?? body) as UserMainIdsResponse
 }

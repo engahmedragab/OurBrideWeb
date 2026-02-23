@@ -86,12 +86,10 @@ export const UserSidebar = ({
     true
   )
 
-  // Calculate cart count using main IDs
+  // Cart count = total items in cart (main-ids returns cart as list of purchases)
   const cartCount = useMemo(() => {
     if (!mainIds) return 0
-    const cartsWithProvidersCount = mainIds.cartsWithProviders?.length || 0
-    const hasPrimaryCart = mainIds.cart?.id ? 1 : 0
-    return cartsWithProvidersCount + hasPrimaryCart
+    return mainIds.cart?.length ?? 0
   }, [mainIds])
 
   type MenuItem = {
@@ -335,7 +333,7 @@ export const UserSidebar = ({
                       >
                         {/* Red vertical indicator for active item - positioned on left edge */}
                         {active && (
-                          <div className="absolute rtl:right-0 left-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
+                          <div className="absolute ltr:left-0 rtl:right-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
                         )}
                         <Icon
                           className={cn(

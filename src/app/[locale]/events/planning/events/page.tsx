@@ -12,7 +12,7 @@ import { format } from 'date-fns'
 import { ar, enUS } from 'date-fns/locale'
 import { useI18nLocale } from '@/i18n/hooks'
 import { cn } from '@/lib/utils'
-import { Button, LoadingOverlay, ErrorModal, LoadingSpinner } from '@/components/ui'
+import { Button, ErrorModal, LoadingSpinner } from '@/components/ui'
 import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
@@ -294,7 +294,7 @@ function EventsPageContent() {
   }
 
   return (
-    <div className="w-full min-h-screen px-0 sm:px-2 lg:px-4 py-4 sm:py-6 lg:py-8">
+    <div className="w-full min-h-screen py-4 sm:py-6 lg:py-8">
       {/* Navigation Header */}
       <div className="mb-4">
         <Link
@@ -367,9 +367,9 @@ function EventsPageContent() {
       )}
 
       {/* Single Layout with Responsive Order */}
-      <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-2">
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         {/* Mini Calendar - Mobile: order-1 (top), Desktop: right sidebar */}
-        <div className="order-1 lg:order-2 flex justify-center items-start px-0 sm:px-2 pb-3">
+        <div className="order-1 flex items-start justify-center pb-3 lg:order-2 lg:pb-0">
           <PlanningMiniCalendar
             value={selectedDayId}
             onChange={handleDateSelect}

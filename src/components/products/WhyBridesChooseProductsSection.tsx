@@ -52,13 +52,13 @@ export const WhyBridesChooseProductsSection = ({
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col md:flex-row items-stretch ">
+        <div className="flex flex-col md:flex-row items-stretch px-4 lg:px-1 ">
         {/* Left Image with offset border */}
         {image && (
           <div
             className="
               relative 
-              w-full md:w-[420px] 
+              w-full md:w-[340px] lg:w-[420px] 
               h-[220px] sm:h-[270px] md:h-[310px] lg:h-[360px]
               flex-shrink-0
             "

@@ -93,12 +93,10 @@ export const Header = ({ className }: HeaderProps) => {
 
   const showHeaderSkeleton = !hasLoadedOnce
 
-  // Calculate cart count using main IDs (cart + carts-with-providers)
+  // Cart count = total items in cart (main-ids returns cart as list of purchases)
   const cartCount = useMemo(() => {
     if (!mainIds) return 0
-    const cartsWithProvidersCount = mainIds.cartsWithProviders?.length || 0
-    const hasPrimaryCart = mainIds.cart?.id ? 1 : 0
-    return cartsWithProvidersCount + hasPrimaryCart
+    return mainIds.cart?.length ?? 0
   }, [mainIds])
 
   const isActive = (path: string) => {

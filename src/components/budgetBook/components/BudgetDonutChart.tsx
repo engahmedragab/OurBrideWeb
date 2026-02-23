@@ -149,7 +149,7 @@ export const BudgetDonutChart = ({
               fill="none"
               stroke={segment.color}
               strokeWidth={thickness}
-              strokeLinecap="round"
+              strokeLinecap="butt"
               className="transition-all duration-500"
             />
           ))}

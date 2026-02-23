@@ -114,7 +114,7 @@ export const CommunitySidebar = ({
 
   return (
     <aside
-      className={cn('w-80 flex-shrink-0 space-y-4 overflow-y-auto', className)}
+      className={cn('w-full min-w-0 flex-shrink-0 space-y-4 overflow-y-auto', className)}
     >
       {/* Community Title */}
       <h2 className="text-20 font-semibold text-gray-900">{t("tabs.community")}</h2>

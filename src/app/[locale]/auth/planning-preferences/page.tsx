@@ -88,7 +88,7 @@ export default function PlanningPreferencesPage() {
   if (checking) {
     return (
       <>
-        <LoadingSpinner open text={`${t('common.loading')} ${t('common.pleaseWait')}`}  />
+        <LoadingSpinner fullScreen={true} size='xl' text={`${t('common.loading')} ${t('common.pleaseWait')}`}  />
       </>
     )
   }
