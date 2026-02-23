@@ -452,7 +452,7 @@ function TodoPageContent() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <TodoLinesPanel
           categoryName={selectedCategoryName}
           stats={stats}

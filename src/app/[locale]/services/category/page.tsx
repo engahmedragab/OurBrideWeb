@@ -912,7 +912,7 @@ function ServicesCategoryPageContent() {
                   />
                   {/* Pagination */}
                   {totalPages > 1 && (
-                    <div className="mt-8 relative z-10">
+                    <div className="mt-8 flex justify-center z-10">
                       <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
