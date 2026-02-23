@@ -7,6 +7,7 @@ import { QuantitySelector } from './QuantitySelector'
 import { Button } from './Button'
 import { ShoppingCart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface OrderSummaryCardProps {
   totalPrice: number
@@ -37,13 +38,14 @@ export const OrderSummaryCard = ({
   disabled = false,
   className,
 }: OrderSummaryCardProps) => {
+  const t = useI18nTranslations('products.orderSummaryCard')
   const [isAddressExpanded, setIsAddressExpanded] = useState(false)
 
   const handleAddressToggle = () => {
     setIsAddressExpanded(!isAddressExpanded)
     if (onDeliveryLocationChange) {
       onDeliveryLocationChange()
-    }
+    } 
   }
 
   const displayAddress = fullAddress || deliveryLocation
@@ -58,7 +60,7 @@ export const OrderSummaryCard = ({
     >
       {/* Total price */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Total price</span>
+        <span className="text-14 text-gray-900">{t('totalPrice')}</span>
         <PriceDisplay
           discounted={totalPrice}
           currency={currency}
@@ -71,7 +73,7 @@ export const OrderSummaryCard = ({
 
       {/* Deliver to */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Deliver to</span>
+        <span className="text-14 text-gray-900">{t('deliverTo')}</span>
         <button
           onClick={handleAddressToggle}
           className="flex items-center gap-1 text-14 text-brand-500 hover:text-brand-600"
@@ -88,7 +90,7 @@ export const OrderSummaryCard = ({
 
       {/* Quantity */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Quantity</span>
+        <span className="text-14 text-gray-900">{t('quantity')}</span>
         <QuantitySelector
           quantity={quantity}
           onQuantityChange={onQuantityChange}
@@ -107,7 +109,7 @@ export const OrderSummaryCard = ({
             className="h-12 w-12 rounded-full border-2 border-brand-500 bg-white hover:bg-gray-50"
             onClick={onAddToCart}
             disabled={disabled}
-            aria-label="Add to cart"
+            aria-label={t('addToCartAria')}
           >
             <ShoppingCart className="h-5 w-5 text-brand-500" />
           </Button>
@@ -120,7 +122,7 @@ export const OrderSummaryCard = ({
             onClick={onBuyNow}
             disabled={disabled}
           >
-            Buy Now
+            {t('buyNow')}
           </Button>
         )}
       </div>

@@ -123,7 +123,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   // Show loading state
   if (productLoading) {
     return (
-      <ProductPageLayout isLoading={true} loadingText={t('productsLoading')} />
+      <ProductPageLayout isLoading={true} loadingText={tCommon('productsLoading')} />
     )
   }
 
