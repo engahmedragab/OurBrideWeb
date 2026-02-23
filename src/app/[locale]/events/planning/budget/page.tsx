@@ -704,7 +704,7 @@ function BudgetPageContent() {
         : t('loading.loadingBudgetSubtitle')
 
     return (
-      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
+      <div className="w-full pb-16 sm:pb-20">
         <div className="flex items-center gap-4 mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
@@ -727,7 +727,7 @@ function BudgetPageContent() {
   // Error
   if (error) {
     return (
-      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
+      <div className="w-full pb-16 sm:pb-20">
         <div className="flex flex-col items-center justify-center py-12">
           <p className="text-16 text-red-600 mb-4">{t('error.failedToLoad')}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
@@ -741,7 +741,7 @@ function BudgetPageContent() {
   // Missing event
   if (!eventId) {
     return (
-      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
+      <div className="w-full pb-16 sm:pb-20">
         <div className="text-center py-12 text-gray-500">
           <p className="text-16">{t('event.eventIdRequired')}</p>
         </div>
@@ -750,7 +750,7 @@ function BudgetPageContent() {
   }
 
   return (
-    <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 pb-16 sm:pb-20">
+    <div className="w-full pb-16 sm:pb-20">
       {/* Header */}
       <div className="mb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">

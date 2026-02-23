@@ -488,7 +488,7 @@ function ItemsPageContent() {
         )}
       </div>
 
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_320px] lg:items-start">
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="min-w-0">
           <ItemLinesPanel
           categoryName={ isRtl ? (selectedCategory?.nameAr || t('lists.untitled')) : (selectedCategory?.nameEn || t('lists.untitled'))}

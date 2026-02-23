@@ -149,6 +149,10 @@ export default function SettingsPage() {
                   onChange={handleLanguageChange}
                   options={languages}
                   placeholder={t('appPreferences.selectLanguage')}
+                   optionClassName="hover:bg-transparent hover:text-brand-500 hover:bg-brand-50/50"
+        selectedOptionClassName="bg-transparent text-brand-500"
+        selectedIconClassName="text-brand-500"
+
                 />
               </div>
             }
@@ -263,6 +267,7 @@ export default function SettingsPage() {
             label={t('ordersPayments.paymentHistory')}
             action={
               <button
+              title='paymentHistory'
                 onClick={() => {
                   // TODO: Implement payment history
                 }}
@@ -330,6 +335,7 @@ export default function SettingsPage() {
               label={<span className="text-brand-500">{t('accountActions.logout')}</span>}
               action={
                 <button
+                  title='logout'
                   onClick={() => setLogoutModalOpen(true)}
                   className={cn(
                     "flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600",
@@ -344,6 +350,7 @@ export default function SettingsPage() {
               label={t('accountActions.deleteAccount')}
               action={
                 <button
+                title='delete account'
                   onClick={() => setDeleteModalOpen(true)}
                   className={cn(
                     "flex items-center gap-1 text-14 font-medium text-gray-600 hover:text-gray-700",

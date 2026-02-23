@@ -32,7 +32,7 @@ export const QuickStatsCard = ({ title, book ,onNavigate }: QuickStatsCardProps)
 
   const progressBook = useMemo(() => {
     if (!book) return null
-    if ('completed' in book && 'pending' in book) return book as BookWithProgress
+    if ('completed' in book) return book as BookWithProgress
     return null
   }, [book])
 

@@ -32,7 +32,7 @@ export const EngagementButton = ({
   const responsiveSizeClasses = {
     xs: 'px-1.5 py-0.5 gap-1 text-11 md:px-1.5 md:py-0.5 md:gap-1 md:text-11 rounded-md',
     sm: 'px-1.5 py-0.5 gap-1 text-11 md:px-2 md:py-1 md:gap-1 md:text-12 rounded-md',
-    md: 'px-2 py-1 gap-1 text-12 md:px-3 md:py-1.5 md:gap-1.5 md:text-13 rounded-lg',
+    md: 'px-2 py-1 gap-1 text-12 md:px-2 md:py-1.5 md:gap-1 md:text-13 rounded-lg',
     lg: 'px-2 py-1 gap-1 text-12 md:px-4 md:py-2 md:gap-2 md:text-14 rounded-lg',
     xl: 'px-3 py-1.5 gap-1.5 text-13 md:px-5 md:py-2.5 md:gap-2.5 md:text-16 rounded-lg',
   }
@@ -75,12 +75,12 @@ export const EngagementButton = ({
       <span
         className={cn(
           'transition-colors',
-          'mx-1  md:ml-',
+          
           isActive ? 'text-brand-500' : 'text-gray-900'
         )}
       >
         <span>{count}</span>
-        <span className="hidden md:inline md:mx-1">{label}</span>
+        <span className="hidden md:inline md:mx-0.5">{label}</span>
       </span>
     </button>
   )

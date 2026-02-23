@@ -361,7 +361,7 @@ function NotesPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="w-full lg:max-w-7xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6">
+      <div className="w-full py-6">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">

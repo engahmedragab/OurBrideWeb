@@ -5,6 +5,8 @@ import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
 
 export type PlanningSideMenuTab = {
     label: string
@@ -20,6 +22,7 @@ export interface PlanningSideMenuProps {
     onTabClick?: (tab: PlanningSideMenuTab, event: MouseEvent<HTMLAnchorElement>) => void
     isInitializingTab?: string | null
     showIndicators?: boolean
+    desktopLayout?: 'vertical' | 'horizontal'
     className?: string
 }
 
@@ -29,104 +32,117 @@ export const PlanningSideMenu = ({
     onTabClick,
     isInitializingTab = null,
     showIndicators = true,
+    desktopLayout = 'vertical',
     className,
 }: PlanningSideMenuProps) => {
   const tSideMenu = useI18nTranslations('eventsPlanning.sideMenu')
   const tTabs = useI18nTranslations('eventsPlanning.sideMenu.tabs')
   const tStatus = useI18nTranslations('eventsPlanning.sideMenu.status')
   const isRtl = useIsRTL()
+  const isHorizontalDesktop = desktopLayout === 'horizontal'
 
   return (
-    <div className={cn('bg-white rounded-2xl p-3 lg:p-2 lg:border lg:border-gray-200 lg:shadow-sm', className)}>
-      <div className="hidden lg:block px-3 py-2 text-12 font-semibold text-gray-500 uppercase tracking-wide">
+    <div className={cn('bg-white rounded-2xl p-3 lg:p-2 border border-gray-300/80 lg:shadow-sm', className)}>
+      <div className={cn('hidden px-2 py-2 text-12 font-semibold text-gray-500 uppercase tracking-wide', isHorizontalDesktop ? 'lg:hidden' : 'lg:block')}>
         {tSideMenu('title')}
       </div>
 
-      <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-col lg:items-stretch lg:gap-1">
+      <Swiper
+        slidesPerView="auto"
+        spaceBetween={12}
+        allowTouchMove={true}
+        className="w-full"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
         {tabs.map(tab => {
           const isActive = activeValue === tab.value
           const isLoading = isInitializingTab === tab.value
           const needsInit = tab.needsInit === true
 
           return (
-            <Link
-              key={tab.value}
-              href={tab.href}
-              onClick={(event) => onTabClick?.(tab, event)}
-              className={cn(
-                'flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-semibold transition-colors',
-                'whitespace-nowrap',
-                'lg:shrink-0 lg:flex-row lg:items-center lg:justify-between lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
-                isRtl ? 'text-right' : 'text-left',
-                isActive ? ' text-brand-500' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              )}
-            >
-              <div className="flex items-center gap-2.5 min-w-0 justify-center lg:flex-1 lg:justify-start">
-                {tab.icon && (
-                  <tab.icon
-                    className={cn(
-                      'hidden lg:block w-4 h-4 flex-shrink-0',
-                      isActive ? 'text-brand-600' : 'text-gray-500'
-                    )}
-                  />
+            <SwiperSlide key={tab.value} className="!w-auto">
+              <Link
+                href={tab.href}
+                onClick={(event) => onTabClick?.(tab, event)}
+                className={cn(
+                  'flex w-auto items-center justify-center gap-2.5 px-3 py-2.5 rounded-xl text-[12px] font-semibold transition-colors',
+                  'whitespace-nowrap',
+                  'lg:flex-row lg:items-center lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
+                  isHorizontalDesktop ? 'lg:justify-center' : 'lg:justify-between',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+                  isRtl ? 'text-right' : 'text-left',
+                  isActive ? 'text-brand-500' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 )}
-                
-                <span className={cn('whitespace-nowrap capitalize lg:truncate', isRtl ? 'text-right' : 'text-left')}>
-                  {tTabs(tab.label)}
-                </span>
-              </div>
-
-              {showIndicators && (
-                <span className="flex items-center gap-1.5 h-4 lg:h-auto lg:ml-2">
-                  {isLoading && (
-                    <span
+              >
+                <div className={cn(
+                  'flex items-center gap-2.5 min-w-0 justify-center',
+                  isHorizontalDesktop ? 'lg:justify-center' : 'lg:flex-1 lg:justify-start'
+                )}>
+                  {tab.icon && (
+                    <tab.icon
                       className={cn(
-                        'inline-flex items-center justify-center',
-                        'h-3 w-3 rounded-full lg:h-4 lg:w-4',
-                        'bg-blue-100 text-blue-700 ring-1 ring-blue-200',
-                        'relative'
+                        'hidden lg:block w-4 h-4 flex-shrink-0',
+                        isActive ? 'text-brand-600' : 'text-gray-500'
                       )}
-                      title={tStatus('initializing')}
-                    >
-                      <span className="absolute inset-0 rounded-full bg-blue-200/60 animate-ping" />
-                      <span className="relative h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
-                    </span>
+                    />
                   )}
 
-                  {!isLoading && needsInit && (
-                    <span
-                      className={cn(
-                        'inline-flex items-center justify-center',
-                        'h-3 w-3 rounded-full lg:h-4 lg:w-4',
-                        'bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200',
-                        'relative'
-                      )}
-                      title={tStatus('needsInit')}
-                    >
-                      <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
-                      <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
-                    </span>
-                  )}
+                  <span className={cn('whitespace-nowrap capitalize lg:truncate', isRtl ? 'text-right' : 'text-left')}>
+                    {tTabs(tab.label)}
+                  </span>
+                </div>
 
-                  {!isLoading && !needsInit && tab.value !== 'overview' && (
-                    <span
-                      className={cn(
-                        'inline-flex items-center justify-center',
-                        'h-3 w-3 rounded-full lg:h-4 lg:w-4',
-                        'bg-green-100 text-green-700 ring-1 ring-green-200'
-                      )}
-                      title={tStatus('ready')}
-                    >
-                      <span className="text-[10px] leading-none">✓</span>
-                    </span>
-                  )}
-                </span>
-              )}
-            </Link>
+                {showIndicators && (
+                  <span className={cn('flex items-center gap-1.5 h-4 lg:h-auto')}>
+                    {isLoading && (
+                      <span
+                        className={cn(
+                          'inline-flex items-center justify-center',
+                          'h-3 w-3 rounded-full lg:h-4 lg:w-4',
+                          'bg-blue-100 text-blue-700 ring-1 ring-blue-200',
+                          'relative'
+                        )}
+                        title={tStatus('initializing')}
+                      >
+                        <span className="absolute inset-0 rounded-full bg-blue-200/60 animate-ping" />
+                        <span className="relative h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+                      </span>
+                    )}
+
+                    {!isLoading && needsInit && (
+                      <span
+                        className={cn(
+                          'inline-flex items-center justify-center',
+                          'h-3 w-3 rounded-full lg:h-4 lg:w-4',
+                          'bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200',
+                          'relative'
+                        )}
+                        title={tStatus('needsInit')}
+                      >
+                        <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
+                        <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
+                      </span>
+                    )}
+
+                    {!isLoading && !needsInit && tab.value !== 'overview' && (
+                      <span
+                        className={cn(
+                          'inline-flex items-center justify-center',
+                          'h-3 w-3 rounded-full lg:h-4 lg:w-4',
+                          'bg-green-100 text-green-700 ring-1 ring-green-200'
+                        )}
+                        title={tStatus('ready')}
+                      >
+                        <span className="text-[10px] leading-none">✓</span>
+                      </span>
+                    )}
+                  </span>
+                )}
+              </Link>
+            </SwiperSlide>
           )
         })}
-      </div>
+      </Swiper>
     </div>
   )
 }
