@@ -3,6 +3,7 @@
 import { useState, useCallback, Suspense, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from '@/i18n/navigation'
+import { useGoogleLogin } from '@react-oauth/google'
 import {
   AuthTabs,
   AuthDivider,
@@ -16,8 +17,14 @@ import { DownloadApp } from '@/components/common'
 import { useAuth } from '@/auth'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
 import { useI18nTranslations } from '@/i18n'
+import {
+  initFacebookSDK,
+  loginWithFacebook,
+  getFacebookAppId,
+} from '@/auth/utils/oauth'
+import { UserType } from '@/../client/common/api/gen/ourbride-api'
 
-import {  useToast } from '@/components/ui/Toaster'
+import { useToast } from '@/components/ui/Toaster'
 import { LoadingSpinner } from '@/components/ui'
 
 
@@ -30,12 +37,20 @@ function LoginFormContent() {
   const tCommon = useI18nTranslations('common')
   const toast = useToast()
   const searchParams = useSearchParams()
-  const { loginWithEmail, loginWithPhone, isLoading, error, clearError } = useAuth()
+  const {
+    loginWithEmail,
+    loginWithPhone,
+    loginWithExternalProvider,
+    isLoading,
+    error,
+    clearError,
+  } = useAuth()
   const [loginCredentials, setLoginCredentials] = useState<{
     identifier: string
     password: string
   }>({ identifier: '', password: '' })
   const [rememberMe, setRememberMe] = useState(false)
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false)
 
   // Prevent duplicate toast spam on rerenders for same error
   const lastToastedErrorRef = useRef<string | null>(null)
@@ -127,10 +142,65 @@ function LoginFormContent() {
     tCommon,
   ])
 
+  // Initialize Facebook SDK on mount
+  useEffect(() => {
+    const facebookAppId = getFacebookAppId()
+    if (facebookAppId && typeof window !== 'undefined') {
+      initFacebookSDK().catch((err) => {
+        console.error('Failed to initialize Facebook SDK:', err)
+      })
+    }
+  }, [])
+
+  // Google OAuth login handler
+  // Using 'implicit' flow (popup-based) which doesn't require redirect URI configuration
+  const googleLogin = useGoogleLogin({
+    flow: 'implicit', // Uses popup flow, no redirect URI needed
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsOAuthLoading(true)
+        clearError()
+
+        await loginWithExternalProvider({
+          accessToken: tokenResponse.access_token,
+          provider: 'Google' as ExternalProvidersType,
+          userType: UserType.Bride,
+        })
+
+        // After login, get planning preference init status from backend
+        const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
+        const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
+
+        const backendPreferenceInit = await getPlanningPreferenceInit()
+        setPreferenceInit(backendPreferenceInit)
+
+        const preferencesInitialized = isPreferenceInit()
+
+        let redirectUrl = searchParams?.get('redirect') || '/dashboard'
+        if (!preferencesInitialized) {
+          redirectUrl = '/auth/planning-preferences'
+        }
+
+        router.push(redirectUrl)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Google login failed'
+        showErrorToast(message)
+        console.error('Google login failed:', err)
+      } finally {
+        setIsOAuthLoading(false)
+      }
+    },
+    onError: () => {
+      setIsOAuthLoading(false)
+      showErrorToast('Google login was cancelled or failed')
+    },
+  })
+
   const handleSocialLogin = useCallback(
     async (provider: 'google' | 'facebook') => {
       try {
         clearError()
+        setIsOAuthLoading(true)
 
         const providerMap: Record<string, ExternalProvidersType | null> = {
           google: 'Google' as ExternalProvidersType,
@@ -141,17 +211,63 @@ function LoginFormContent() {
         const providerType = providerMap[provider]
         if (!providerType) {
           showErrorToast(`${provider} login is not supported`)
+          setIsOAuthLoading(false)
           return
         }
 
-        console.log(`Social login with ${provider} - OAuth integration needed`)
+        if (provider === 'google') {
+          googleLogin()
+          return
+        }
+
+        if (provider === 'facebook') {
+          try {
+            const accessToken = await loginWithFacebook()
+
+            await loginWithExternalProvider({
+              accessToken,
+              provider: 'Facebook' as ExternalProvidersType,
+              userType: UserType.Bride,
+            })
+
+            // After login, get planning preference init status from backend
+            const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
+            const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
+
+            const backendPreferenceInit = await getPlanningPreferenceInit()
+            setPreferenceInit(backendPreferenceInit)
+
+            const preferencesInitialized = isPreferenceInit()
+
+            let redirectUrl = searchParams?.get('redirect') || '/dashboard'
+            if (!preferencesInitialized) {
+              redirectUrl = '/auth/planning-preferences'
+            }
+
+            router.push(redirectUrl)
+          } catch (err) {
+            const message = err instanceof Error ? err.message : 'Facebook login failed'
+            showErrorToast(message)
+            console.error('Facebook login failed:', err)
+          } finally {
+            setIsOAuthLoading(false)
+          }
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Login failed'
         showErrorToast(message)
         console.error(`${provider} login failed:`, err)
+        setIsOAuthLoading(false)
       }
     },
-    [clearError, showErrorToast]
+    [
+      clearError,
+      showErrorToast,
+      googleLogin,
+      loginWithExternalProvider,
+      router,
+      searchParams,
+    ]
   )
   useEffect(() => {
     if (!error) return
@@ -169,10 +285,15 @@ function LoginFormContent() {
 
         {/* Social Login */}
         <div className="flex items-center justify-center gap-2">
-          <SocialMediaButton provider="google" onClick={() => handleSocialLogin('google')} />
+          <SocialMediaButton
+            provider="google"
+            onClick={() => handleSocialLogin('google')}
+            disabled={isOAuthLoading || isLoading}
+          />
           <SocialMediaButton
             provider="facebook"
             onClick={() => handleSocialLogin('facebook')}
+            disabled={isOAuthLoading || isLoading}
           />
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
+import { useGoogleLogin } from '@react-oauth/google'
 import {
   AuthTabs,
   AuthDivider,
@@ -17,6 +18,11 @@ import { useAuth } from '@/auth'
 import { Gender, UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
 import { useI18nTranslations } from '@/i18n'
+import {
+  initFacebookSDK,
+  loginWithFacebook,
+  getFacebookAppId,
+} from '@/auth/utils/oauth'
 
 import { useToast } from '@/components/ui/Toaster'
 import { LoadingSpinner } from '@/components/ui'
@@ -31,6 +37,7 @@ export default function SignupPage() {
 
   const [showTermsModal, setShowTermsModal] = useState(false)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false)
 
   const [signupCredentials, setSignupCredentials] = useState({
     fullName: '',
@@ -93,10 +100,51 @@ export default function SignupPage() {
     }
   }, [acceptedTerms, clearError, router, signupCredentials, signupFull, toast])
 
+  // Initialize Facebook SDK on mount
+  useEffect(() => {
+    const facebookAppId = getFacebookAppId()
+    if (facebookAppId && typeof window !== 'undefined') {
+      initFacebookSDK().catch((err) => {
+        console.error('Failed to initialize Facebook SDK:', err)
+      })
+    }
+  }, [])
+
+  // Google OAuth signup handler
+  // Using 'implicit' flow (popup-based) which doesn't require redirect URI configuration
+  const googleSignup = useGoogleLogin({
+    flow: 'implicit', // Uses popup flow, no redirect URI needed
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsOAuthLoading(true)
+        clearError()
+
+        await loginWithExternalProvider({
+          accessToken: tokenResponse.access_token,
+          provider: 'Google' as ExternalProvidersType,
+          userType: UserType.Bride,
+        })
+
+        router.push('/dashboard')
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Google signup failed'
+        toast.addToast(msg, 'error')
+        console.error('Google signup failed:', err)
+      } finally {
+        setIsOAuthLoading(false)
+      }
+    },
+    onError: () => {
+      setIsOAuthLoading(false)
+      toast.addToast('Google signup was cancelled or failed', 'error')
+    },
+  })
+
   const handleSocialSignup = useCallback(
     async (provider: 'google' | 'facebook') => {
       try {
         clearError()
+        setIsOAuthLoading(true)
 
         const providerMap: Record<string, ExternalProvidersType | null> = {
           google: 'Google' as ExternalProvidersType,
@@ -106,17 +154,42 @@ export default function SignupPage() {
         const providerType = providerMap[provider]
         if (!providerType) {
           toast.addToast(`${provider} signup is not supported`, 'error')
+          setIsOAuthLoading(false)
           return
         }
 
-        console.log(`Social signup with ${provider} - OAuth integration needed`)
+        if (provider === 'google') {
+          googleSignup()
+          return
+        }
+
+        if (provider === 'facebook') {
+          try {
+            const accessToken = await loginWithFacebook()
+
+            await loginWithExternalProvider({
+              accessToken,
+              provider: 'Facebook' as ExternalProvidersType,
+              userType: UserType.Bride,
+            })
+
+            router.push('/dashboard')
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Facebook signup failed'
+            toast.addToast(msg, 'error')
+            console.error('Facebook signup failed:', err)
+          } finally {
+            setIsOAuthLoading(false)
+          }
+        }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Signup failed'
         toast.addToast(msg, 'error')
         console.error(`${provider} signup failed:`, err)
+        setIsOAuthLoading(false)
       }
     },
-    [clearError, toast]
+    [clearError, toast, googleSignup, loginWithExternalProvider, router]
   )
 
   return (
@@ -126,8 +199,16 @@ export default function SignupPage() {
         <AuthTabs />
 
         <div className="flex items-center justify-center gap-2">
-          <SocialMediaButton provider="google" onClick={() => handleSocialSignup('google')} />
-          <SocialMediaButton provider="facebook" onClick={() => handleSocialSignup('facebook')} />
+          <SocialMediaButton
+            provider="google"
+            onClick={() => handleSocialSignup('google')}
+            disabled={isOAuthLoading || isLoading}
+          />
+          <SocialMediaButton
+            provider="facebook"
+            onClick={() => handleSocialSignup('facebook')}
+            disabled={isOAuthLoading || isLoading}
+          />
         </div>
 
         <AuthDivider />
