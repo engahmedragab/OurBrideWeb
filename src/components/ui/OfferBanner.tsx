@@ -170,7 +170,7 @@ export const OfferBanner = ({
                   <Button
                     variant="outline"
                     size="md"
-                    className="px-6 py-4 text-[13px] md:text-[14px] font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-brand-500"
+                    className="px-6 py-4 text-[13px] md:text-[12px] lg:text-[14px] font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-brand-500"
                     asChild
                   >
                     <Link href={currentOffer.ctaLink || '/products'}>

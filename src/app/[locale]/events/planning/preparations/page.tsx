@@ -412,7 +412,7 @@ function PreparationsPageContent() {
         : tPrep('loading.loadingPreparations')
 
     return (
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full py-8">
         <div className="flex items-center justify-center py-12">
           <LoadingSpinner size="lg" text={loadingText} fullScreen={true} />
         </div>
@@ -422,7 +422,7 @@ function PreparationsPageContent() {
 
   return (
     <div className="w-full min-h-screen">
-      <div className="w-full lg:max-w-5xl lg:mx-auto px-0 sm:px-2 lg:px-4 py-6 sm:py-8">
+      <div className="w-full py-6 sm:py-8">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="flex items-center gap-3">

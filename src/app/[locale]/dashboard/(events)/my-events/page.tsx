@@ -557,21 +557,42 @@ function MyEventsPageContent() {
   // If event is selected, show event info with overview and all books
   if (selectedEventId !== null) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={handleBackToEvents}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeftIcon className={cn("w-4 h-4", isRTL ? 'rotate-180' : '')} />
-            {t('actions.backToEvents')}
-          </Button>
-        </div>
+      <div className="w-full pb-16 sm:pb-20">
+        <div className="mx-auto w-full max-w-[1360px] px-3 sm:px-4 lg:px-6">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={handleBackToEvents}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeftIcon className={cn("w-4 h-4", isRTL ? 'rotate-180' : '')} />
+              {t('actions.backToEvents')}
+            </Button>
+          </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="order-2 lg:order-1 flex-1 min-w-0">
+          <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-4 lg:gap-6">
+            <div className="lg:hidden">
+              <PlanningSideMenu
+                tabs={planningTabs}
+                activeValue={activePlanningTab}
+                isInitializingTab={isInitializingTab}
+                onTabClick={handlePlanningTabClick}
+              />
+            </div>
+
+            <div className="hidden lg:block">
+              <PlanningSideMenu
+                tabs={planningTabs}
+                activeValue={activePlanningTab}
+                isInitializingTab={isInitializingTab}
+                onTabClick={handlePlanningTabClick}
+                desktopLayout="horizontal"
+                className="px-3 py-2"
+              />
+            </div>
+
+            <div className="min-w-0">
             {/* Loading State for Event Info - Only show on overview tab */}
             {isMounted && isLoadingEventInfo && activePlanningTab === 'overview' && (
               <div className=" ">
@@ -784,24 +805,15 @@ function MyEventsPageContent() {
                 />
               </div>
             )}
-          </div>
-          <aside className="order-1 lg:order-2 lg:w-64 flex-shrink-0">
-            <div className="lg:sticky lg:top-6">
-              <PlanningSideMenu
-                tabs={planningTabs}
-                activeValue={activePlanningTab}
-                isInitializingTab={isInitializingTab}
-                onTabClick={handlePlanningTabClick}
-              />
             </div>
-          </aside>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full p-3">
+    <div className="mx-auto w-full max-w-[1360px] px-3 sm:px-4 lg:px-6 py-3">
       {/* Header with Tabs and Add Button */}
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-6 sm:gap-8 w-full">
@@ -860,7 +872,7 @@ function MyEventsPageContent() {
       {isMounted && !isLoading && !error && (
         <>
           {currentEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 py-6">
               {currentEvents.map(event => (
                 <div
                   key={event.id}

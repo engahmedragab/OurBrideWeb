@@ -404,7 +404,7 @@ function OccasionsPageContent() {
         : t('page.loading.pleaseWait')
 
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
+      <div className="w-full pb-20 sm:pb-24">
         <div className="flex items-center gap-4 mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
@@ -439,9 +439,9 @@ function OccasionsPageContent() {
   }
 
   return (
-    <div>
+    <div className="w-full">
       {/* Header with Save and Add Buttons */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-6">
+      <div className="w-full pb-6">
         <div className="flex items-center gap-4 mb-6 sm:mb-8">
           <button
             onClick={() => router.back()}
@@ -507,7 +507,7 @@ function OccasionsPageContent() {
 
       {/* Occasions List - Only show when form is closed */}
       {!isFormOpen && (
-        <>
+        <div className="w-full pb-20 sm:pb-24">
           {occasionLines.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
               <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -649,7 +649,7 @@ function OccasionsPageContent() {
               })}
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* Occasion Detail View Modal */}
