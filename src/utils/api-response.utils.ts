@@ -244,3 +244,4 @@ export const handlePublicEndpointError = <T>(
   // For other errors, re-throw
   throw error
 }
+
