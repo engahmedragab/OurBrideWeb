@@ -67,7 +67,6 @@ export const argbToRgba = (colorName: string | null | undefined): string => {
       return `rgba(${red},${green},${blue},1)`
     }
   } catch (error) {
-    console.warn('[iconUtils] Failed to parse colorName:', colorName, error)
   }
   
   return 'rgba(142,142,142,1)' // Default gray fallback
@@ -98,7 +97,6 @@ export const argbToHex = (colorName: string | null | undefined): string => {
       return `#${hex}`
     }
   } catch (error) {
-    console.warn('[iconUtils] Failed to parse colorName to hex:', colorName, error)
   }
   
   return '#8e8e8e'

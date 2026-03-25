@@ -485,7 +485,6 @@ const ProductServiceCard = ({
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
   const isRtl = useIsRTL();
-  console.log({data})
   return (
     <div className="flex flex-col h-full ">
       {/* Card */}
@@ -924,7 +923,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     const t = useI18nTranslations('common')
     // Guard against undefined cardData
     if (!cardData) {
-      console.warn('Card component requires cardData prop')
       return null
     }
 

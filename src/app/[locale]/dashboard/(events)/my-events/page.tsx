@@ -58,6 +58,7 @@ import {
   ItemsOverview,
   NotesOverview,
   OccasionsOverview,
+  InvitationsOverview,
 } from '@/components/overviews'
 import authHeroImage from '@/assets/images/authHero.jpg'
 import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
@@ -526,7 +527,6 @@ function MyEventsPageContent() {
           // After init, navigate to the tab
           router.push(tab.href)
         } catch (error) {
-          console.error(`Failed to initialize ${tab.value} book:`, error)
           const errorMessage = error instanceof Error ? error.message : `Failed to initialize ${tab.label}`
           addToast(errorMessage, 'error')
           // Still navigate even if init fails
@@ -668,7 +668,17 @@ function MyEventsPageContent() {
                   />
                 </div>
 
-                {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
+                {/* SECTION 6: Invitations - Create & Manage */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
+                  <div className="self-start h-fit">
+                    <InvitationsOverview
+                      eventId={selectedEventId || undefined}
+                      guestCount={eventInfo.guestBook?.lines?.length || 0}
+                    />
+                  </div>
+                </div>
+
+                {/* SECTION 7: Notes & Occasions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
                   {/* <div className="self-start h-fit">
     <ItemsOverview

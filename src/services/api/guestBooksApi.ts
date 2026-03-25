@@ -83,14 +83,6 @@ export const syncGuestBook = async (
   try {
     const params = normalizeQuery(query)
     
-    // Log categories being sent (for debugging)
-    const newCategories = data.lineCategories?.filter(cat => cat.id === 0) || []
-    const existingCategories = data.lineCategories?.filter(cat => cat.id && cat.id > 0) || []
-    console.log(`[API] Syncing guest book - New categories: ${newCategories.length}, Existing categories: ${existingCategories.length}`)
-    if (newCategories.length > 0) {
-      console.log('[API] New categories details:', newCategories.map(c => ({ name: c.name, guestRelevant: c.guestRelevant })))
-    }
-    
     await apiClient.api.postGuestBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync guest book')
@@ -115,28 +107,17 @@ export const syncGuestBookDelta = async (
     // Ensure the response has the required structure
     if (extractedResponse && typeof extractedResponse === 'object') {
       // Log for debugging
-      console.log('[GuestBooks API] Sync Delta Response:', {
-        hasBook: !!extractedResponse.book,
-        hasCategoryIdMap: !!extractedResponse.categoryIdMap,
-        hasLineIdMap: !!extractedResponse.lineIdMap,
-        categoryIdMapKeys: extractedResponse.categoryIdMap ? Object.keys(extractedResponse.categoryIdMap) : [],
-        lineIdMapKeys: extractedResponse.lineIdMap ? Object.keys(extractedResponse.lineIdMap) : [],
-      })
-      
       // Ensure categoryIdMap and lineIdMap exist (even if empty)
       if (!extractedResponse.categoryIdMap) {
-        console.warn('[GuestBooks API] Response missing categoryIdMap, using empty object')
         extractedResponse.categoryIdMap = {}
       }
       if (!extractedResponse.lineIdMap) {
-        console.warn('[GuestBooks API] Response missing lineIdMap, using empty object')
         extractedResponse.lineIdMap = {}
       }
     }
     
     return extractedResponse as SyncBookDeltaResponse<GuestBookResponse | null>
   } catch (error: unknown) {
-    console.error('[GuestBooks API] Sync Delta Error:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to sync guest book (delta)')
   }
 }

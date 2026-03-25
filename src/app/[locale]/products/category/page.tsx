@@ -332,7 +332,6 @@ function ProductsContent() {
         )
       addToast(message, type)
     } catch (error) {
-      console.error('Failed to add product to cart:', error)
       const errorMessage = error instanceof Error ? error.message : tCommon('productCommon.addToCartErrorRetry')
       addToast(errorMessage, 'error')
     }

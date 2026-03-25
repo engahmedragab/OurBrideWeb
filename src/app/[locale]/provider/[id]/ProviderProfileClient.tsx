@@ -199,7 +199,7 @@ export function ProviderProfileClient({
     script.async = true
     script.defer = true
     script.onload = () => setGoogleMapsLoaded(true)
-    script.onerror = () => console.error('Failed to load Google Maps')
+    script.onerror = () => {}
     document.head.appendChild(script)
   }, [])
 
@@ -338,7 +338,6 @@ export function ProviderProfileClient({
           await navigator.clipboard.writeText(window.location.href)
           addToast('Link copied to clipboard!', 'success')
         } catch (clipboardError) {
-          console.error('Failed to copy to clipboard:', clipboardError)
           addToast('Failed to share. Please try again.', 'error')
         }
       }
@@ -1058,7 +1057,6 @@ export function ProviderProfileClient({
 
                           mapElement.__mapInstance = map
                         } catch (error) {
-                          console.error('Error initializing map:', error)
                         }
                       }
 
@@ -1404,7 +1402,6 @@ export function ProviderProfileClient({
                                   }
                                 })
                               } catch (error) {
-                                console.error('Error initializing location map:', error)
                               }
                             }}
                             className="w-full h-full"

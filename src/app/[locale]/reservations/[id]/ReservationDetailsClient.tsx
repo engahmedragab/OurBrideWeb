@@ -129,7 +129,6 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
       handleCloseCancelModal()
     } catch (error) {
       // Error is handled by mutation onError
-      console.error('Failed to cancel reservation:', error)
     }
   }
 

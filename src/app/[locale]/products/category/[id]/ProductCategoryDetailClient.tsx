@@ -164,7 +164,6 @@ export function ProductCategoryDetailClient({
       )
       addToast(message, type)
     } catch (error) {
-      console.error('Failed to add product to cart:', error)
       const errorMessage = error instanceof Error ? error.message : tCommon('productCommon.addToCartErrorRetry')
       addToast(errorMessage, 'error')
     }
@@ -436,7 +435,6 @@ export function ProductCategoryDetailClient({
                           }
                           addToast(message, type)
                         } catch (error) {
-                          console.error('Error submitting review:', error)
                           const errorMessage = error instanceof Error ? error.message : tCommon('reviewsSection.submitRetry')
                           addToast(errorMessage, 'error')
                         }

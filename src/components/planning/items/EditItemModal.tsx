@@ -137,7 +137,6 @@ export const EditItemModal = ({
       })
       reset()
     } catch (e) {
-      console.error('Failed to update item:', e)
     }
   }
 

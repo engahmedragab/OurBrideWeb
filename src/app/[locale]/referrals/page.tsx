@@ -140,7 +140,6 @@ export default function ReferralsPage() {
 
   const handleCopyLink = (): void => {
     navigator.clipboard.writeText(inviteLink).catch((error: Error) => {
-      console.error('Failed to copy link:', error)
     })
   }
 

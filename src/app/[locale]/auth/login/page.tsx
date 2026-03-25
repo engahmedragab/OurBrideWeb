@@ -114,7 +114,6 @@ function LoginFormContent() {
           : tCommon?.('somethingWentWrong') || 'Login failed'
 
       showErrorToast(message)
-      console.error('Login failed:', err)
     }
   }, [
     loginCredentials,
@@ -144,11 +143,9 @@ function LoginFormContent() {
           return
         }
 
-        console.log(`Social login with ${provider} - OAuth integration needed`)
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Login failed'
         showErrorToast(message)
-        console.error(`${provider} login failed:`, err)
       }
     },
     [clearError, showErrorToast]

@@ -154,11 +154,7 @@ export const CategoryIcon = ({
       if (mappedIcon) {
         return { IconComponent: mappedIcon, codepoint }
       }
-      console.warn(
-        `[CategoryIcon] Icon glyph not found for codepoint: ${codepoint} (iconName: ${iconName})`
-      )
     } else if (iconName) {
-      console.warn(`[CategoryIcon] Failed to parse iconName: ${iconName}`)
     }
 
     return { IconComponent: Star, codepoint: null }

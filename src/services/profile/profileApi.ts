@@ -50,7 +50,6 @@ export const getPlanningPreferenceInit = async (): Promise<boolean> => {
     // Fallback: treat unknown responses as not-init
     return false
   } catch (error) {
-    console.error('Error fetching planning preferences init status from profile:', error)
     // For safety, if the API fails, treat as not initialized
     return false
   }
@@ -168,7 +167,6 @@ export const updateUserProfile = async (
 
     // Log the request for debugging
     if (process.env.NODE_ENV === 'development') {
-      console.log('Updating user profile with data:', data)
     }
 
     await apiClient.api.postProfileUpdate(data)

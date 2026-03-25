@@ -108,7 +108,6 @@ export default function ProvidersPage() {
             setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
           }
         } catch (error) {
-          console.error('Error getting address:', error)
           setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
         }
 
@@ -116,7 +115,6 @@ export default function ProvidersPage() {
         setIsLocationPopoverOpen(false)
       },
       (error) => {
-        console.error('Error getting location:', error)
         alert('Unable to retrieve your location. Please check your browser permissions.')
         setIsGettingLocation(false)
       }

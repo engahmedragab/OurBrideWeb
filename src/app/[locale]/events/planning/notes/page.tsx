@@ -98,21 +98,6 @@ function NotesPageContent() {
       })
     },
     syncDeltaFn: async (delta) => {
-      console.log('[NotesPage] syncDeltaFn payload:', {
-        hasDelta: !!delta,
-        lines: {
-          created: delta?.lines?.created?.length,
-          updated: delta?.lines?.updated?.length,
-          deletedIds: delta?.lines?.deletedIds?.length,
-        },
-        lineCategories: {
-          created: delta?.lineCategories?.created?.length,
-          updated: delta?.lineCategories?.updated?.length,
-          deletedIds: delta?.lineCategories?.deletedIds?.length,
-        },
-        eventId: delta?.eventId,
-        bookId: delta?.bookId,
-      })
       const response = await syncDeltaMutation.mutateAsync({
         data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<
           import('@/../client/common/api/gen/ourbride-api').NoteLineRequest,
@@ -120,7 +105,6 @@ function NotesPageContent() {
         >,
         query: normalizedQuery,
       })
-      console.log('[NotesPage] syncDeltaFn response:', response)
       return response as unknown as SyncBookDeltaResponse<NoteBookDraft>
     },
     refetch,
@@ -320,21 +304,12 @@ function NotesPageContent() {
   }, [applyLocalUpdate, editingNote])
 
   const handleSync = useCallback(async () => {
-    console.log('[NotesPage] Save click', {
-      hasUnsavedChanges,
-      isLoading,
-      isInitializing,
-      isAddingModels,
-      hasLocalDraft: !!localDraft,
-    })
     const result = await save()
-    console.log('[NotesPage] Save result', result)
     if (!result.ok) {
       if (result.reason === 'loading' || result.reason === 'no-changes') {
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      console.error(result.message || 'Failed to save changes')
       return
     }
   }, [save, setHasUnsavedChanges, hasUnsavedChanges, isLoading, isInitializing, isAddingModels, localDraft])

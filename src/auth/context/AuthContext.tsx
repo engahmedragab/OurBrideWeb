@@ -468,7 +468,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       // If refresh fails, user data might be invalid
-      console.error('Failed to refresh user data')
     }
   }, [])
 

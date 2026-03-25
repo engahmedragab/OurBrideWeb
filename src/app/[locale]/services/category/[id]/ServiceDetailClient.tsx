@@ -749,7 +749,6 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                           }
                           addToast(message, type)
                         } catch (error) {
-                          console.error('Error submitting review:', error)
                           const errorMessage = error instanceof Error ? error.message : tSD('reviews.failTryAgain')
                           addToast(errorMessage, 'error')
                         }

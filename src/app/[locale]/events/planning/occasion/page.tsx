@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Button, Input, LoadingOverlay, LoadingSpinner } from '@/components/ui'
-import { ChevronLeft, Plus, Trash2, Edit2, Calendar, X, Save } from 'lucide-react'
+import { ChevronLeft, Plus, Trash2, Edit2, Calendar, Save, Mail } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
@@ -263,7 +263,6 @@ function OccasionsPageContent() {
 
   const handleFormSubmit = async (formData: OccasionFormData) => {
     if (!localOccasionBook?.id) {
-      console.error('Occasion book not found')
       return
     }
 
@@ -377,7 +376,6 @@ function OccasionsPageContent() {
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      console.error(result.message || 'Failed to save changes')
       return
     }
   }
@@ -468,6 +466,17 @@ function OccasionsPageContent() {
             >
               <Plus className="h-4 w-4" />
               {t('page.actions.addNewOccasion')}
+            </Button>
+            <Button
+              variant="outlineBrand"
+              size="md"
+              onClick={() => router.push(`/events/planning/invitations?eventId=${eventId}`)}
+              disabled={!eventId}
+              className="flex items-center gap-2 rounded-xl"
+              type="button"
+            >
+              <Mail className="h-4 w-4" />
+              {t('page.actions.createInvitation') || 'Create Invitation'}
             </Button>
           </div>
           {(hasUnsavedChanges || syncMutation.isPending) && (
@@ -658,6 +667,7 @@ function OccasionsPageContent() {
           occasion={selectedOccasion}
           onClose={handleCloseDetail}
           onEdit={() => handleEditFromDetail(selectedOccasion)}
+          onCreateInvitation={() => router.push(`/events/planning/invitations?eventId=${eventId}`)}
         />
       )}
     </div>

@@ -64,7 +64,6 @@ export default function AddressesPage() {
       await deleteAddressMutation.mutateAsync(addressToDelete)
       addToast(t('deleteSuccess'), 'success')
     } catch (error) {
-      console.error('Failed to delete address:', error)
       addToast(
         error instanceof Error ? error.message : t('deleteError'),
         'error'
@@ -80,7 +79,6 @@ export default function AddressesPage() {
       await setDefaultAddressMutation.mutateAsync(addressId)
       addToast(t('defaultSuccess'), 'success')
     } catch (error) {
-      console.error('Failed to set default address:', error)
       addToast(
         error instanceof Error ? error.message : t('defaultError'),
         'error'

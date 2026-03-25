@@ -86,7 +86,6 @@ export const CreatePostModal = ({
           const result = await FilesService.uploadFile(file)
           return result.url
         } catch (error) {
-          console.error(`Failed to upload ${file.name}:`, error)
           addToast(t('createPostModal.toasts.uploadFileFail', { fileName: file.name }), 'error')
           return null
         }
@@ -98,7 +97,6 @@ export const CreatePostModal = ({
       setImageUrls(prev => [...prev, ...validUrls])
       addToast(t('createPostModal.toasts.uploadSuccess', { count: validUrls.length }), 'success')
     } catch (error) {
-      console.error('Error uploading images:', error)
       addToast(t('createPostModal.toasts.uploadFail'), 'error')
     } finally {
       setUploadingImages([])
@@ -122,7 +120,6 @@ export const CreatePostModal = ({
       setPostContent(generatedContent)
       addToast(t('createPostModal.toasts.generateSuccess'), 'success')
     } catch (error) {
-      console.error('Error generating content:', error)
       addToast(t('createPostModal.toasts.generateFail'), 'error')
     } finally {
       setIsGeneratingContent(false)
@@ -169,7 +166,6 @@ export const CreatePostModal = ({
         throw new Error(t('createPostModal.toasts.postNoResponse'))
       }
     } catch (error) {
-      console.error('Error creating post:', error)
       const errorMessage =
         error instanceof Error ? error.message : t('createPostModal.toasts.postFail')
       addToast(errorMessage, 'error')

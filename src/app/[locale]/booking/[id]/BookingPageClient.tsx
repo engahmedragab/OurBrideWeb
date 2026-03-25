@@ -107,9 +107,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const service = serviceDetailData?.service
     // Use raw service response from the hook instead of making a duplicate API call
     const rawServiceResponse = serviceDetailData?.rawServiceResponse || null
-    console.log('🟡 Raw service response:', rawServiceResponse)
-    
-
     // Extract packages from service response (packages are included in the service response)
 const packages = useMemo(
   () => mapPackagesFromService(rawServiceResponse, locale),
@@ -189,14 +186,9 @@ const staff = useMemo(
             return
         }
 
-        console.log('🟡 UserInfo data:', userInfo)
-
         // Use userInfo from hook (already extracted from token)
         const fullName = userInfo.name || userInfo.fullName || ''
         const phoneNumber = userInfo.phoneNumber || ''
-
-        console.log('🟡 Extracted fullName:', fullName)
-        console.log('🟡 Extracted phoneNumber:', phoneNumber)
 
         // Only update if we have valid data and form is empty
         if ((fullName || phoneNumber)) {
@@ -211,13 +203,11 @@ const staff = useMemo(
                 }
                 // Only update if there are changes
                 if (Object.keys(updates).length > 0) {
-                    console.log('🟡 Updating form data with:', updates)
                     return { ...prev, ...updates }
                 }
                 return prev
             })
         } else {
-            console.log('🟡 No userInfo data available to populate form')
         }
     }, [userInfo, isMounted])
 
@@ -730,7 +720,6 @@ const staff = useMemo(
     ) => {
         // Create purchase record after successful reservation
         try {
-            console.log('🟢 Creating purchase record...')
             const servicePrice = service?.price?.original || service?.price?.discounted || 0
 
             // Ensure providerId is available - try multiple sources
@@ -755,17 +744,11 @@ const staff = useMemo(
                 clientId: clientId || undefined,
             }
 
-            console.log('🟢 Purchase payload:', JSON.stringify(purchasePayload, null, 2))
             const purchaseResponse = await addPurchase(purchasePayload)
-            console.log('✅ Purchase created successfully:', purchaseResponse)
-
             // Navigate to reservation details page after successful purchase creation
-            console.log('🟢 Navigating to reservation details page...')
             router.push(`/reservations/${reservationId}`)
         } catch (error) {
-            console.error('❌ Error creating purchase:', error)
             // Even if purchase creation fails, navigate to reservation details
-            console.log('🟡 Purchase creation failed, but navigating to reservation details anyway...')
             router.push(`/reservations/${reservationId}`)
         }
     }
@@ -824,45 +807,22 @@ const staff = useMemo(
     }
 
     const handleConfirm = async () => {
-        console.log('🔵 handleConfirm called')
-        console.log('🔵 Form data:', formData)
-        console.log('🔵 Selected slot ID:', selectedSlotId)
-        console.log('🔵 Service:', service)
-        console.log('🔵 Service ID:', serviceId)
-
         const isValid = validateForm()
-        console.log('🔵 Form validation result:', isValid)
-        console.log('🔵 Validation errors:', errors)
-
         if (!isValid) {
-            console.log('❌ Form validation failed, returning early')
             return
         }
 
         if (!service || !serviceId) {
-            console.log('❌ Service or serviceId missing, returning early')
-            console.log('❌ Service:', service)
-            console.log('❌ ServiceId:', serviceId)
             return
         }
 
-        console.log('✅ Validation passed, setting isSubmitting to true')
         setIsSubmitting(true)
 
         try {
-            console.log('🟢 Starting reservation creation process')
-
             // Prepare reservation request
             const providerId = rawServiceResponse?.providerId || (service.provider?.id ? parseInt(service.provider.id, 10) : undefined)
-            console.log('🟢 Provider ID:', providerId)
-            console.log('🟢 Raw service response:', rawServiceResponse)
-
             // Get selected time slot to extract proper date/time
             const selectedSlot = timeSlots.find(slot => slot.id === selectedSlotId)
-            console.log('🟢 Selected slot:', selectedSlot)
-            console.log('🟢 All time slots:', timeSlots)
-            console.log('🟢 Selected slot ID:', selectedSlotId)
-
             let requestedStartTime: string | undefined
             let reservationDate: string | undefined
 
@@ -908,10 +868,6 @@ const staff = useMemo(
                 }
             }
 
-            console.log('🟢 Preparing reservation request')
-            console.log('🟢 Requested start time:', requestedStartTime)
-            console.log('🟢 Reservation date:', reservationDate)
-
             const reservationRequest: ReservationRequest = {
                 serviceId: parseInt(serviceId, 10),
                 providerId: providerId || undefined,
@@ -925,8 +881,6 @@ const staff = useMemo(
                 depositAmount: rawServiceResponse?.deposit || undefined,
             }
 
-            console.log('🟢 Reservation request payload:', JSON.stringify(reservationRequest, null, 2))
-
             // Get client ID from user info
             const clientId = userInfo.id || undefined
 
@@ -936,10 +890,7 @@ const staff = useMemo(
             // Create reservation (production-ready API pattern)
             // API returns 201 Created with reservationId immediately, status will be "Created" (1)
             try {
-                console.log('🟡 Calling createReservation API...')
                 const apiResponse = await createReservation(reservationRequest)
-                console.log('🟡 API Response received:', apiResponse)
-
                 // Extract reservation ID from response
                 // API returns 201 Created with reservationId immediately
                 const responseData = apiResponse as unknown as { reservationId?: string; id?: string | number; status?: ReservationStatus }
@@ -947,28 +898,22 @@ const staff = useMemo(
                     (typeof responseData?.id === 'string' ? responseData.id : responseData?.id?.toString()) ||
                     responseData?.reservationId
 
-                console.log('🟡 Extracted reservation ID:', reservationId)
-
                 if (!reservationId) {
-                    console.error('❌ Reservation ID not found in response')
                     throw new Error(tSD('states.missingReservationId'))
                 }
 
                 // Always start polling
                 // Poll GET /api/v1/services/reservations/{reservationId} until status changes from "Pending" (2)
                 // "Pending" indicates the reservation is being validated/processed in the queue
-                console.log('✅ Reservation created successfully, starting polling...')
                 setIsSubmitting(false)
                 setShowProcessingModal(true)
                 setQueueStatus('queued')
 
                 // Start polling by reservation ID (production-ready pattern)
                 // Poll until status changes from "Pending" to "Confirmed", "Rejected", etc.
-                console.log('🟢 Starting polling with reservation ID:', reservationId)
                 startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
 
             } catch (error: unknown) {
-                console.error('❌ Error in createReservation try block:', error)
                 const err = error as {
                     response?: {
                         status?: number;
@@ -1015,11 +960,6 @@ const staff = useMemo(
                 throw error
             }
         } catch (error) {
-            console.error('❌ Error in handleConfirm catch block:', error)
-            console.error('❌ Error details:', {
-                message: error instanceof Error ? error.message : 'Unknown error',
-                stack: error instanceof Error ? error.stack : undefined,
-            })
             setQueueStatus('failed')
             setShowProcessingModal(false)
             setIsSubmitting(false)
@@ -1424,14 +1364,9 @@ const staff = useMemo(
                                     variant="brand"
                                     size="lg"
                                     onClick={() => {
-                                        console.log('🔵 Button clicked!')
-                                        console.log('🔵 Current step:', step)
-                                        console.log('🔵 Is submitting:', isSubmitting)
                                         if (step === 'confirm') {
-                                            console.log('🔵 Calling handleConfirm...')
                                             handleConfirm()
                                         } else {
-                                            console.log('🔵 Calling handleContinue...')
                                             handleContinue()
                                         }
                                     }}

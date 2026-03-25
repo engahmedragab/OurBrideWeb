@@ -305,7 +305,6 @@ export const ProviderMap = ({
                 },
             })
         } catch (error) {
-            console.warn('[ProviderMap] MarkerClusterer initialization failed:', error)
         }
 
         return () => {

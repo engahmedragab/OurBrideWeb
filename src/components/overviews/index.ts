@@ -9,4 +9,5 @@ export { GuestsInvitation, type GuestsInvitationProps } from './GuestsInvitation
 export { ItemsOverview, type ItemsOverviewProps } from './ItemsOverview'
 export { NotesOverview, type NotesOverviewProps } from './NotesOverview'
 export { OccasionsOverview, type OccasionsOverviewProps } from './OccasionsOverview'
+export { InvitationsOverview, type InvitationsOverviewProps } from './InvitationsOverview'
 

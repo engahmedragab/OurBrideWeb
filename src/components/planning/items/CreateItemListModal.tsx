@@ -84,7 +84,6 @@ export const CreateItemListModal = ({
       await onSubmit({ name: data.name, color: data.color })
       reset()
     } catch (e) {
-      console.error('Failed to create list:', e)
     }
   }
 

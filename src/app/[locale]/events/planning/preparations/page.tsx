@@ -186,16 +186,6 @@ function PreparationsPageContent() {
 
       if (process.env.NODE_ENV === 'development') {
         // Debug icon resolution for preparations
-        console.log('[Preparations] icon resolution', {
-          lineId: line.id,
-          title: line.title || line.titleEn || line.titleAr,
-          lineServiceClass: line.serviceClass,
-          preparationId: line.preparationId,
-          preparationClass: prepClass,
-          resolvedClass,
-          iconName: line.iconName,
-          iconValue,
-        })
       }
 
       service.icon = { kind: 'asset', value: iconValue }

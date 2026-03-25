@@ -37,7 +37,6 @@ export async function generateStaticParams({
     // This ensures we have some static params even if API fails
     return Array.from({ length: 100 }, (_, i) => ({ id: String(i + 1) }))
   } catch (error) {
-    console.error('Error fetching services for static params:', error)
     // Fallback: Generate IDs 1-100 if API call fails
     return Array.from({ length: 100 }, (_, i) => ({ id: String(i + 1) }))
   }

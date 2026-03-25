@@ -497,7 +497,6 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           await refetch()
         }
       } catch (error) {
-        console.error('Init book failed:', error)
         hasInitAttemptedRef.current = false
       }
     }
@@ -519,7 +518,6 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           await refetch()
         }
       } catch (error) {
-        console.error('Add models failed:', error)
         hasAddModelsAttemptedRef.current = false
       }
     }
@@ -553,7 +551,6 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           await refetch()
         }
       } catch (error) {
-        console.error('Auto-sync failed:', error)
       }
     }, 2 * 60 * 1000)
 
@@ -635,14 +632,6 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
         const response = await syncDeltaFn(deltaPayload)
         
         // Log response for debugging
-        console.log('[PlanningBookController] Delta sync response:', {
-          hasBook: !!response.book,
-          hasCategoryIdMap: !!response.categoryIdMap,
-          hasLineIdMap: !!response.lineIdMap,
-          categoryIdMap: response.categoryIdMap,
-          lineIdMap: response.lineIdMap,
-        })
-        
         // Update local IDs from the response (maps temp IDs to server IDs)
         const updatedBook = localBook ? updateLocalIdsFromDeltaResponse(response, localBook) : null
         

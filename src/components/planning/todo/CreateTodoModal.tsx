@@ -67,7 +67,6 @@ export const CreateTodoModal = ({
       await onSubmit({ title: data.title, isDone: Boolean(data.isDone) })
       reset()
     } catch (e) {
-      console.error('Failed to create todo:', e)
     }
   }
 

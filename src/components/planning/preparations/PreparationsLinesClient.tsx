@@ -179,7 +179,6 @@ function PreparationsLinesContent() {
         lastSyncedRef.current = localServiceBook
         refetch()
       } catch (error) {
-        console.error('Auto-sync failed:', error)
       }
     }, 2 * 60 * 1000) // 2 minutes
 
@@ -347,23 +346,6 @@ function PreparationsLinesContent() {
       const newLines = linesArray.filter((l: Record<string, unknown>) =>
         typeof l.id !== 'number' || l.id <= 0
       )
-      console.log('Sync payload (matching backend shape):', {
-        rootFields: {
-          id: payload.id,
-          completed: payload.completed,
-          pending: payload.pending,
-          isSubDone: payload.isSubDone,
-          bookType: payload.bookType,
-          bookClass: payload.bookClass,
-          isModelsAdd: payload.isModelsAdd,
-          count: payload.count,
-        },
-        linesCount: linesArray.length,
-        newLinesCount: newLines.length,
-        sampleNewLine: newLines[0] || null,
-        sampleExistingLine: linesArray.find((l: Record<string, unknown>) => l.id && typeof l.id === 'number' && l.id > 0) || null,
-        hasServerFields: payload.createdBy !== undefined || payload.lastModifiedBy !== undefined,
-      })
     }
 
     // Cast to ServiceBookRequest (backend accepts the same shape)

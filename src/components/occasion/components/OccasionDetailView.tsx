@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { X, MapPin, Clock } from 'lucide-react'
+import { X, Clock, Mail } from 'lucide-react'
 import type { OccasionLineResponse } from '@/types/responses'
 import occasionImage from '@/assets/images/occasion.png'
 import brideNameSvg from '@/assets/svg/bridename.svg'
@@ -15,6 +15,7 @@ interface OccasionDetailViewProps {
   occasion: OccasionLineResponse
   onClose: () => void
   onEdit?: () => void
+  onCreateInvitation?: () => void
 }
 
 /**
@@ -75,7 +76,7 @@ const calculateTimeRemaining = (targetDate: string | null | undefined) => {
   return { days, hours, minutes, isPast: false }
 }
 
-export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetailViewProps) {
+export function OccasionDetailView({ occasion, onClose, onEdit, onCreateInvitation }: OccasionDetailViewProps) {
   const t = useI18nTranslations('eventsPlanning.occasions')
   const locale = useI18nLocale()
   // Initialize with null to avoid hydration mismatch, then calculate on client side
@@ -217,6 +218,20 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
           {occasion.caption && (
             <div className="pt-4 border-t border-gray-200">
               <p className="text-14 text-gray-600 italic text-center">{occasion.caption}</p>
+            </div>
+          )}
+
+          {/* Create Invitation Button */}
+          {onCreateInvitation && (
+            <div className="pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={onCreateInvitation}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-medium text-14 transition-colors shadow-sm"
+              >
+                <Mail className="w-4 h-4" />
+                {t('page.actions.createInvitation') || 'Create Invitation'}
+              </button>
             </div>
           )}
         </div>

@@ -89,7 +89,6 @@ export default function SignupPage() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Signup failed'
       toast.addToast(msg, 'error')
-      console.error('Signup failed:', err)
     }
   }, [acceptedTerms, clearError, router, signupCredentials, signupFull, toast])
 
@@ -109,11 +108,9 @@ export default function SignupPage() {
           return
         }
 
-        console.log(`Social signup with ${provider} - OAuth integration needed`)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Signup failed'
         toast.addToast(msg, 'error')
-        console.error(`${provider} signup failed:`, err)
       }
     },
     [clearError, toast]

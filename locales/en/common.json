@@ -1992,6 +1992,13 @@
         "invitedGuests": "Invited Guests",
         "guestSingular": "Guest",
         "guestPlural": "Guests"
+      },
+      "invitations": {
+        "title": "Invitations",
+        "badge": "New",
+        "description": "Create and send beautiful digital wedding invitations to your guests. Manage RSVPs and track who's coming.",
+        "createButton": "Create Invitation",
+        "manageButton": "Manage Invitations"
       }
     },
     "budget": {
@@ -2291,7 +2298,8 @@
           "updateOccasion": "Update Occasion",
           "edit": "Edit",
           "delete": "Delete",
-          "close": "Close"
+          "close": "Close",
+          "createInvitation": "Create Invitation"
         },
         "status": {
           "unsavedChanges": "Unsaved changes",

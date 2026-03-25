@@ -65,7 +65,6 @@ function ServicesIntroPageContent() {
   const tC = useI18nTranslations('common')
   const tS= useI18nTranslations('services.intro')
   const { data, isLoading, error } = useServicesHome()
-  console.log("data", data)
   // Redirect logic: If any filter params are present, redirect to /services/category
   useEffect(() => {
     const hasFilterParams =
@@ -199,8 +198,6 @@ const TRUST_FEATURES = [
   // Map providers to BestProvider format - memoized
   const bestProviders: BestProvider[] = useMemo(() => {
     if (!data?.providers || data.providers.length === 0) return []
-    console.log("data.providers", data.providers)
-
     // Format profession helper - moved outside map for better performance
     const formatProfession = (profession: string): string => {
       if (!profession) return tS('providers.defaultProfession')

@@ -1885,6 +1885,13 @@
         "invitedGuests": "الضيوف المدعوون",
         "guestSingular": "ضيف",
         "guestPlural": "ضيوف"
+      },
+      "invitations": {
+        "title": "الدعوات",
+        "badge": "جديد",
+        "description": "أنشئ وأرسل دعوات زفاف رقمية جميلة لضيوفك. تابع الردود واعرف من سيحضر.",
+        "createButton": "إنشاء دعوة",
+        "manageButton": "إدارة الدعوات"
       }
     },
     "budget": {
@@ -2185,7 +2192,8 @@
           "updateOccasion": "تحديث المناسبة",
           "edit": "تعديل",
           "delete": "حذف",
-          "close": "إغلاق"
+          "close": "إغلاق",
+          "createInvitation": "إنشاء دعوة"
         },
         "status": {
           "unsavedChanges": "تغييرات غير محفوظة",

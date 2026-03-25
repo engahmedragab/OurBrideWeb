@@ -111,7 +111,6 @@ export const getProductById = async (
     return responseData.data.data
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Failed to fetch product by ID')
-    console.error(`Error fetching product by ID (${id}):`, errorMessage)
     // Return null to allow the cart page to continue working even if some products fail to load
     return null
   }
@@ -133,7 +132,6 @@ export const getProductBySlug = async (
     
     return responseData.data.data
   } catch (error) {
-    console.error('Error fetching product by slug:', error)
     return null
   }
 }
@@ -251,7 +249,6 @@ export const getProductsByCategory = async (
     
     return responseData.data.data
   } catch (error) {
-    console.error('Error fetching products by category:', error)
     return []
   }
 }
@@ -284,7 +281,6 @@ export const getRelatedProducts = async (
     
     return []
   } catch (error) {
-    console.error('Error fetching related products:', error)
     return []
   }
 }
@@ -433,7 +429,6 @@ export const searchProducts = async (
     
     return []
   } catch (error) {
-    console.error('Error searching products:', error)
     return []
   }
 }
@@ -465,7 +460,6 @@ export const searchProductsAdvanced = async (
     }
     return responseData as ApiResult<unknown>
   } catch (error) {
-    console.error('Error in advanced product search:', error)
     throw error
   }
 }
@@ -533,7 +527,6 @@ export const getProductBySku = async (
     
     return responseData.data.data
   } catch (error) {
-    console.error('Error fetching product by SKU:', error)
     return null
   }
 }
@@ -562,7 +555,6 @@ export const getProductVariations = async (
     
     return responseData.data.data
   } catch (error) {
-    console.error('Error fetching product variations:', error)
     return []
   }
 }
@@ -591,7 +583,6 @@ export const getProductAttributes = async (
     
     return responseData.data.data
   } catch (error) {
-    console.error('Error fetching product attributes:', error)
     return []
   }
 }
@@ -625,7 +616,6 @@ export const getProductBrands = async (
     
     return []
   } catch (error) {
-    console.error('Error fetching product brands:', error)
     return []
   }
 }
@@ -654,7 +644,6 @@ export const getFlashSaleGrouped = async (
     const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
     return defaultResult
   } catch (error) {
-    console.error('Error fetching flash sale grouped products:', error)
     throw error
   }
 }
@@ -702,7 +691,6 @@ export const getRelatedCategoryProducts = async (
     
     return []
   } catch (error) {
-    console.error('Error fetching related category products:', error)
     return []
   }
 }

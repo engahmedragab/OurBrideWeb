@@ -43,19 +43,6 @@ const mapProviderMapToFeatured = (
   longitude?: number
   topRatedServices?: ServiceSummary[]
 } => {
-  console.log('[mapProviderMapToFeatured] Mapping provider:', {
-    id: provider.id,
-    name: provider.name,
-    latitude: provider.latitude,
-    longitude: provider.longitude,
-    address: provider.address,
-    rate: provider.rate,
-    topRatedServicesCount: provider.topRatedServices?.length || 0,
-    totalServicesCount: provider.totalServicesCount,
-    reviewCount: provider.reviewCount,
-    imagesCount: provider.images?.length || 0,
-  })
-  
   // Get first image from images array for banner/logo
   const firstImage = provider.images && provider.images.length > 0 
     ? provider.images[0] 
@@ -90,14 +77,6 @@ const mapProviderMapToFeatured = (
     // Add topRatedServices for ProviderSearchCard
     topRatedServices: provider.topRatedServices || [],
   }
-  
-  console.log('[mapProviderMapToFeatured] Mapped result:', {
-    id: mapped.id,
-    nameEn: mapped.nameEn,
-    latitude: mapped.latitude,
-    longitude: mapped.longitude,
-    topRatedServicesCount: mapped.topRatedServices?.length || 0,
-  })
   
   return mapped
 }
@@ -135,10 +114,6 @@ export const getProvidersMap = async (
     const response = await apiClient.api.getProviderMap(cleanQuery)
     const responseAny = response as unknown as Record<string, unknown>
     
-    console.log('[getProvidersMap] Raw API response:', JSON.stringify(responseAny, null, 2))
-    console.log('[getProvidersMap] Response type:', typeof responseAny)
-    console.log('[getProvidersMap] Response keys:', responseAny ? Object.keys(responseAny) : [])
-    
     // Handle different response structures
     // Expected structure from API: { data: { providers: [...] }, success: true, ... }
     // API client may return: response.data = { data: { providers: [...] }, ... }
@@ -147,69 +122,43 @@ export const getProvidersMap = async (
     // First, check if response has a .data property (API client wrapper)
     const actualResponse = responseAny?.data || responseAny
     
-    console.log('[getProvidersMap] Actual response after unwrapping:', JSON.stringify(actualResponse, null, 2))
-    console.log('[getProvidersMap] Actual response keys:', actualResponse ? Object.keys(actualResponse) : [])
-    
     if (actualResponse && typeof actualResponse === 'object') {
       // Check for { data: { providers: [...] } } structure
       if ('data' in actualResponse && actualResponse.data) {
         const dataObj = actualResponse.data
-        console.log('[getProvidersMap] Found data.data:', dataObj)
-        console.log('[getProvidersMap] data.data type:', typeof dataObj)
-        console.log('[getProvidersMap] data.data keys:', typeof dataObj === 'object' ? Object.keys(dataObj) : [])
-        
         if (typeof dataObj === 'object') {
           if ('providers' in dataObj && Array.isArray(dataObj.providers)) {
             providersData = dataObj.providers
-            console.log('[getProvidersMap] ✓ Found providers in data.data.providers, count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if (Array.isArray(dataObj)) {
             providersData = dataObj
-            console.log('[getProvidersMap] ✓ Found providers in data.data (array), count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if ('data' in dataObj && Array.isArray(dataObj.data)) {
             providersData = dataObj.data
-            console.log('[getProvidersMap] ✓ Found providers in data.data.data, count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if ('items' in dataObj && Array.isArray(dataObj.items)) {
             providersData = dataObj.items
-            console.log('[getProvidersMap] ✓ Found providers in data.data.items, count:', Array.isArray(providersData) ? providersData.length : 0)
           }
         }
       } 
       // Check for direct { providers: [...] } in actual response
       else if ('providers' in actualResponse && Array.isArray(actualResponse.providers)) {
         providersData = actualResponse.providers
-        console.log('[getProvidersMap] ✓ Found providers in root providers, count:', Array.isArray(providersData) ? providersData.length : 0)
       }
       // Check if actual response is directly an array
       else if (Array.isArray(actualResponse)) {
         providersData = actualResponse
-        console.log('[getProvidersMap] ✓ Response is directly an array, count:', Array.isArray(providersData) ? providersData.length : 0)
       }
     }
     
     // Ensure we have an array
     if (!Array.isArray(providersData)) {
-      console.warn('[getProvidersMap] Providers data is not an array. Response structure:', {
-        responseAny,
-        hasData: 'data' in (responseAny || {}),
-        dataType: typeof (responseAny?.data),
-        dataKeys: responseAny?.data ? Object.keys(responseAny.data) : [],
-      })
       return []
     }
-    
-    console.log('[getProvidersMap] Extracted providers count:', providersData.length)
-    console.log('[getProvidersMap] Sample provider:', providersData[0])
     
     // Map ProviderMapResponse[] to FeaturedProviderResponse[]
     const providers = providersData as ProviderMapResponse[]
     const mappedProviders = providers.map(mapProviderMapToFeatured)
     
-    console.log('[getProvidersMap] Mapped providers count:', mappedProviders.length)
-    console.log('[getProvidersMap] Sample mapped provider:', mappedProviders[0])
-    
     return mappedProviders
   } catch (error: unknown) {
-    console.error('Error fetching providers map:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch providers for map'
     )
@@ -240,14 +189,10 @@ export const getNearbyProviders = async (
         )
       : undefined
 
-    console.log('[getNearbyProviders] Calling API with providerId:', providerId, 'query:', cleanQuery)
-
     const response = await apiClient.api.getProviderGetNearbyProviders(
       providerId,
       Object.keys(cleanQuery || {}).length > 0 ? cleanQuery : undefined
     )
-    
-    console.log('[getNearbyProviders] API response received:', response)
     
     const responseAny = response as unknown as Record<string, unknown>
     
@@ -256,8 +201,6 @@ export const getNearbyProviders = async (
     
     // First, check if response has a .data property (API client wrapper)
     const actualResponse = responseAny?.data || responseAny
-    
-    console.log('[getNearbyProviders] Actual response after unwrapping:', JSON.stringify(actualResponse, null, 2))
     
     if (actualResponse && typeof actualResponse === 'object') {
       // Check for { data: { providers: [...] } } structure
@@ -287,20 +230,12 @@ export const getNearbyProviders = async (
     
     // Ensure we have an array
     if (!Array.isArray(providersData)) {
-      console.warn('[getNearbyProviders] Providers data is not an array. Response structure:', {
-        responseAny,
-        hasData: 'data' in (responseAny || {}),
-        dataType: typeof (responseAny?.data),
-      })
       return []
     }
-    
-    console.log('[getNearbyProviders] Extracted providers count:', providersData.length)
     
     // Return as ProviderMapResponse[]
     return providersData as ProviderMapResponse[]
   } catch (error: unknown) {
-    console.error('[getNearbyProviders] Error fetching nearby providers:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch nearby providers'
     )

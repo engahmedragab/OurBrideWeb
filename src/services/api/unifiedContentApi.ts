@@ -196,11 +196,8 @@ export const search = async (
     ) : undefined
     
     // Log API call for debugging
-    console.log('[UnifiedContentSearch] Calling API with params:', cleanParams)
-    
     const response = await apiClient.api.getUnifiedContentSearch(cleanParams)
     
-    console.log('[UnifiedContentSearch] API response:', response)
     const responseAny: any = response
     
     // Handle different response structures
