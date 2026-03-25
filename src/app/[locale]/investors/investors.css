@@ -296,8 +296,29 @@
 }
 .inv-tr-desc { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.55; }
 
+/* ── KILLER LINE ── */
+.inv-killer-line {
+  font-size: 20px; font-weight: 700; color: var(--inv-brand);
+  padding: 20px 28px; background: var(--inv-cream2);
+  border-left: 4px solid var(--inv-brand); border-radius: 0 12px 12px 0;
+  max-width: 620px; margin-bottom: 52px; letter-spacing: -.01em;
+}
+.investors-page[dir="rtl"] .inv-killer-line {
+  border-left: none; border-right: 4px solid var(--inv-brand);
+  border-radius: 12px 0 0 12px;
+}
+
+/* ── MARKET WEDGE ── */
+.inv-wedge-line {
+  font-size: 13px; font-weight: 500; color: var(--inv-brand);
+  margin-top: 20px; padding: 12px 16px;
+  background: rgba(241, 72, 54, .06); border-radius: 8px;
+  line-height: 1.6; max-width: 400px;
+}
+
 /* ── SOLUTION PILLARS ── */
 .inv-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.inv-pillars.inv-pillars-4 { grid-template-columns: repeat(2, 1fr); }
 .inv-pillar {
   background: var(--inv-cream); padding: 40px 32px;
   position: relative; overflow: hidden; transition: background .2s;
@@ -332,6 +353,42 @@
 .inv-rev-pct {
   font-size: 11px; font-weight: 600; color: var(--inv-brand);
   margin-top: 10px; letter-spacing: .06em;
+}
+
+/* ── UNIT ECONOMICS ── */
+.inv-unit-econ {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+  margin-top: 36px; margin-bottom: 12px;
+}
+.inv-unit-item {
+  background: var(--inv-cream); padding: 28px 24px;
+  border-top: 3px solid var(--inv-brand); border-radius: 0 0 10px 10px;
+  transition: background .2s;
+}
+.inv-unit-item:hover { background: var(--inv-cream3); }
+.inv-unit-label {
+  font-size: 9px; font-weight: 600; letter-spacing: .1em;
+  color: var(--inv-muted); margin-bottom: 8px;
+}
+.inv-unit-val {
+  font-weight: 700; font-size: 32px; color: var(--inv-brand);
+  letter-spacing: -.02em; line-height: 1; margin-bottom: 8px;
+}
+.inv-unit-desc { font-size: 12px; color: var(--inv-mid); line-height: 1.5; }
+
+/* ── CONVICTION BOX ── */
+.inv-conviction-box {
+  background: var(--inv-cream); border-left: 3px solid var(--inv-brand);
+  padding: 24px 32px; max-width: 680px; border-radius: 0 12px 12px 0;
+  margin-top: 40px;
+}
+.inv-conviction-box p {
+  font-size: 15px; font-weight: 500; line-height: 1.75;
+  color: var(--inv-dark); margin: 0;
+}
+.investors-page[dir="rtl"] .inv-conviction-box {
+  border-left: none; border-right: 3px solid var(--inv-brand);
+  border-radius: 12px 0 0 12px;
 }
 
 /* ── ROADMAP ── */
@@ -560,6 +617,8 @@
   .inv-built-grid { grid-template-columns: 1fr; }
   .inv-problem-cols { grid-template-columns: 1fr; }
   .inv-pillars { grid-template-columns: 1fr; }
+  .inv-pillars.inv-pillars-4 { grid-template-columns: 1fr; }
+  .inv-unit-econ { grid-template-columns: 1fr 1fr; }
   .inv-rev-streams { grid-template-columns: 1fr 1fr; }
   .inv-roadmap { grid-template-columns: 1fr 1fr; }
   .inv-team-grid { grid-template-columns: 1fr; }
