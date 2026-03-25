@@ -19,7 +19,6 @@ export const getHomeData = async (): Promise<unknown> => {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching home data:', error)
     throw error
   }
 }
@@ -36,7 +35,6 @@ export const getStoreHomeData = async (): Promise<unknown> => {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching store home data:', error)
     throw error
   }
 }
@@ -53,7 +51,6 @@ export const getServicesHome = async (): Promise<unknown> => {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching services home data:', error)
     throw error
   }
 }
@@ -84,12 +81,8 @@ export const getCommunityHome = async (query?: {
     }
     
     // Log API call for debugging
-    console.log('[getCommunityHome] Calling API with query:', cleanQuery)
-    console.log('[getCommunityHome] Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL)
-    
     const response = await apiClient.api.getHomeGetCommunityHome(cleanQuery)
     
-    console.log('[getCommunityHome] API response received:', response)
     const responseAny = response as unknown as { data?: { data?: CommunityHomeResponse } | CommunityHomeResponse } | CommunityHomeResponse
     
     // Handle different response structures
@@ -107,10 +100,7 @@ export const getCommunityHome = async (query?: {
     }
     throw new Error('Invalid response format from community home endpoint')
   } catch (error: unknown) {
-    console.error('[getCommunityHome] Error fetching community home data:', error)
     if (error instanceof Error) {
-      console.error('[getCommunityHome] Error message:', error.message)
-      console.error('[getCommunityHome] Error stack:', error.stack)
     }
     
     // Log additional Axios error details if available
@@ -131,22 +121,6 @@ export const getCommunityHome = async (query?: {
           data?: unknown
         }
       }
-      console.error('[getCommunityHome] Axios error details:', {
-        message: axiosError.message,
-        code: axiosError.code,
-        config: axiosError.config ? {
-          url: axiosError.config.url,
-          method: axiosError.config.method,
-          baseURL: axiosError.config.baseURL,
-          params: axiosError.config.params,
-          headers: axiosError.config.headers,
-        } : undefined,
-        response: axiosError.response ? {
-          status: axiosError.response.status,
-          statusText: axiosError.response.statusText,
-          data: axiosError.response.data,
-        } : 'No response received',
-      })
     }
     
     throw error instanceof Error ? error : new Error('Failed to fetch community home data')
@@ -167,7 +141,6 @@ export const getMineInfo = async (): Promise<unknown> => {
     }
     return responseAny
   } catch (error) {
-    console.error('Error fetching mine info:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch mine info')
   }
 }
@@ -197,7 +170,6 @@ export const getProviderHome = async (): Promise<ProviderHomeResponse> => {
     }
     throw new Error('Invalid response format from provider home endpoint')
   } catch (error) {
-    console.error('Error fetching provider home data:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider home data')
   }
 }
@@ -229,7 +201,6 @@ export const getStoreHomeByProvider = async (query?: {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching store home by provider:', error)
     throw error
   }
 }

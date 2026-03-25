@@ -234,7 +234,6 @@ function TodoPageContent() {
     // Validate task: must be 2-40 characters
     const taskValue = (data.title || '').trim()
     if (taskValue.length < 2 || taskValue.length > 40) {
-      console.error('Task must be between 2 and 40 characters')
       return
     }
 
@@ -275,7 +274,6 @@ function TodoPageContent() {
     // Validate task: must be 2-40 characters
     const taskValue = (data.title || '').trim()
     if (taskValue.length < 2 || taskValue.length > 40) {
-      console.error('Task must be between 2 and 40 characters')
       return
     }
 
@@ -371,7 +369,6 @@ function TodoPageContent() {
         }
         return
       }
-      console.error(result.message || 'Failed to save changes')
       return
     }
   }

@@ -152,7 +152,6 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
       )
       addToast(message, type)
     } catch (error) {
-      console.error(t('productCommon.addToCartError'), error)
       const errorMessage = error instanceof Error ? error.message : t('productCommon.addToCartError')
       addToast(errorMessage, 'error')
     }
@@ -430,7 +429,6 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         }
                         addToast(message, type)
                       } catch (error) {
-                        console.error(t('reviewsSection.submitErrorWithReason'), error)
                         const errorMessage = error instanceof Error ? error.message : t('reviewsSection.submitRetry')
                         addToast(errorMessage, 'error')
                       }

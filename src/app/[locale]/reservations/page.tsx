@@ -99,7 +99,6 @@ export default function ReservationsPage() {
     try {
       await refetch()
     } catch (error) {
-      console.error('Failed to refresh reservations:', error)
     } finally {
       setIsRefreshing(false)
     }
@@ -130,7 +129,6 @@ export default function ReservationsPage() {
       handleCloseCancelModal()
     } catch (error) {
       // Error is handled by mutation onError
-      console.error('Failed to cancel reservation:', error)
     }
   }
 

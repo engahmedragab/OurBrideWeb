@@ -132,10 +132,8 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
   return {
     id: item.id,
     bookId: localItemBook.id,
-    nameAr: item.nameAr,
-    nameEn:item.nameEn,
-    descriptionAr: item.descriptionAr || null,
-    descriptionEn: item.descriptionEn || null,
+    name: item.nameAr || item.nameEn || null,
+    description: item.descriptionAr || item.descriptionEn || null,
     quantity: item.quantity || null,
     totalPrice: item.totalPrice || null,
     providerName: item.providerName || null,
@@ -161,8 +159,6 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
     itemId: originalLine?.itemId || null,
     categoryId: originalLine?.categoryId || null,
     subCategoryId: originalLine?.subCategoryId || null,
-    iconName: originalLine?.iconName || null,
-    colorName: originalLine?.colorName || null,
   }
 }
 

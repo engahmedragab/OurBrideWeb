@@ -129,7 +129,6 @@ function LoginFormContent() {
           : tCommon?.('somethingWentWrong') || 'Login failed'
 
       showErrorToast(message)
-      console.error('Login failed:', err)
     }
   }, [
     loginCredentials,
@@ -319,8 +318,8 @@ function LoginFormContent() {
         </div>
       </div>
 
-    
-      
+
+
     </>
   )
 }
@@ -335,7 +334,7 @@ export default function LoginPage() {
   return (
     <>
       {/* ✅ Toast host should be mounted once at page root */}
-   
+
 
       <Suspense
         fallback={
@@ -343,11 +342,11 @@ export default function LoginPage() {
             <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
             <AuthTabs />
             <LoadingSpinner
-            size='xl'
-            fullScreen={true}
+              size='xl'
+              fullScreen={true}
               open={true}
               text={`${tCommon('loading')} ${tCommon('pleaseWait')}`}
-            
+
             />
           </div>
         }

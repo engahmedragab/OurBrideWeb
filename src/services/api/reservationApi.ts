@@ -64,7 +64,6 @@ export const getAvailableTimeSlots = async (
     // Ensure it's an array
     return Array.isArray(timeSlots) ? timeSlots : []
   } catch (error: unknown) {
-    console.error('Error fetching available time slots:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch available time slots')
   }
 }
@@ -84,7 +83,6 @@ export const getAvailableTimeSlotsForMultipleServices = async (
     // Ensure it's an array
     return Array.isArray(timeSlots) ? timeSlots : []
   } catch (error: unknown) {
-    console.error('Error fetching available time slots for multiple services:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch available time slots for multiple services')
   }
 }
@@ -152,7 +150,6 @@ export const createReservation = async (
       }
     }
     
-    console.error('Error creating reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to create reservation')
   }
 }
@@ -272,7 +269,6 @@ export const createGroupReservation = async (
       }
     }
     
-    console.error('Error creating group reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to create group reservation')
   }
 }
@@ -312,7 +308,6 @@ export const getClientReservationsPaginated = async (options?: {
     
     return { reservations: [], totalCount: 0 }
   } catch (error: unknown) {
-    console.error('Error fetching client reservations:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch client reservations')
   }
 }
@@ -328,7 +323,6 @@ export const getUserReservations = async (): Promise<ReservationResponse[]> => {
     
     return Array.isArray(responseData) ? responseData : []
   } catch (error: unknown) {
-    console.error('Error fetching user reservations:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch user reservations')
   }
 }
@@ -345,7 +339,6 @@ export const getReservationById = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse | null
   } catch (error: unknown) {
-    console.error('Error fetching reservation:', error)
     return null
   }
 }
@@ -381,7 +374,6 @@ export const getReservationsByIds = async (
     
     return []
   } catch (error: unknown) {
-    console.error('Error fetching reservations by IDs:', error)
     return []
   }
 }
@@ -399,7 +391,6 @@ export const updateReservation = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error updating reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to update reservation')
   }
 }
@@ -414,7 +405,6 @@ export const cancelReservation = async (
   try {
     await apiClient.api.deleteReservationCancelReservation(reservationId)
   } catch (error: unknown) {
-    console.error('Error cancelling reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to cancel reservation')
   }
 }
@@ -433,7 +423,6 @@ export const completeReservation = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error completing reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to complete reservation')
   }
 }
@@ -456,7 +445,6 @@ export const submitReview = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error submitting review:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to submit review')
   }
 }
@@ -477,7 +465,6 @@ export const confirmReservationPayment = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error confirming reservation payment:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to confirm reservation payment')
   }
 }
@@ -498,7 +485,6 @@ export const checkSlotAvailability = async (
     const availability = extractResponseData(response)
     return Boolean(availability)
   } catch (error: unknown) {
-    console.error('Error checking slot availability:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to check slot availability')
   }
 }
@@ -515,7 +501,6 @@ export const submitClientTestFeedback = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error submitting client test feedback:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to submit client test feedback')
   }
 }
@@ -536,7 +521,6 @@ export const updateReservationStatus = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error updating reservation status:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to update reservation status')
   }
 }
@@ -557,7 +541,6 @@ export const createReservationByProvider = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error creating reservation by provider:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to create reservation by provider')
   }
 }
@@ -575,7 +558,6 @@ export const updateReservationByProvider = async (
     const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
-    console.error('Error updating reservation by provider:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to update reservation by provider')
   }
 }
@@ -592,7 +574,6 @@ export const getReservationsByProviderId = async (
     const reservations = extractResponseData(response)
     return Array.isArray(reservations) ? (reservations as ReservationResponse[]) : []
   } catch (error: unknown) {
-    console.error('Error fetching reservations by provider:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch reservations by provider')
   }
 }

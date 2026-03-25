@@ -47,7 +47,6 @@ function ItemsPageContent() {
     clientId: null as unknown as string | undefined,
     enabled: typeof window !== 'undefined',
   })
-   console.log({itemBook})
   const syncMutation = useSyncItemBook()
   const syncDeltaMutation = useSyncItemBookDelta()
   const initMutation = useInitItemBooks()
@@ -215,7 +214,6 @@ function ItemsPageContent() {
       return convertLineToUiItem(line, categoryName)
     })
   }, [selectedCategoryId, getLinesByCategory, categoryNameMap])
- console.log({visibleItems})
   const stats = useMemo(() => {
     const total = visibleItems.length
     const completed = visibleItems.filter((i) => i.isDone).length
@@ -406,7 +404,6 @@ function ItemsPageContent() {
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      console.error(result.message || 'Failed to save changes')
       return
     }
   }

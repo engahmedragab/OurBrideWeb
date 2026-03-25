@@ -119,7 +119,6 @@ export const CreateItemModal = ({
       })
       reset()
     } catch (e) {
-      console.error('Failed to create item:', e)
     }
   }
 

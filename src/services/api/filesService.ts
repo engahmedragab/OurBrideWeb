@@ -17,14 +17,6 @@ export const FilesService = {
       
       // Log response for debugging (only in development)
       if (process.env.NODE_ENV === 'development') {
-        console.log('File upload response:', {
-          response,
-          responseType: typeof response,
-          responseKeys: response ? Object.keys(response) : [],
-          responseData: responseAny?.data,
-          responseDataKeys: responseAny?.data ? Object.keys(responseAny.data) : [],
-          fullResponse: JSON.stringify(responseAny, null, 2),
-        })
       }
       
       // Handle Axios response structure (response.data contains the actual data)
@@ -142,7 +134,6 @@ export const FilesService = {
           responseKeys: responseAny ? Object.keys(responseAny) : [],
           actualDataKeys: actualData ? Object.keys(actualData) : [],
         }
-        console.error('Could not extract URL from upload response:', errorDetails)
         throw new Error(
           `No URL found in upload response. ` +
           `Please check the server response structure. ` +
@@ -152,7 +143,6 @@ export const FilesService = {
       
       return { url, fileName, mediaData }
     } catch (error) {
-      console.error('File upload failed:', error)
       throw error
     }
   },
@@ -194,7 +184,6 @@ export const FilesService = {
       
       return results
     } catch (error) {
-      console.error('Multiple file upload failed:', error)
       throw error
     }
   },
@@ -208,7 +197,6 @@ export const FilesService = {
     try {
       await apiClient.api.deleteFilesDeleteFile(fileName)
     } catch (error) {
-      console.error('File deletion failed:', error)
       throw error
     }
   },
@@ -234,7 +222,6 @@ export const FilesService = {
       }
       return ''
     } catch (error) {
-      console.error('Failed to get download URL:', error)
       throw error
     }
   },

@@ -88,8 +88,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     try {
       const result = await FilesService.uploadFile(file)
       
-      console.log('Upload result:', result)
-      
       if (result && result.url) {
         setPreviewUrl(result.url)
         if (onImageUploaded) {
@@ -97,7 +95,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         }
         addToast('Image uploaded successfully', 'success')
       } else {
-        console.error('Upload result missing URL:', result)
         throw new Error('No URL returned from upload service. Please check the server response.')
       }
     } catch (error: unknown) {
@@ -112,13 +109,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       } else if (error instanceof Error) {
         errorMessage = error.message
       }
-      
-      console.error('Error uploading image:', {
-        error,
-        errorMessage,
-        errorResponse,
-        errorData: errorResponse?.data,
-      })
       
       addToast(errorMessage, 'error')
       // Revert preview on error
@@ -148,12 +138,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           await FilesService.deleteFile(fileName)
         } catch (error) {
           // Ignore delete errors - file might not exist on server
-          console.warn('Could not delete file from server:', error)
         }
       }
     } catch (error) {
       // URL parsing failed, skip server deletion
-      console.warn('Could not parse URL for deletion:', error)
     }
 
     setPreviewUrl(null)

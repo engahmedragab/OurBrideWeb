@@ -192,7 +192,6 @@ export const getServicesPreparations = async (): Promise<unknown> => {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching services preparations:', error)
     throw error
   }
 }
@@ -209,7 +208,6 @@ export const getServicesByPreparationId = async (
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching services by preparation ID:', error)
     throw error
   }
 }
@@ -241,7 +239,6 @@ export const getServicesByProviderId = async (
     
     return services as ServiceResponse[]
   } catch (error) {
-    console.error('Error fetching services by provider ID:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch services by provider ID')
   }
 }
@@ -267,7 +264,6 @@ export const getServicesByPreparationIdPaged = async (
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching paginated services by preparation ID:', error)
     throw error
   }
 }
@@ -297,7 +293,6 @@ export const getServiceById = async (serviceId: number): Promise<ServiceResponse
     
     return null
   } catch (error) {
-    console.error('Error fetching service by ID:', error)
     throw error
   }
 }
@@ -331,7 +326,6 @@ export const getServiceBySlug = async (slug: string): Promise<ServiceResponse | 
     
     return null
   } catch (error) {
-    console.error('Error fetching service by slug:', error)
     throw error
   }
 }
@@ -358,7 +352,6 @@ export const searchServices = async (query?: {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error searching services:', error)
     throw error
   }
 }
@@ -376,7 +369,6 @@ export const getAllServices = async (query?: {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching all services:', error)
     throw error
   }
 }
@@ -395,7 +387,6 @@ export const searchServicesByTerm = async (query?: {
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error searching services by term:', error)
     throw error
   }
 }
@@ -410,7 +401,6 @@ export const getServicePackages = async (serviceId: number): Promise<unknown> =>
     const responseData = response as { data?: unknown }
     return responseData.data ?? response
   } catch (error) {
-    console.error('Error fetching service packages:', error)
     throw error
   }
 }

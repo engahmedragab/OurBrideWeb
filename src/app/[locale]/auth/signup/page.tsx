@@ -64,7 +64,7 @@ export default function SignupPage() {
     }
     if (error === lastToastedError) return
 
-   
+
     setLastToastedError(error)
   }, [error, lastToastedError, toast])
 
@@ -96,7 +96,6 @@ export default function SignupPage() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Signup failed'
       toast.addToast(msg, 'error')
-      console.error('Signup failed:', err)
     }
   }, [acceptedTerms, clearError, router, signupCredentials, signupFull, toast])
 
@@ -163,30 +162,11 @@ export default function SignupPage() {
           return
         }
 
-        if (provider === 'facebook') {
-          try {
-            const accessToken = await loginWithFacebook()
-
-            await loginWithExternalProvider({
-              accessToken,
-              provider: 'Facebook' as ExternalProvidersType,
-              userType: UserType.Bride,
-            })
-
-            router.push('/dashboard')
-          } catch (err) {
-            const msg = err instanceof Error ? err.message : 'Facebook signup failed'
-            toast.addToast(msg, 'error')
-            console.error('Facebook signup failed:', err)
-          } finally {
-            setIsOAuthLoading(false)
-          }
-        }
+        console.log(`Social signup with ${provider} - OAuth integration needed`)
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Signup failed'
         toast.addToast(msg, 'error')
         console.error(`${provider} signup failed:`, err)
-        setIsOAuthLoading(false)
       }
     },
     [clearError, toast, googleSignup, loginWithExternalProvider, router]
@@ -256,7 +236,7 @@ export default function SignupPage() {
         }}
       />
 
-     
+
     </>
   )
 }

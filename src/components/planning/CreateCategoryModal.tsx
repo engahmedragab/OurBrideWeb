@@ -67,7 +67,6 @@ export const CreateCategoryModal = ({
       reset()
     } catch (error) {
       // Error handling is done by parent component
-      console.error('Failed to create category:', error)
     }
   }
 

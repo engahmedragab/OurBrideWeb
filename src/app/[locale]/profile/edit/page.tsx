@@ -85,7 +85,6 @@ export default function ProfileEditPage() {
             }
           }
         } catch {
-          console.warn('Invalid birthDate format:', userData.birthDate)
         }
       }
 
@@ -158,7 +157,6 @@ export default function ProfileEditPage() {
             formattedBirthDate = date.toISOString()
           }
         } catch {
-          console.warn('Invalid birthDate format:', formData.birthDate)
         }
       }
 
@@ -185,15 +183,12 @@ export default function ProfileEditPage() {
         throw new Error('Cannot update profile: user ID is required')
       }
 
-      console.log('Sending profile update request:', JSON.stringify(requestData, null, 2))
-
       await updateMutation.mutateAsync(requestData)
 
       // Navigate back to profile page after successful save
       router.push('/profile')
     } catch (error) {
       // Error is handled by the mutation's onError handler
-      console.error('Failed to save profile:', error)
     }
   }
 

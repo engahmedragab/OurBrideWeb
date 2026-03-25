@@ -27,7 +27,6 @@ export function ItemListsSidebar({
   onSelectCategory: (id: number) => void
   onDeleteCategory?: (id: number) => void
 }) {
-  console.log({categories})
   return (
     <aside className={cn('rounded-xl border bg-white p-4', className)}>
       <div className="mb-4 flex items-center justify-between">

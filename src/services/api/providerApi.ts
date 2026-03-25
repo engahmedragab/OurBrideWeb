@@ -76,7 +76,6 @@ export const getProviderById = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider details'
     )
@@ -105,7 +104,6 @@ export const getProviderBySlug = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider by slug:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider details by slug'
     )
@@ -200,7 +198,6 @@ export const getProviderPublicProfileBySlug = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider public profile by slug:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider public profile by slug'
     )
@@ -226,8 +223,6 @@ export const getProviderPublicProfileById = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider public profile:', error)
-    
     // Handle Axios errors with more detail
     const axiosError = error as { 
       response?: { 
@@ -244,15 +239,12 @@ export const getProviderPublicProfileById = async (
       // Server responded with error status
       const status = axiosError.response.status
       const statusText = axiosError.response.statusText
-      console.error(`API Error ${status}: ${statusText}`, axiosError.response.data)
       throw new Error(`Failed to fetch provider public profile: ${status} ${statusText}`)
     } else if (axiosError.request) {
       // Request was made but no response received (network error, timeout, etc.)
-      console.error('Network error - no response received:', axiosError.message || axiosError.code)
       throw new Error(`Network error: Unable to reach the server. ${axiosError.message || axiosError.code || 'Please check your connection and try again.'}`)
     } else if (error instanceof Error) {
       // Other error
-      console.error('Error message:', error.message)
       throw error
     }
     
@@ -328,7 +320,6 @@ export const getProviderBranchPortfolio = async (
     
     return portfolioData as unknown as BranchPortfolioResponse
   } catch (error: unknown) {
-    console.error('Error fetching provider branch portfolio:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider branch portfolio')
   }
 }
@@ -390,7 +381,6 @@ export const getProviderTeamMemberPortfolio = async (
     
     return portfolioData as unknown as BranchPortfolioResponse
   } catch (error: unknown) {
-    console.error('Error fetching provider team member portfolio:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio')
   }
 }
@@ -417,7 +407,6 @@ export const getProviderTeamMemberPortfolioByAssignmentId = async (
     
     return Array.isArray(portfolio) ? (portfolio as MediaResponse[]) : []
   } catch (error: unknown) {
-    console.error('Error fetching provider team member portfolio by assignment ID:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio by assignment ID')
   }
 }
@@ -440,7 +429,6 @@ export const getProviderTeamUsers = async (
     
     return Array.isArray(users) ? (users as unknown[]) : []
   } catch (error: unknown) {
-    console.error('Error fetching provider team users:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team users')
   }
 }
@@ -463,7 +451,6 @@ export const getProviderBranches = async (
     
     return Array.isArray(branches) ? (branches as PlaceResponse[]) : []
   } catch (error: unknown) {
-    console.error('Error fetching provider branches:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider branches')
   }
 }
@@ -524,7 +511,6 @@ export const filterProviders = async (
     const providersData = extractResponseData(response)
     
     if (!Array.isArray(providersData)) {
-      console.warn('Providers data is not an array:', providersData)
       return []
     }
     
@@ -532,7 +518,6 @@ export const filterProviders = async (
     const providers = providersData as ProviderResponse[]
     return providers.map(mapProviderToFeatured)
   } catch (error: unknown) {
-    console.error('Error filtering providers:', error)
     throw error instanceof Error ? error : new Error('Failed to filter providers')
   }
 }
@@ -561,16 +546,12 @@ export const getProviderPublicStore = async (
         )
       : {}
 
-    console.log('[getProviderPublicStore] Calling API with providerId:', providerId, 'query:', cleanQuery)
-
     // Only pass query if it has values, otherwise pass undefined to use defaults
     // Note: Accept-Language header is already added by the API client interceptor
     const response = await apiClient.api.getProviderGetPublicStore(
       providerId,
       Object.keys(cleanQuery).length > 0 ? cleanQuery : undefined
     )
-    
-    console.log('[getProviderPublicStore] API response received:', response)
     
     const responseData = extractResponseData(response)
     
@@ -581,10 +562,7 @@ export const getProviderPublicStore = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('[getProviderPublicStore] Error fetching provider public store:', error)
     if (error instanceof Error) {
-      console.error('[getProviderPublicStore] Error message:', error.message)
-      console.error('[getProviderPublicStore] Error stack:', error.stack)
     }
     // Re-throw the original error to preserve status code and details
     throw error
@@ -628,7 +606,6 @@ export const getProviderPublicStoreBySlug = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('[getProviderPublicStoreBySlug] Error fetching provider public store by slug:', error)
     throw error
   }
 }
@@ -651,7 +628,6 @@ export const getProviderLinkee = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider linkee:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider linkee'
     )
@@ -680,7 +656,6 @@ export const getProviderLinkeeBySlug = async (
     
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('Error fetching provider Linkee by slug:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider Linkee by slug'
     )

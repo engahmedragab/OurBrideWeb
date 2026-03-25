@@ -140,20 +140,12 @@ function ProvidersSearchContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    console.log('Checking Google Maps...', {
-      hasGoogle: !!window.google,
-      hasApiKey: !!GOOGLE_MAPS_API_KEY,
-      apiKey: GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing'
-    })
-
     if (window.google?.maps) {
-      console.log('Google Maps already loaded')
       return
     }
 
     const existingScript = document.querySelector('script[src*="maps.googleapis.com"]')
     if (existingScript) {
-      console.log('Google Maps script already exists in DOM')
       return
     }
 
@@ -163,34 +155,22 @@ function ProvidersSearchContent() {
       return
     }
 
-    console.log('Loading Google Maps script...')
     const script = document.createElement('script')
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`
     script.async = true
     script.defer = true
     script.onload = () => {
-      console.log('Google Maps script loaded successfully')
     }
     script.onerror = (error) => {
-      console.error('Failed to load Google Maps script:', error)
     }
     document.head.appendChild(script)
   }, [])
 
   // Use API providers - no fallback needed
   const providers = useMemo(() => {
-    console.log('[ProvidersSearchContent] apiProviders:', apiProviders)
-    console.log('[ProvidersSearchContent] apiProviders length:', apiProviders?.length || 0)
     if (apiProviders && apiProviders.length > 0) {
-      console.log('[ProvidersSearchContent] Sample provider:', apiProviders[0])
       const firstProvider = apiProviders[0]
       if (hasCoordinates(firstProvider)) {
-        console.log('[ProvidersSearchContent] Provider with coords:', {
-          id: firstProvider.id,
-          name: firstProvider.nameEn,
-          latitude: firstProvider.latitude,
-          longitude: firstProvider.longitude,
-        })
       }
     }
     return apiProviders || []
@@ -263,7 +243,6 @@ function ProvidersSearchContent() {
             setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
           }
         } catch (error) {
-          console.error('Error getting address:', error)
           setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
         }
 
@@ -271,7 +250,6 @@ function ProvidersSearchContent() {
         setIsLocationPopoverOpen(false)
       },
       (error) => {
-        console.error('Error getting location:', error)
         alert('Unable to retrieve your location. Please check your browser permissions.')
         setIsGettingLocation(false)
       }
@@ -615,24 +593,6 @@ function ProvidersSearchContent() {
                 {/* Right: Google Map */}
                 <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-lg">
                   {window.google?.maps?.Map ? (
-                    (() => {
-                      console.log('[ProvidersSearchContent] Rendering ProviderMap with:', {
-                        providersCount: filteredProviders.length,
-                        mapCenter,
-                        mapZoom,
-                        selectedProviderId: selectedProvider?.id,
-                        providers: filteredProviders.map(p => {
-                          const hasCoords = hasCoordinates(p)
-                          return {
-                            id: p.id,
-                            name: p.nameEn || p.nameAr,
-                            latitude: hasCoords ? p.latitude : undefined,
-                            longitude: hasCoords ? p.longitude : undefined,
-                            hasCoords,
-                          }
-                        }),
-                      })
-                      return (
                         <ProviderMap
                           providers={filteredProviders}
                           center={mapCenter}
@@ -641,8 +601,6 @@ function ProvidersSearchContent() {
                           selectedProviderId={selectedProvider?.id}
                           className="rounded-xl"
                         />
-                      )
-                    })()
                   ) : (
                     <div className="w-full h-full min-h-[500px] bg-gray-100 flex items-center justify-center">
                       <Typography variant="body" textColor="secondary">

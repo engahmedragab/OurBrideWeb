@@ -268,7 +268,7 @@ const ProductServiceCard = ({
   }
 
   return (
-    <div 
+    <div
       className="group relative bg-transparent rounded-xl overflow-visible transition-shadow cursor-pointer flex flex-col border border-gray-200/70"
       onClick={handleCardClick}
     >
@@ -304,16 +304,16 @@ const ProductServiceCard = ({
 
       {/* Image Container - 75% of card height */}
       <div className="relative flex-[3] min-h-[220px] sm:min-h-[260px] md:min-h-[280px] overflow-hidden bg-gray-100 custom-shaped-card flex items-center justify-center">
-        {data.image && 
-         data.image.trim() !== '' && 
-         data.image !== '/' &&
-         !data.image.includes('placeholder') &&
-         data.image !== '/placeholder-product.png' &&
-         data.image !== '/placeholder-service.png' &&
-         data.image !== '/placeholder-membership.png' &&
-         data.image !== '/placeholder-giftcard.png' &&
-         data.image !== '/images/placeholder-product.png' &&
-         !imageError ? (
+        {data.image &&
+          data.image.trim() !== '' &&
+          data.image !== '/' &&
+          !data.image.includes('placeholder') &&
+          data.image !== '/placeholder-product.png' &&
+          data.image !== '/placeholder-service.png' &&
+          data.image !== '/placeholder-membership.png' &&
+          data.image !== '/placeholder-giftcard.png' &&
+          data.image !== '/images/placeholder-product.png' &&
+          !imageError ? (
           <Image
             src={data.image}
             alt={data.title}
@@ -486,7 +486,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
   const isRtl = useIsRTL();
   const t = useI18nTranslations('common')
-  console.log({data})
+  console.log({ data })
   return (
     <div className="flex flex-col h-full ">
       {/* Card */}
@@ -499,7 +499,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         {/* Stars - All red for 5-star rating */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={`star-${ isRtl ? data.authorNameAr : data.authorNameEn}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
+            <Star key={`star-${isRtl ? data.authorNameAr : data.authorNameEn}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
           ))}
         </div>
       </div>
@@ -524,7 +524,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         </div>
         <div>
           <p className="text-16 font-semibold text-gray-900">
-            { isRtl ? data.authorNameAr :  data.authorNameEn}
+            {isRtl ? data.authorNameAr : data.authorNameEn}
           </p>
           <p className="text-14 text-gray-500">{data.timeAgo || t('recently')}</p>
         </div>
@@ -925,7 +925,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     const t = useI18nTranslations('common')
     // Guard against undefined cardData
     if (!cardData) {
-      console.warn('Card component requires cardData prop')
       return null
     }
 

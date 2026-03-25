@@ -1,0 +1,151 @@
+name: Build and Deploy Next.js App (Production)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: DO_HOST
+
+    steps:
+      # 1️⃣ Checkout
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node.js 20
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3️⃣ Install dependencies (CI only)
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      # 4️⃣ Clean build cache
+      - name: 🧹 Clean Cache
+        run: |
+          rm -rf .next
+          rm -rf .turbo
+
+      # 5️⃣ Build Next.js (SERVER MODE)
+      - name: 🏗️ Build Next.js App
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      # 5a️⃣ Package .next and public for upload (preserve paths so they land in build/.next and build/public)
+      - name: 📦 Package .next and public directories
+        run: |
+          tar -czf next-build.tar.gz .next
+          tar -czf public-build.tar.gz public
+
+      # 5b️⃣ Remove old static build artifacts on server (CRA-style files)
+      - name: 🧹 Clean Old Static Build on Server
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb/build
+            rm -f index.html 404.html asset-manifest.json robots.txt manifest.json
+            rm -f logo.png logo0.png logoicon.ico
+            rm -rf static
+            echo "Old static build artifacts removed."
+
+      # 6️⃣ Upload build artifacts to server
+      - name: 🚀 Upload Build to DigitalOcean
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          source: "node_modules/**,package.json,next.config.js,next-build.tar.gz,public-build.tar.gz"
+          target: /var/www/OurBrideWeb/build
+          rm: false
+
+      # 6a️⃣ Extract .next and public on server (tarballs preserve paths: build/.next, build/public)
+      - name: 📂 Extract .next and public on Server
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb/build
+            test -f next-build.tar.gz || { echo "ERROR: next-build.tar.gz missing"; exit 1; }
+            tar -xzf next-build.tar.gz
+            rm -f next-build.tar.gz
+            test -d .next || { echo "ERROR: .next not found after extract"; exit 1; }
+            echo ".next at /var/www/OurBrideWeb/build/.next"
+            test -f public-build.tar.gz || { echo "ERROR: public-build.tar.gz missing"; exit 1; }
+            tar -xzf public-build.tar.gz
+            rm -f public-build.tar.gz
+            test -d public || { echo "ERROR: public not found after extract"; exit 1; }
+            echo "public at /var/www/OurBrideWeb/build/public"
+
+      # 6b️⃣ Deploy .well-known (apple-app-site-association, assetlinks.json) into build/public/.well-known
+      - name: 📱 Deploy .well-known Files
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          source: "public/.well-known/*"
+          target: /var/www/OurBrideWeb/build/public/.well-known
+          strip_components: 2
+
+      - name: 🔧 Set .well-known Permissions
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            sudo chown -R www-data:www-data /var/www/OurBrideWeb/build/public/.well-known
+            sudo chmod -R 755 /var/www/OurBrideWeb/build/public/.well-known
+
+      # 7️⃣ Restart app using PM2 (app root = same path as old deploy)
+      - name: 🔁 Restart App with PM2
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 20
+
+            export PATH="$HOME/.nvm/versions/node/v20.20.0/bin:$PATH"
+
+            cd /var/www/OurBrideWeb/build
+
+            pm2 reload ourbride || \
+            PORT=3000 pm2 start node_modules/.bin/next \
+              --name ourbride \
+              -- start -p 3000
+
+            pm2 save
+
+      # 8️⃣ Reload Nginx
+      - name: 🔄 Reload Nginx
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            sudo nginx -t
+            sudo systemctl reload nginx

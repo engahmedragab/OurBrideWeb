@@ -76,7 +76,6 @@ export const EditTodoModal = ({
       await onSubmit({ title: data.title, isDone: Boolean(data.isDone) })
       reset()
     } catch (e) {
-      console.error('Failed to update todo:', e)
     }
   }
 

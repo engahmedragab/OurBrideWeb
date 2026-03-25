@@ -391,7 +391,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
         setTimeSlots(uniqueSlots)
       } catch (error) {
-        console.error('Error fetching time slots:', error)
         setTimeSlotsError(error instanceof Error ? error : new Error('Failed to fetch time slots'))
         setTimeSlots([])
       } finally {
@@ -455,7 +454,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
   // Start polling for group reservations
   const startPolling = (reservationIds: string[], providerId: number | undefined, clientId: string | undefined) => {
-    console.log('🟢 Starting polling for reservations:', reservationIds)
     reservationIdsRef.current = reservationIds
 
     let pollCount = 0
@@ -465,8 +463,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
     const poll = async () => {
       try {
         pollCount++
-        console.log(`🟡 Polling attempt ${pollCount} for reservations:`, reservationIds)
-
         // Poll all reservations using bulk endpoint for better performance
         const reservations = await getReservationsByIds(reservationIds)
 
@@ -478,7 +474,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
         if (allConfirmed) {
           // All reservations confirmed, create bulk purchases
-          console.log('✅ All reservations confirmed, creating bulk purchases')
           stopPolling()
           setQueueStatus('completed')
           setShowProcessingModal(false)
@@ -493,7 +488,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         })
 
         if (anyRejected) {
-          console.error('❌ Some reservations were rejected')
           setQueueStatus('failed')
           setShowProcessingModal(false)
           stopPolling()
@@ -506,7 +500,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
         // Still processing, continue polling
         if (pollCount >= maxPolls) {
-          console.error('❌ Polling timeout')
           setQueueStatus('failed')
           setShowProcessingModal(false)
           stopPolling()
@@ -522,7 +515,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         pollingIntervalRef.current = setTimeout(poll, delay)
 
       } catch (error: unknown) {
-        console.error('❌ Error polling reservations:', error)
         const err = error as { response?: { status?: number }; statusCode?: number }
 
         // If reservations not found (404), continue polling
@@ -570,12 +562,9 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
     clientId: string | undefined
   ) => {
     try {
-      console.log('🟢 Creating bulk purchases for reservations:', reservationIds)
-
       // Get all reservations using bulk endpoint for better performance
       const reservations = await getReservationsByIds(reservationIds)
       if (reservations.length === 0) {
-        console.error('❌ No reservations found')
         return
       }
 
@@ -583,7 +572,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       const purchaseRequests: PurchaseRequest[] = reservations
         .map((reservation) => {
           if (!reservation || !reservation.reservationId) {
-            console.error(`❌ Invalid reservation:`, reservation)
             return null
           }
 
@@ -592,7 +580,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           // Find the service for this reservation
           const service = services.find(s => s.id === reservation.serviceId?.toString())
           if (!service) {
-            console.error(`❌ Service not found for reservation ${reservationId}`)
             return null
           }
 
@@ -619,11 +606,8 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         .filter((req): req is PurchaseRequest => req !== null)
 
       if (purchaseRequests.length === 0) {
-        console.error('❌ No valid purchase requests to create')
         return
       }
-
-      console.log('🟢 Creating bulk purchases:', purchaseRequests.length, 'items')
 
       // Create bulk purchase request
       const bulkPurchaseRequest: BulkPurchaseRequest = {
@@ -634,16 +618,8 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       // Call bulk purchase API
       const bulkResponse = await addBulkPurchases(bulkPurchaseRequest)
 
-      console.log('✅ Bulk purchases created successfully:', {
-        totalItems: bulkResponse.totalItems,
-        successCount: bulkResponse.successCount,
-        failureCount: bulkResponse.failureCount,
-        failedItems: bulkResponse.failedItems,
-      })
-
       // Check if there were any failures
       if (bulkResponse.failureCount > 0) {
-        console.warn('⚠️ Some purchases failed:', bulkResponse.failedItems)
         // Show error modal for failed items
         const failedMessages = Object.entries(bulkResponse.failedItems)
           .map(([index, message]) => `Item ${parseInt(index) + 1}: ${message}`)
@@ -659,7 +635,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         router.push('/reservations')
       }
     } catch (error) {
-      console.error('❌ Error creating bulk purchases:', error)
       const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string }
       const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create purchases. Please try again.'
       setErrorModal({
@@ -682,8 +657,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
     }
 
     try {
-      console.log('🟢 Starting group reservation creation...')
-
       // Get branchId and staffId from selections
       const branchId = selectedBranch !== 'any' ? parseInt(selectedBranch, 10) : undefined
       const staffId = selectedTeamMember !== 'any' ? parseInt(selectedTeamMember, 10) : undefined
@@ -713,12 +686,8 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         failOnFirstError: false,
       }
 
-      console.log('🟢 Group reservation request:', groupReservationRequest)
-
       // Create group reservations
       const groupResponse: GroupReservationResponse = await createGroupReservation(groupReservationRequest)
-      console.log('🟢 Group reservation response:', groupResponse)
-
       // Extract reservation IDs from response
       // New structure: response.data.createdReservations contains array of ReservationResponse
       const reservationIds: string[] = []
@@ -743,8 +712,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
       // If queued and no reservations yet, poll cart to get reservation IDs
       if ((groupResponse.queued || groupResponse.statusCode === 202) && reservationIds.length === 0) {
-        console.log('🟡 Group reservation queued, polling cart to get reservation IDs...')
-
         // When queued, poll the cart to get reservation IDs
         // The reservations are created asynchronously and added to the cart
         const pollCartForReservations = async (): Promise<string[]> => {
@@ -756,8 +723,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
             try {
               await new Promise(resolve => setTimeout(resolve, pollDelay))
               const cart = await getCart()
-              console.log('🟡 Polled cart:', cart)
-
               // Extract reservation IDs from cart purchases
               const ids: string[] = []
               if (cart?.purchases) {
@@ -781,13 +746,11 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
               }
 
               if (ids.length > 0) {
-                console.log('✅ Found reservation IDs in cart:', ids)
                 return ids
               }
 
               attempts++
             } catch (error) {
-              console.error('❌ Error polling cart:', error)
               attempts++
             }
           }
@@ -803,8 +766,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
         throw new Error('No reservation IDs found in response')
       }
 
-      console.log('🟢 Extracted reservation IDs:', reservationIds)
-
       // Start polling
       setShowProcessingModal(true)
       setQueueStatus('queued')
@@ -813,7 +774,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       startPolling(reservationIds, finalProviderId, clientId)
 
     } catch (error: unknown) {
-      console.error('❌ Error creating group reservations:', error)
       setQueueStatus('failed')
       setShowProcessingModal(false)
       stopPolling()

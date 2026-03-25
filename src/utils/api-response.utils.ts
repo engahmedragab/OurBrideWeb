@@ -237,7 +237,6 @@ export const handlePublicEndpointError = <T>(
   // If guest access is allowed and this is a GuestOrAuthenticatedRequired error,
   // return default value instead of throwing
   if (allowGuestAccess && isGuestOrAuthenticatedRequired(error)) {
-    console.warn('Public endpoint returned guest/authenticated required error, using default value:', error)
     return defaultValue
   }
 

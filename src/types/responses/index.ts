@@ -268,6 +268,19 @@ export type { TodoSubLineResponse } from './todo-sub-line-response'
 export type { TodoLineResponse } from './todo-line-response'
 export type { TodoBookResponse } from './todo-book-response'
 
+// Invitation book response types
+export {
+  InvitationStatus,
+} from './invitation-book-response'
+export type {
+  InvitationResponse,
+  InvitationBookResponse,
+  InvitationStatsResponse,
+  InvitationModelResponse,
+  InvitationModelRequest,
+  WeddingCheckInResponse,
+} from './invitation-book-response'
+
 // API result types
 export type EventBookListResponse = ApiResult<EventBookResponse>
 export type BudgetBookListResponse = ApiResult<BudgetBookResponse>

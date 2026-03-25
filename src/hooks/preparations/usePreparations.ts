@@ -47,7 +47,6 @@ export const usePreparations = (enabled = true) => {
           preparations,
         }
       } catch (error) {
-        console.error('Error fetching preparations:', error)
         throw error
       }
     },
