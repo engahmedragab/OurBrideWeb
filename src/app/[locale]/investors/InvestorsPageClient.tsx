@@ -446,8 +446,8 @@ export default function InvestorsPageClient() {
         </h2>
         <p className="inv-ask-desc">{c.ask.desc}</p>
         <div className="inv-funds-grid">
-          {c.ask.funds.map((fund) => (
-            <div key={fund.pct} className="inv-fund-item">
+          {c.ask.funds.map((fund, i) => (
+            <div key={i} className="inv-fund-item">
               <div className="inv-fund-pct">{fund.pct}</div>
               <div className="inv-fund-label">
                 {fund.line1}
