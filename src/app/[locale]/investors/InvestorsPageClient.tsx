@@ -196,9 +196,10 @@ export default function InvestorsPageClient() {
           <br />
           <span className="inv-accent">{c.problem.title2}</span>
         </h2>
-        <p className="inv-body-lg inv-reveal" style={{ maxWidth: 620, marginBottom: 52 }}>
+        <p className="inv-body-lg inv-reveal" style={{ maxWidth: 620, marginBottom: 32 }}>
           {c.problem.desc}
         </p>
+        <div className="inv-killer-line inv-reveal">{c.problem.killerLine}</div>
         <div className="inv-problem-cols">
           {c.problem.cards.map((card, i) => (
             <div key={card.title} className={`inv-prob-card inv-reveal ${DELAYS[i] || ''}`}>
@@ -220,6 +221,7 @@ export default function InvestorsPageClient() {
             <p className="inv-body-lg" style={{ maxWidth: 400 }}>
               {c.market.desc}
             </p>
+            <div className="inv-wedge-line">{c.market.wedge}</div>
           </div>
           <div className="inv-reveal inv-d1">
             <div className="inv-market-cards">
@@ -308,9 +310,9 @@ export default function InvestorsPageClient() {
         <p className="inv-body-lg inv-reveal" style={{ maxWidth: 600, marginBottom: 52 }}>
           {c.solution.desc}
         </p>
-        <div className="inv-pillars">
+        <div className="inv-pillars inv-pillars-4">
           {c.solution.pillars.map((pillar, i) => (
-            <div key={pillar.num} className={`inv-pillar inv-reveal ${DELAYS[i % 3] || ''}`}>
+            <div key={pillar.num} className={`inv-pillar inv-reveal ${DELAYS[i % 4] || ''}`}>
               <div className="inv-pillar-num">{pillar.num}</div>
               <h3>{pillar.title}</h3>
               <p>{pillar.desc}</p>
@@ -337,6 +339,17 @@ export default function InvestorsPageClient() {
             </div>
           ))}
         </div>
+        {/* Unit Economics */}
+        <div className="inv-unit-econ inv-reveal">
+          {c.model.unitEcon.map((item, i) => (
+            <div key={i} className="inv-unit-item">
+              <div className="inv-unit-label">{item.label}</div>
+              <div className="inv-unit-val">{item.val}</div>
+              <div className="inv-unit-desc">{item.desc}</div>
+            </div>
+          ))}
+        </div>
+
         <div className="inv-flywheel-box inv-reveal">
           <p>
             <strong>{c.model.flywheel}</strong> {c.model.flywheelDesc}
@@ -401,6 +414,9 @@ export default function InvestorsPageClient() {
               <p>{member.desc}</p>
             </div>
           ))}
+        </div>
+        <div className="inv-conviction-box inv-reveal">
+          <p>{c.team.conviction}</p>
         </div>
       </section>
 
